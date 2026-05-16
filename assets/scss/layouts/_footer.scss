@@ -1,0 +1,164 @@
+// main: ../main.scss
+/*--------------------------------------------------------------
+# Global Footer
+--------------------------------------------------------------*/
+.footer {
+  color: var(--default-color);
+  background-color: var(--background-color);
+  font-size: 14px;
+  position: relative;
+  border-top: 1px solid color-mix(in srgb, var(--default-color), transparent 90%);
+
+  .footer-top {
+    padding: 56px 0 38px;
+  }
+
+  .footer-about {
+    .logo {
+      text-decoration: none;
+      margin-bottom: 18px;
+
+      .sitename {
+        font-size: 1.35rem;
+        font-weight: 800;
+        color: var(--heading-color);
+        letter-spacing: -0.3px;
+      }
+    }
+
+    p {
+      color: color-mix(in srgb, var(--default-color), transparent 22%);
+      line-height: 1.7;
+      margin-bottom: 18px;
+      max-width: 360px;
+    }
+
+    .footer-contact {
+      p {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        margin-bottom: 10px;
+        line-height: 1.5;
+
+        i {
+          color: var(--accent-color);
+          font-size: 1rem;
+          flex-shrink: 0;
+        }
+
+        a {
+          color: var(--default-color);
+          text-decoration: none;
+          transition: all 0.3s ease;
+
+          &:hover {
+            color: var(--accent-color);
+          }
+        }
+      }
+    }
+  }
+
+  .footer-links {
+    h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--heading-color);
+      margin-bottom: 18px;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+
+      li {
+        margin-bottom: 10px;
+
+        a {
+          color: color-mix(in srgb, var(--default-color), transparent 25%);
+          text-decoration: none;
+          transition: all 0.3s ease;
+
+          &:hover {
+            color: var(--accent-color);
+            padding-left: 4px;
+          }
+        }
+      }
+    }
+  }
+
+  .footer-cta {
+    h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--heading-color);
+      margin-bottom: 18px;
+    }
+
+    p {
+      color: color-mix(in srgb, var(--default-color), transparent 22%);
+      line-height: 1.7;
+      margin-bottom: 20px;
+    }
+
+    .footer-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--accent-color);
+      color: var(--contrast-color);
+      text-decoration: none;
+      padding: 0.85rem 1.25rem;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.92rem;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background: color-mix(in srgb, var(--accent-color), black 10%);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 22px color-mix(in srgb, var(--accent-color), transparent 75%);
+      }
+    }
+  }
+
+  .footer-bottom {
+    padding: 22px 0;
+    border-top: 1px solid color-mix(in srgb, var(--default-color), transparent 90%);
+  }
+
+  .copyright {
+    text-align: center;
+
+    p {
+      margin-bottom: 0;
+      color: color-mix(in srgb, var(--default-color), transparent 25%);
+      font-size: 0.92rem;
+    }
+
+    .sitename {
+      color: var(--heading-color);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .footer-top {
+      padding: 44px 0 28px;
+    }
+
+    .footer-about {
+      p {
+        max-width: 100%;
+      }
+    }
+
+    .footer-cta {
+      .footer-button {
+        width: 100%;
+      }
+    }
+  }
+}

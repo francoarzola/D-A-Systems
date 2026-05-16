@@ -1,0 +1,321 @@
+// main: ../main.scss
+/*--------------------------------------------------------------
+# Contact Section
+--------------------------------------------------------------*/
+.contact {
+  .contact-form-container {
+    padding: 60px 0;
+
+    .form-intro {
+      margin-bottom: 50px;
+
+      h2 {
+        font-size: 36px;
+        font-weight: 600;
+        line-height: 1.25;
+        margin-bottom: 20px;
+        color: var(--heading-color);
+        letter-spacing: -0.5px;
+
+        @media (max-width: 768px) {
+          font-size: 28px;
+        }
+      }
+
+      p {
+        font-size: 17px;
+        line-height: 1.75;
+        color: color-mix(in srgb, var(--default-color), transparent 18%);
+        margin-bottom: 0;
+        max-width: 680px;
+      }
+    }
+
+    .contact-form {
+      .row {
+        margin-bottom: 36px;
+
+        &:last-of-type {
+          margin-bottom: 0;
+        }
+      }
+
+      .form-field {
+        position: relative;
+        margin-bottom: 38px;
+
+        &.message-field {
+          margin-bottom: 24px;
+        }
+
+        .field-label {
+          position: absolute;
+          top: -10px;
+          left: 0;
+          font-size: 12px;
+          font-weight: 700;
+          color: var(--heading-color);
+          letter-spacing: 0.5px;
+          text-transform: uppercase;
+          opacity: 0.85;
+        }
+
+        .form-input {
+          width: 100%;
+          border: none;
+          border-bottom: 1px solid color-mix(in srgb, var(--default-color), transparent 78%);
+          background: transparent;
+          padding: 20px 0 15px 0;
+          font-size: 16px;
+          color: var(--default-color);
+          transition: all 0.3s ease;
+          border-radius: 0;
+
+          &:focus {
+            outline: none;
+            border-bottom-color: var(--accent-color);
+            background: transparent;
+          }
+
+          &::placeholder {
+            color: color-mix(in srgb, var(--default-color), transparent 58%);
+            opacity: 1;
+          }
+        }
+
+        select.form-input {
+          appearance: none;
+          cursor: pointer;
+          color: color-mix(in srgb, var(--default-color), transparent 18%);
+        }
+
+        .message-input {
+          resize: vertical;
+          min-height: 130px;
+          font-family: inherit;
+          padding-top: 25px;
+        }
+      }
+
+      .contact-form-note {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.6rem;
+        margin: 0 0 28px;
+        color: color-mix(in srgb, var(--default-color), transparent 30%);
+        font-size: 0.94rem;
+        line-height: 1.5;
+
+        i {
+          color: var(--accent-color);
+          font-size: 1rem;
+          margin-top: 0.15rem;
+          flex-shrink: 0;
+        }
+      }
+
+      .loading,
+      .error-message,
+      .sent-message {
+        font-size: 0.95rem;
+      }
+
+      .send-button {
+        background: var(--accent-color);
+        border: 1px solid var(--accent-color);
+        color: var(--contrast-color);
+        padding: 16px 34px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+
+        .button-arrow {
+          font-size: 18px;
+          transition: transform 0.3s ease;
+        }
+
+        &:hover {
+          background: color-mix(in srgb, var(--accent-color), black 10%);
+          border-color: color-mix(in srgb, var(--accent-color), black 10%);
+          transform: translateY(-2px);
+          box-shadow: 0 8px 22px color-mix(in srgb, var(--accent-color), transparent 72%);
+
+          .button-arrow {
+            transform: translateX(5px);
+          }
+        }
+      }
+    }
+  }
+
+  .contact-sidebar {
+    background: color-mix(in srgb, var(--accent-color), transparent 95%);
+    height: 100%;
+    padding: 56px 40px;
+    border-radius: 16px;
+    border: 1px solid color-mix(in srgb, var(--accent-color), transparent 82%);
+
+    .contact-header {
+      margin-bottom: 46px;
+
+      h3 {
+        font-size: 28px;
+        font-weight: 700;
+        line-height: 1.3;
+        margin-bottom: 18px;
+        color: var(--heading-color);
+        letter-spacing: -0.3px;
+      }
+
+      p {
+        font-size: 16px;
+        line-height: 1.75;
+        color: color-mix(in srgb, var(--default-color), transparent 20%);
+        margin-bottom: 0;
+      }
+    }
+
+    .contact-methods {
+      margin-bottom: 46px;
+    }
+
+    .contact-method {
+      display: flex;
+      align-items: flex-start;
+      gap: 18px;
+      margin-bottom: 32px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      .contact-icon {
+        width: 44px;
+        height: 44px;
+        flex-shrink: 0;
+        border-radius: 12px;
+        background: color-mix(in srgb, var(--accent-color), transparent 88%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--accent-color);
+
+        i {
+          font-size: 20px;
+        }
+      }
+
+      .contact-details {
+        flex: 1;
+
+        .method-label {
+          font-size: 12px;
+          font-weight: 700;
+          color: var(--accent-color);
+          letter-spacing: 1px;
+          text-transform: uppercase;
+          display: block;
+          margin-bottom: 8px;
+        }
+
+        p {
+          font-size: 15px;
+          line-height: 1.6;
+          color: var(--default-color);
+          margin-bottom: 0;
+        }
+
+        a {
+          color: var(--default-color);
+          text-decoration: none;
+          transition: all 0.3s ease;
+
+          &:hover {
+            color: var(--accent-color);
+          }
+        }
+      }
+    }
+
+    .connect-section {
+      border-top: 1px solid color-mix(in srgb, var(--default-color), transparent 88%);
+      padding-top: 34px;
+
+      .connect-label {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--accent-color);
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        display: block;
+        margin-bottom: 14px;
+      }
+
+      p {
+        font-size: 15px;
+        line-height: 1.65;
+        color: color-mix(in srgb, var(--default-color), transparent 22%);
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  @media (max-width: 992px) {
+    .contact-form-container {
+      padding: 40px 0;
+    }
+
+    .contact-sidebar {
+      padding: 40px 30px;
+      margin-bottom: 40px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .contact-form-container {
+      .form-intro {
+        margin-bottom: 40px;
+        text-align: center;
+
+        p {
+          max-width: 100%;
+        }
+      }
+
+      .contact-form {
+        .row {
+          margin-bottom: 20px;
+        }
+
+        .form-field {
+          margin-bottom: 30px;
+        }
+
+        .send-button {
+          width: 100%;
+        }
+      }
+    }
+
+    .contact-sidebar {
+      padding: 30px 25px;
+
+      .contact-header,
+      .contact-methods {
+        margin-bottom: 38px;
+      }
+
+      .contact-method {
+        margin-bottom: 28px;
+      }
+    }
+  }
+}
