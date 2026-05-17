@@ -24,6 +24,12 @@ foreach ($required_fields as $field) {
   }
 }
 
+if (!isset($_POST['privacy_consent']) || trim((string)$_POST['privacy_consent']) !== 'accepted') {
+  http_response_code(400);
+  echo 'Debes aceptar la política de privacidad para enviar la solicitud.';
+  exit;
+}
+
 $website = isset($_POST['website']) ? trim((string)$_POST['website']) : '';
 if ($website !== '') {
   echo 'OK';
