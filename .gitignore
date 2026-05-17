@@ -1,3 +1,7 @@
 .env
 config/*.local.php
 *.log
+
+# Contact form rate limiting and operational logging
+storage/logs/*.log
+storage/rate-limit/*.json
