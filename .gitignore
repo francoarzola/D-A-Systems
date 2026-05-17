@@ -1,0 +1,6 @@
+.env
+config/*.local.php
+*.log
+
+storage/logs/*.log
+storage/rate-limit/*.json
