@@ -1,13 +1,33 @@
 <?php
-$receiving_email_address = 'dasystemstechnology@gmail.com';
-
-if (!file_exists('../assets/vendor/php-email-form/php-email-form.php')) {
+$config_path = __DIR__ . '/../config/contact.php';
+if (!file_exists($config_path)) {
   http_response_code(500);
   echo 'No fue posible procesar la solicitud en este momento.';
   exit;
 }
 
-include '../assets/vendor/php-email-form/php-email-form.php';
+$config = include $config_path;
+if (!is_array($config)) {
+  http_response_code(500);
+  echo 'No fue posible procesar la solicitud en este momento.';
+  exit;
+}
+
+$receiving_email_address = $config['receiving_email_address'] ?? '';
+if (!filter_var($receiving_email_address, FILTER_VALIDATE_EMAIL)) {
+  http_response_code(500);
+  echo 'No fue posible procesar la solicitud en este momento.';
+  exit;
+}
+
+$php_email_form_path = __DIR__ . '/../assets/vendor/php-email-form/php-email-form.php';
+if (!file_exists($php_email_form_path)) {
+  http_response_code(500);
+  echo 'No fue posible procesar la solicitud en este momento.';
+  exit;
+}
+
+include $php_email_form_path;
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
   http_response_code(405);
