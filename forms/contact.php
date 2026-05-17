@@ -29,15 +29,112 @@ if (!file_exists($php_email_form_path)) {
 
 include $php_email_form_path;
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+$method = $_SERVER['REQUEST_METHOD'] ?? 'UNKNOWN';
+$remote_ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+$client_ip = filter_var($remote_ip, FILTER_VALIDATE_IP) ? $remote_ip : 'unknown';
+$ip_hash = hash('sha256', $client_ip);
+$user_agent_hash = isset($_SERVER['HTTP_USER_AGENT']) && trim((string)$_SERVER['HTTP_USER_AGENT']) !== ''
+  ? hash('sha256', $_SERVER['HTTP_USER_AGENT'])
+  : null;
+$rate_limit_path = __DIR__ . '/../storage/rate-limit/contact-' . $ip_hash . '.json';
+$log_path = __DIR__ . '/../storage/logs/contact.log';
+$max_attempts = 5;
+$window_seconds = 900;
+
+function ensure_directory_exists(string $path): void {
+  if (!is_dir($path)) {
+    @mkdir($path, 0755, true);
+  }
+}
+
+function write_json_line(string $path, array $payload): void {
+  ensure_directory_exists(dirname($path));
+  @file_put_contents($path, json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "\n", FILE_APPEND | LOCK_EX);
+}
+
+function log_event(string $event, string $status, string $reason = ''): void {
+  global $ip_hash, $user_agent_hash, $method, $log_path;
+
+  $payload = [
+    'timestamp' => gmdate('c'),
+    'event' => $event,
+    'ip_hash' => $ip_hash,
+    'method' => $method,
+    'status' => $status,
+  ];
+
+  if ($reason !== '') {
+    $payload['reason'] = $reason;
+  }
+
+  if ($user_agent_hash !== null) {
+    $payload['user_agent_hash'] = $user_agent_hash;
+  }
+
+  write_json_line($log_path, $payload);
+}
+
+function load_rate_limit(string $path): array {
+  if (!file_exists($path)) {
+    return [];
+  }
+
+  $content = @file_get_contents($path);
+  if ($content === false) {
+    return [];
+  }
+
+  $data = json_decode($content, true);
+  if (!is_array($data) || !isset($data['attempts']) || !is_array($data['attempts'])) {
+    return [];
+  }
+
+  return array_values(array_filter($data['attempts'], static function ($timestamp) {
+    return is_int($timestamp) || ctype_digit((string)$timestamp);
+  }));
+}
+
+function save_rate_limit(string $path, array $attempts): void {
+  ensure_directory_exists(dirname($path));
+  $payload = ['attempts' => array_values($attempts)];
+  @file_put_contents($path, json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "\n", LOCK_EX);
+}
+
+function prune_attempts(array $attempts, int $window_seconds): array {
+  $threshold = time() - $window_seconds;
+  return array_values(array_filter($attempts, static function ($timestamp) use ($threshold) {
+    return ((is_int($timestamp) || ctype_digit((string)$timestamp)) && (int) $timestamp >= $threshold);
+  }));
+}
+
+function add_rate_limit_attempt(string $path, array $attempts): array {
+  $attempts[] = time();
+  save_rate_limit($path, $attempts);
+  return $attempts;
+}
+
+if ($method !== 'POST') {
+  log_event('invalid_method', 'error', 'invalid_method');
   http_response_code(405);
   echo 'Método no permitido.';
   exit;
 }
 
+$attempts = prune_attempts(load_rate_limit($rate_limit_path), $window_seconds);
+if (count($attempts) >= $max_attempts) {
+  log_event('rate_limit_blocked', 'error', 'rate_limit_exceeded');
+  http_response_code(429);
+  echo 'Has realizado demasiados intentos. Intenta nuevamente más tarde.';
+  exit;
+}
+
+$attempts = add_rate_limit_attempt($rate_limit_path, $attempts);
+log_event('send_attempt', 'pending');
+
 $required_fields = ['name', 'email', 'subject', 'message'];
 foreach ($required_fields as $field) {
   if (!isset($_POST[$field]) || trim((string)$_POST[$field]) === '') {
+    log_event('missing_required_fields', 'error', 'missing_required_fields');
     http_response_code(400);
     echo 'Faltan campos obligatorios.';
     exit;
@@ -45,6 +142,7 @@ foreach ($required_fields as $field) {
 }
 
 if (!isset($_POST['privacy_consent']) || trim((string)$_POST['privacy_consent']) !== 'accepted') {
+  log_event('privacy_consent_missing', 'error', 'privacy_consent_missing');
   http_response_code(400);
   echo 'Debes aceptar la política de privacidad para enviar la solicitud.';
   exit;
@@ -52,6 +150,7 @@ if (!isset($_POST['privacy_consent']) || trim((string)$_POST['privacy_consent'])
 
 $website = isset($_POST['website']) ? trim((string)$_POST['website']) : '';
 if ($website !== '') {
+  log_event('honeypot_triggered', 'blocked', 'honeypot_triggered');
   echo 'OK';
   exit;
 }
@@ -79,12 +178,14 @@ if (
   mb_strlen($subject) > 150 ||
   mb_strlen($message) > 3000
 ) {
+  log_event('invalid_length', 'error', 'invalid_length');
   http_response_code(400);
   echo 'Uno o más campos exceden la longitud permitida.';
   exit;
 }
 
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+  log_event('invalid_email', 'error', 'invalid_email');
   http_response_code(400);
   echo 'El correo electrónico no es válido.';
   exit;
@@ -108,4 +209,11 @@ if ($company !== '') {
 $contact->add_message($subject, 'Asunto');
 $contact->add_message($message, 'Mensaje', 10);
 
-echo $contact->send();
+$send_result = $contact->send();
+if (trim($send_result) === 'OK') {
+  log_event('send_completed', 'success', 'send_ok');
+  echo 'OK';
+} else {
+  log_event('send_completed', 'error', 'send_failed');
+  echo $send_result;
+}
