@@ -41,7 +41,7 @@ declare(strict_types=1);
     </section>
 
     <div class="button-wrapper">
-      <button class="button-disabled" type="button" disabled>Acceder al sistema</button>
+      <a href="login.php" class="button-disabled" role="button">Acceder al sistema</a>
     </div>
 
     <footer>
