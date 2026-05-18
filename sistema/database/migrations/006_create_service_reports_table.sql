@@ -1,0 +1,26 @@
+-- Migration 006: Create service_reports table
+CREATE TABLE IF NOT EXISTS `service_reports` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `client_id` INT UNSIGNED NOT NULL,
+  `user_id` INT UNSIGNED NOT NULL,
+  `report_number` VARCHAR(30) NULL,
+  `service_date` DATE NOT NULL,
+  `service_type` VARCHAR(50) NOT NULL DEFAULT 'remota',
+  `status` VARCHAR(40) NOT NULL DEFAULT 'pendiente',
+  `reported_issue` TEXT NULL,
+  `diagnosis` TEXT NULL,
+  `work_done` TEXT NULL,
+  `recommendations` TEXT NULL,
+  `billable` TINYINT(1) NOT NULL DEFAULT 0,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` DATETIME NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_service_reports_report_number` (`report_number`),
+  KEY `idx_service_reports_client_id` (`client_id`),
+  KEY `idx_service_reports_user_id` (`user_id`),
+  KEY `idx_service_reports_service_date` (`service_date`),
+  KEY `idx_service_reports_status` (`status`),
+  CONSTRAINT `fk_service_reports_client_id` FOREIGN KEY (`client_id`) REFERENCES `clients` (`id`) ON UPDATE CASCADE ON DELETE RESTRICT,
+  CONSTRAINT `fk_service_reports_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON UPDATE CASCADE ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
