@@ -2,6 +2,11 @@
 config/*.local.php
 *.log
 
+# Local database configuration files with secrets should not be versioned
+sistema/config/database.php
+sistema/config/database.local.php
+sistema/config/*.local.php
+
 # Contact form rate limiting and operational logging
 storage/logs/*.log
 storage/rate-limit/*.json
