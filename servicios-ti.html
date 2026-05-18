@@ -376,6 +376,7 @@
                   </div>
 
                   <input type="hidden" name="subject" value="Consulta por servicios TI desde servicios-ti.html">
+                  <input type="hidden" name="csrf_token" class="csrf-token-field">
 
                   <div class="form-field">
                     <textarea name="message" rows="3" placeholder="Describe brevemente el problema o necesidad TI de tu empresa" required=""></textarea>
@@ -516,6 +517,41 @@
 
   <!-- Vendor JS Files -->
   <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script>
+    (function () {
+      if (!window.fetch || !document.querySelectorAll) {
+        return;
+      }
+
+      var forms = document.querySelectorAll('form[action="forms/contact.php"]');
+      if (forms.length === 0) {
+        return;
+      }
+
+      fetch('forms/csrf-token.php', {
+        credentials: 'same-origin'
+      })
+      .then(function (response) {
+        if (!response.ok) {
+          throw new Error('CSRF token request failed');
+        }
+        return response.json();
+      })
+      .then(function (data) {
+        if (!data || !data.csrf_token) {
+          throw new Error('Invalid CSRF token response');
+        }
+        var inputs = document.querySelectorAll('input.csrf-token-field');
+        inputs.forEach(function (input) {
+          input.value = data.csrf_token;
+        });
+      })
+      .catch(function () {
+        return;
+      });
+    })();
+  </script>
+
   <script src="assets/vendor/php-email-form/validate.js"></script>
   <script src="assets/vendor/aos/aos.js"></script>
   <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>

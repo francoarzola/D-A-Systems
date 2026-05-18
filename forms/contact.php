@@ -29,6 +29,38 @@ if (!file_exists($php_email_form_path)) {
 
 include $php_email_form_path;
 
+function start_da_systems_session(): void {
+  if (session_status() !== PHP_SESSION_NONE) {
+    return;
+  }
+
+  $secure = (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off') ||
+            (isset($_SERVER['SERVER_PORT']) && (int) $_SERVER['SERVER_PORT'] === 443);
+  $cookieParams = [
+    'lifetime' => 0,
+    'path' => '/',
+    'domain' => $_SERVER['SERVER_NAME'] ?? '',
+    'secure' => $secure,
+    'httponly' => true,
+    'samesite' => 'Lax',
+  ];
+
+  session_name('DA_SYSTEMS_SESSION');
+  if (PHP_VERSION_ID >= 70300) {
+    session_set_cookie_params($cookieParams);
+  } else {
+    session_set_cookie_params(
+      $cookieParams['lifetime'],
+      $cookieParams['path'],
+      $cookieParams['domain'],
+      $cookieParams['secure'],
+      $cookieParams['httponly']
+    );
+  }
+
+  session_start();
+}
+
 $method = $_SERVER['REQUEST_METHOD'] ?? 'UNKNOWN';
 $remote_ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
 $client_ip = filter_var($remote_ip, FILTER_VALIDATE_IP) ? $remote_ip : 'unknown';
@@ -130,6 +162,16 @@ if (count($attempts) >= $max_attempts) {
 
 $attempts = add_rate_limit_attempt($rate_limit_path, $attempts);
 log_event('send_attempt', 'pending');
+
+start_da_systems_session();
+
+if (!isset($_POST['csrf_token'], $_SESSION['csrf_token']) ||
+    !hash_equals($_SESSION['csrf_token'], (string) $_POST['csrf_token'])) {
+  log_event('csrf_token_invalid', 'error', 'csrf_token_invalid');
+  http_response_code(400);
+  echo 'No fue posible validar la solicitud. Recarga la página e inténtalo nuevamente.';
+  exit;
+}
 
 $required_fields = ['name', 'email', 'subject', 'message'];
 foreach ($required_fields as $field) {
