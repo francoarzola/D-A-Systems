@@ -33,7 +33,19 @@ final class Connection
         $requiredKeys = ['host', 'port', 'database', 'username', 'password'];
 
         foreach ($requiredKeys as $key) {
-            if (!isset($config[$key]) || $config[$key] === '') {
+            if (!array_key_exists($key, $config)) {
+                throw new RuntimeException('Database configuration is incomplete.');
+            }
+
+            if ($key === 'password') {
+                if ($config['password'] === null || !is_string($config['password'])) {
+                    throw new RuntimeException('Database configuration is incomplete.');
+                }
+
+                continue;
+            }
+
+            if ($config[$key] === '' || $config[$key] === null) {
                 throw new RuntimeException('Database configuration is incomplete.');
             }
         }
