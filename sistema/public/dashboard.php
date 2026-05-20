@@ -9,6 +9,12 @@ use DAndASystems\Internal\Core\SessionManager;
 $session = new SessionManager();
 $session->start();
 
+if (!$session->has('auth_user_id')) {
+    header('Location: login.php');
+    exit;
+}
+
+$authUserName = (string) $session->get('auth_user_name', 'Usuario');
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -26,7 +32,7 @@ $session->start();
         D&A Systems
       </div>
       <h1 class="title">Dashboard interno</h1>
-      <p class="subtitle">Dashboard interno en preparación. Protección de acceso real pendiente de implementación con usuarios.</p>
+      <p class="subtitle">Bienvenido, <?php echo htmlspecialchars($authUserName, ENT_QUOTES, 'UTF-8'); ?>.</p>
     </section>
 
     <section class="grid">
@@ -45,12 +51,11 @@ $session->start();
     </section>
 
     <div class="button-wrapper" style="margin-top:22px;">
-      <a href="login.php" class="button-disabled" role="button">Volver a login</a>
-      <a href="logout.php" class="button-disabled" role="button" style="margin-left:12px;">Cerrar sesión</a>
+      <a href="logout.php" class="button-disabled" role="button">Cerrar sesión</a>
     </div>
 
     <footer>
-      <small>Panel de control provisional — No autenticado.</small>
+      <small>Panel de control interno protegido.</small>
     </footer>
   </div>
 </body>
