@@ -3,18 +3,18 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../app/Core/SessionManager.php';
+require_once __DIR__ . '/../app/Core/AuthGuard.php';
 
 use DAndASystems\Internal\Core\SessionManager;
+use DAndASystems\Internal\Core\AuthGuard;
 
 $session = new SessionManager();
 $session->start();
 
-if (!$session->has('auth_user_id')) {
-    header('Location: login.php');
-    exit;
-}
+$guard = new AuthGuard();
+$guard->requireAuth('login.php');
 
-$authUserName = (string) $session->get('auth_user_name', 'Usuario');
+$authUserName = $guard->userName() ?: 'Usuario';
 ?>
 <!DOCTYPE html>
 <html lang="es">
