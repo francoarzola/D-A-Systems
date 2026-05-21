@@ -42,44 +42,102 @@ if ($isPost) {
             $message = 'Credenciales inválidas.';
         } else {
             try {
-                $config = DatabaseConfig::fromDefaultPath()->load();
-                $connection = new Connection($config);
-                $pdo = $connection->pdo();
+              $config = DatabaseConfig::fromDefaultPath()->load();
+              $connection = new Connection($config);
+              $pdo = $connection->pdo();
 
+              // Rate limit keys (store only hashes)
+              $emailHash = hash('sha256', strtolower(trim($emailValue)));
+              $clientIp = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+              $ipHash = hash('sha256', $clientIp);
+              $userAgentHash = hash('sha256', $_SERVER['HTTP_USER_AGENT'] ?? 'unknown');
+
+              // Count recent failed attempts in the last 15 minutes
+              $countStmt = $pdo->prepare(
+                'SELECT COUNT(*) FROM login_attempts WHERE email_hash = :email_hash AND ip_hash = :ip_hash AND success = 0 AND attempted_at >= DATE_SUB(NOW(), INTERVAL 15 MINUTE)'
+              );
+              $countStmt->execute([
+                ':email_hash' => $emailHash,
+                ':ip_hash' => $ipHash,
+              ]);
+              $failedCount = (int) $countStmt->fetchColumn();
+
+              if ($failedCount >= 5) {
+                // Register another failed attempt and block without checking credentials
+                $insertBlock = $pdo->prepare(
+                  'INSERT INTO login_attempts (email_hash, ip_hash, success, user_agent_hash) VALUES (:email_hash, :ip_hash, 0, :user_agent_hash)'
+                );
+                $insertBlock->execute([
+                  ':email_hash' => $emailHash,
+                  ':ip_hash' => $ipHash,
+                  ':user_agent_hash' => $userAgentHash,
+                ]);
+
+                $message = 'Demasiados intentos. Intenta nuevamente más tarde.';
+              } else {
+                // Proceed to validate credentials
                 $statement = $pdo->prepare(
-                    'SELECT id, name, email, password_hash, role, active FROM users WHERE email = :email LIMIT 1'
+                  'SELECT id, name, email, password_hash, role, active FROM users WHERE email = :email LIMIT 1'
                 );
                 $statement->execute([':email' => $emailValue]);
                 $user = $statement->fetch(\PDO::FETCH_ASSOC);
 
-                if (!is_array($user)
-                    || !isset($user['password_hash'], $user['active'])
-                    || (int) $user['active'] !== 1
-                    || !password_verify($password, (string) $user['password_hash'])
+                $loginSuccess = false;
+
+                if (is_array($user)
+                  && isset($user['password_hash'], $user['active'])
+                  && (int) $user['active'] === 1
+                  && password_verify($password, (string) $user['password_hash'])
                 ) {
-                    $message = 'Credenciales inválidas.';
-                } else {
-                    $session->regenerate();
-                    $session->set('auth_user_id', (int) $user['id']);
-                    $session->set('auth_user_name', (string) $user['name']);
-                    $session->set('auth_user_email', (string) $user['email']);
-                    $session->set('auth_user_role', (string) $user['role']);
-                    $session->set('auth_logged_in_at', (new \DateTimeImmutable())->format('c'));
-                    $csrf->rotate();
-
-                    $updateStatement = $pdo->prepare(
-                        'UPDATE users SET last_login_at = :last_login_at WHERE id = :id'
-                    );
-                    $updateStatement->execute([
-                        ':last_login_at' => (new \DateTimeImmutable())->format('Y-m-d H:i:s'),
-                        ':id' => (int) $user['id'],
-                    ]);
-
-                    header('Location: dashboard.php');
-                    exit;
+                  $loginSuccess = true;
                 }
+
+                if (!$loginSuccess) {
+                  // Register failed attempt
+                  $insertFail = $pdo->prepare(
+                    'INSERT INTO login_attempts (email_hash, ip_hash, success, user_agent_hash) VALUES (:email_hash, :ip_hash, 0, :user_agent_hash)'
+                  );
+                  $insertFail->execute([
+                    ':email_hash' => $emailHash,
+                    ':ip_hash' => $ipHash,
+                    ':user_agent_hash' => $userAgentHash,
+                  ]);
+
+                  $message = 'Credenciales inválidas.';
+                } else {
+                  // Register successful attempt
+                  $insertSuccess = $pdo->prepare(
+                    'INSERT INTO login_attempts (email_hash, ip_hash, success, user_agent_hash) VALUES (:email_hash, :ip_hash, 1, :user_agent_hash)'
+                  );
+                  $insertSuccess->execute([
+                    ':email_hash' => $emailHash,
+                    ':ip_hash' => $ipHash,
+                    ':user_agent_hash' => $userAgentHash,
+                  ]);
+
+                  // Complete login
+                  $session->regenerate();
+                  $session->set('auth_user_id', (int) $user['id']);
+                  $session->set('auth_user_name', (string) $user['name']);
+                  $session->set('auth_user_email', (string) $user['email']);
+                  $session->set('auth_user_role', (string) $user['role']);
+                  $session->set('auth_logged_in_at', (new \DateTimeImmutable())->format('c'));
+                  $csrf->rotate();
+
+                  $updateStatement = $pdo->prepare(
+                    'UPDATE users SET last_login_at = :last_login_at WHERE id = :id'
+                  );
+                  $updateStatement->execute([
+                    ':last_login_at' => (new \DateTimeImmutable())->format('Y-m-d H:i:s'),
+                    ':id' => (int) $user['id'],
+                  ]);
+
+                  header('Location: dashboard.php');
+                  exit;
+                }
+              }
             } catch (Throwable) {
-                $message = 'No fue posible procesar la solicitud.';
+              $message = 'No fue posible procesar la solicitud.';
             }
         }
     }
