@@ -6,6 +6,8 @@ namespace DAndASystems\Internal\Core;
 
 final class AuthGuard
 {
+    private const TIMEOUT_SECONDS = 1800; // 30 minutes
+
     public function isAuthenticated(): bool
     {
         if (session_status() !== PHP_SESSION_ACTIVE) {
@@ -34,6 +36,89 @@ final class AuthGuard
         if (!$this->isAuthenticated()) {
             header('Location: ' . $redirectTo);
             exit;
+        }
+
+        // If session expired due to inactivity, clear auth and redirect with timeout flag
+        if ($this->hasSessionExpired()) {
+            $this->clearAuthentication();
+            header('Location: ' . $redirectTo . '?timeout=1');
+            exit;
+        }
+
+        // Update last activity timestamp
+        $this->touchActivity();
+    }
+
+    private function hasSessionExpired(): bool
+    {
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            return false;
+        }
+
+        $last = $_SESSION['auth_last_activity_at'] ?? null;
+
+        if ($last === null) {
+            return false;
+        }
+
+        $lastInt = null;
+        if (is_int($last)) {
+            $lastInt = $last;
+        } elseif (is_string($last) && ctype_digit($last)) {
+            $lastInt = (int) $last;
+        }
+
+        if ($lastInt === null) {
+            return false;
+        }
+
+        return (time() - $lastInt) > self::TIMEOUT_SECONDS;
+    }
+
+    private function touchActivity(): void
+    {
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            return;
+        }
+
+        $_SESSION['auth_last_activity_at'] = time();
+    }
+
+    private function clearAuthentication(): void
+    {
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            return;
+        }
+
+        // Remove only authentication-related session keys to avoid wiping unrelated session data
+        $keys = [
+            'auth_user_id',
+            'auth_user_name',
+            'auth_user_email',
+            'auth_user_role',
+            'auth_logged_in_at',
+            'auth_last_activity_at',
+        ];
+
+        foreach ($keys as $k) {
+            if (array_key_exists($k, $_SESSION)) {
+                unset($_SESSION[$k]);
+            }
+        }
+
+        // Additionally destroy session cookie/server data to ensure cleanup
+        try {
+            $sm = new SessionManager();
+            $sm->destroy();
+        } catch (\Throwable) {
+            // If SessionManager is not available for any reason, fall back to clearing session data
+            $_SESSION = [];
+            if (function_exists('session_unset')) {
+                @session_unset();
+            }
+            if (function_exists('session_destroy')) {
+                @session_destroy();
+            }
         }
     }
 
