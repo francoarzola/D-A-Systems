@@ -12,6 +12,44 @@ use DAndASystems\Internal\Core\CsrfService;
 use DAndASystems\Internal\Infrastructure\Config\DatabaseConfig;
 use DAndASystems\Internal\Infrastructure\Database\Connection;
 
+function getClientIp(): string
+{
+    return $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+}
+
+function hashValue(string $value): string
+{
+    return hash('sha256', $value);
+}
+
+function recordAuditLog(PDO $pdo, ?int $userId, string $event, ?int $entityId, array $metadata = []): void
+{
+    try {
+        $metadataJson = json_encode($metadata, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+
+        if ($metadataJson === false) {
+            $metadataJson = '{}';
+        }
+
+        $statement = $pdo->prepare(
+            'INSERT INTO audit_logs (user_id, event, entity_type, entity_id, ip_hash, user_agent_hash, metadata_json)
+             VALUES (:user_id, :event, :entity_type, :entity_id, :ip_hash, :user_agent_hash, :metadata_json)'
+        );
+
+        $statement->execute([
+            ':user_id' => $userId,
+            ':event' => $event,
+            ':entity_type' => 'auth',
+            ':entity_id' => $entityId,
+            ':ip_hash' => hashValue(getClientIp()),
+            ':user_agent_hash' => hashValue($_SERVER['HTTP_USER_AGENT'] ?? 'unknown'),
+            ':metadata_json' => $metadataJson,
+        ]);
+    } catch (\Throwable) {
+        // Audit failures must not break the login flow.
+    }
+}
+
 $session = new SessionManager();
 $csrf = new CsrfService($session);
 
@@ -47,10 +85,9 @@ if ($isPost) {
               $pdo = $connection->pdo();
 
               // Rate limit keys (store only hashes)
-              $emailHash = hash('sha256', strtolower(trim($emailValue)));
-              $clientIp = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
-              $ipHash = hash('sha256', $clientIp);
-              $userAgentHash = hash('sha256', $_SERVER['HTTP_USER_AGENT'] ?? 'unknown');
+              $emailHash = hashValue(strtolower(trim($emailValue)));
+              $ipHash = hashValue(getClientIp());
+              $userAgentHash = hashValue($_SERVER['HTTP_USER_AGENT'] ?? 'unknown');
 
               // Count recent failed attempts in the last 15 minutes
               $countStmt = $pdo->prepare(
@@ -73,6 +110,7 @@ if ($isPost) {
                   ':user_agent_hash' => $userAgentHash,
                 ]);
 
+                recordAuditLog($pdo, null, 'login_blocked_rate_limit', null, ['reason' => 'rate_limited']);
                 $message = 'Demasiados intentos. Intenta nuevamente más tarde.';
               } else {
                 // Proceed to validate credentials
@@ -83,6 +121,12 @@ if ($isPost) {
                 $user = $statement->fetch(\PDO::FETCH_ASSOC);
 
                 $loginSuccess = false;
+                $auditUserId = null;
+                $auditReason = 'invalid_credentials';
+
+                if (is_array($user) && isset($user['id'])) {
+                  $auditUserId = (int) $user['id'];
+                }
 
                 if (is_array($user)
                   && isset($user['password_hash'], $user['active'])
@@ -90,6 +134,10 @@ if ($isPost) {
                   && password_verify($password, (string) $user['password_hash'])
                 ) {
                   $loginSuccess = true;
+                }
+
+                if (is_array($user) && isset($user['active']) && (int) $user['active'] !== 1) {
+                  $auditReason = 'inactive_user';
                 }
 
                 if (!$loginSuccess) {
@@ -103,6 +151,7 @@ if ($isPost) {
                     ':user_agent_hash' => $userAgentHash,
                   ]);
 
+                  recordAuditLog($pdo, $auditUserId, 'login_failed', $auditUserId, ['reason' => $auditReason]);
                   $message = 'Credenciales inválidas.';
                 } else {
                   // Register successful attempt
@@ -114,6 +163,8 @@ if ($isPost) {
                     ':ip_hash' => $ipHash,
                     ':user_agent_hash' => $userAgentHash,
                   ]);
+
+                  recordAuditLog($pdo, $auditUserId, 'login_success', $auditUserId, ['reason' => 'authenticated']);
 
                   // Complete login
                   $session->regenerate();
