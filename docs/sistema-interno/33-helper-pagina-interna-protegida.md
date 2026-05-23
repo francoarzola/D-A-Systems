@@ -16,7 +16,8 @@ El helper `InternalPage::render()` centraliza el flujo común de páginas intern
 - recibe título de página
 - recibe heading
 - recibe navegación activa
-- recibe contenido HTML
+- recibe un callback de contenido
+- ejecuta el callback después de autenticar al usuario
 - carga el layout interno existente
 
 ## Archivos modificados
@@ -32,7 +33,8 @@ El helper `InternalPage::render()` centraliza el flujo común de páginas intern
 - Las páginas internas ya no repiten la carga directa de `SessionManager` y `AuthGuard`.
 - Las páginas internas ya no repiten el inicio de sesión ni `requireAuth('login.php')`.
 - Las páginas internas ya no repiten la obtención de `$userName`.
-- Cada página conserva solo su contenido específico y llama al helper con sus datos de presentación.
+- Cada página conserva solo su contenido específico dentro de un callback y llama al helper con sus datos de presentación.
+- El contenido específico se genera después de iniciar sesión y exigir autenticación.
 
 ## Qué NO se cambió
 
@@ -61,7 +63,7 @@ El helper `InternalPage::render()` centraliza el flujo común de páginas intern
 6. Ejecutar `php -l sistema/app/Views/layouts/internal.php`.
 7. Ejecutar `php -l sistema/app/Support/InternalPage.php`.
 8. Acceder a cada página con sesión activa y verificar que mantiene el mismo contenido visible.
-9. Acceder a cada página sin sesión y confirmar que redirige a `login.php`.
+9. Acceder a cada página sin sesión y confirmar que redirige a `login.php` antes de generar contenido específico.
 10. Verificar que la navegación activa sigue funcionando.
 
 ## Preparación para próximas etapas
