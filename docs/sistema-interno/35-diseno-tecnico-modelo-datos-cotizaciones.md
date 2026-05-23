@@ -18,7 +18,7 @@ De forma futura, `cotizaciones` podrá relacionarse con clientes y usuarios inte
 | Campo | Tipo sugerido | Obligatorio | Reglas / observaciones |
 | --- | --- | --- | --- |
 | `id` | entero autoincremental | Sí | Identificador interno primario. |
-| `quote_number` | varchar(30) | Sí | Número visible único, por ejemplo `COT-2026-0001`. |
+| `quote_number` | varchar(30) | Condicional | Puede ser `NULL` mientras la cotización está en `borrador`. Debe asignarse al emitir la cotización y desde ese momento debe ser único. Formato sugerido: `COT-2026-0001`. |
 | `quote_date` | date | Sí | Fecha de emisión o creación formal de la cotización. |
 | `valid_until` | date | No | Fecha hasta la cual la cotización mantiene validez comercial. |
 | `client_name` | varchar(160) | Sí | Nombre o razón social del cliente. |
@@ -90,14 +90,19 @@ Ejemplo:
 
 `COT-2026-0001`
 
+Decisión tomada para este proyecto:
+
+- El correlativo se asigna al emitir la cotización, no al crear el borrador.
+- Mientras la cotización está en `borrador`, `quote_number` puede permanecer `NULL`.
+- Al pasar a `emitida`, se debe asignar un `quote_number` único.
+- Los estados posteriores (`enviada`, `aceptada`, `rechazada`, `anulada`) deben conservar el mismo `quote_number`.
+
 Ventajas:
 
-- Es legible para usuarios internos y clientes.
-- Reinicia el correlativo por año.
-- Evita números demasiado largos en el tiempo.
+- Permite crear y descartar borradores sin consumir números oficiales.
+- Evita saltos innecesarios en el correlativo visible.
+- Mantiene numeración formal solo para cotizaciones emitidas.
 - Permite identificar rápidamente el período de emisión.
-
-Decisión pendiente: definir si el correlativo se asigna al crear el borrador o solo al emitir la cotización.
 
 ## Relaciones
 
@@ -111,7 +116,7 @@ Decisión pendiente: definir si el correlativo se asigna al crear el borrador o 
 
 ## Índices recomendados
 
-- `quote_number` único.
+- `quote_number` único para cotizaciones emitidas y estados posteriores.
 - `status` para filtros por estado.
 - `quote_date` para ordenamiento y reportes por fecha.
 - `client_name` para búsqueda simple por cliente.
@@ -119,7 +124,8 @@ Decisión pendiente: definir si el correlativo se asigna al crear el borrador o 
 
 ## Validaciones futuras
 
-- `quote_number` obligatorio y único.
+- `quote_number` puede ser `NULL` en estado `borrador`.
+- `quote_number` es obligatorio y único desde estado `emitida`.
 - `quote_date` obligatorio.
 - `client_name` obligatorio.
 - `contact_email` debe tener formato de email válido si se informa.
@@ -137,8 +143,7 @@ Decisión pendiente: definir si el correlativo se asigna al crear el borrador o 
 - Definir si se permitirá cotizar sin RUT.
 - Confirmar si el IVA será fijo, variable o configurable por cotización.
 - Definir si habrá ítems exentos de IVA.
-- Definir control de correlativo para evitar duplicados en concurrencia.
-- Definir si el correlativo se reserva en borrador o al emitir.
+- Definir control de correlativo para evitar duplicados en concurrencia al emitir.
 - Definir trazabilidad de cambios de estado.
 - Definir si las observaciones serán internas, visibles al cliente o ambas.
 - Definir permisos por rol para crear, editar, emitir, anular y aceptar cotizaciones.
