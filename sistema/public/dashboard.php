@@ -2,26 +2,16 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/../app/Core/SessionManager.php';
-require_once __DIR__ . '/../app/Core/AuthGuard.php';
+require_once __DIR__ . '/../app/Support/InternalPage.php';
 
-use DAndASystems\Internal\Core\SessionManager;
-use DAndASystems\Internal\Core\AuthGuard;
+use DAndASystems\Internal\Support\InternalPage;
 
-$session = new SessionManager();
-$session->start();
-
-$guard = new AuthGuard();
-$guard->requireAuth('login.php');
-
-$authUserName = $guard->userName() ?: 'Usuario';
-
-$pageTitle = 'Dashboard — Sistema interno D&A Systems';
-$pageHeading = 'Dashboard interno';
-$userName = $authUserName;
-
-ob_start();
-?>
+InternalPage::render(
+    'Dashboard — Sistema interno D&A Systems',
+    'Dashboard interno',
+    'dashboard',
+    static function (): void {
+        ?>
 <section class="grid">
   <article class="card">
     <h2>Cotizaciones</h2>
@@ -37,6 +27,5 @@ ob_start();
   </article>
 </section>
 <?php
-$content = ob_get_clean();
-
-require __DIR__ . '/../app/Views/layouts/internal.php';
+    }
+);
