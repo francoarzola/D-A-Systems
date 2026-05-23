@@ -6,8 +6,12 @@ require_once __DIR__ . '/../app/Support/InternalPage.php';
 
 use DAndASystems\Internal\Support\InternalPage;
 
-ob_start();
-?>
+InternalPage::render(
+    'Dashboard — Sistema interno D&A Systems',
+    'Dashboard interno',
+    'dashboard',
+    static function (): void {
+        ?>
 <section class="grid">
   <article class="card">
     <h2>Cotizaciones</h2>
@@ -23,11 +27,5 @@ ob_start();
   </article>
 </section>
 <?php
-$content = ob_get_clean();
-
-InternalPage::render(
-    'Dashboard — Sistema interno D&A Systems',
-    'Dashboard interno',
-    'dashboard',
-    $content
+    }
 );
