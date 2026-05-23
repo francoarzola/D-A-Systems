@@ -60,7 +60,7 @@ $escape = static fn (string $value): string => htmlspecialchars($value, ENT_QUOT
 
       <a
         href="logout.php"
-        style="display:inline-flex;align-items:center;justify-content:center;padding:10px 14px;border:1px solid rgba(26,61,143,0.2);border-radius:999px;text-decoration:none;font-weight:600;font-size:0.95rem;background:#f3f6fb;color:#1a3d8f;margin-left:auto;"
+        style="display:inline-flex;align-items:center;justify-content:center;padding:10px 14px;border:1px solid rgba(26,61,143,0.2);border-radius:999px;text-decoration:none;font-weight:600;font-size:0.95rem;background:#f3f6fb;color:#1a3d8f;"
       >
         Cerrar sesión
       </a>
