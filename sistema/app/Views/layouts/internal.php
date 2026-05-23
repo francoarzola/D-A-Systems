@@ -7,6 +7,15 @@ $pageHeading = isset($pageHeading) && is_string($pageHeading) ? $pageHeading : '
 $userName = isset($userName) && is_string($userName) && $userName !== '' ? $userName : 'Usuario';
 $content = isset($content) && is_string($content) ? $content : '';
 $stylesheetPath = isset($stylesheetPath) && is_string($stylesheetPath) ? $stylesheetPath : 'assets/css/internal.css';
+$activeNav = isset($activeNav) && is_string($activeNav) ? $activeNav : 'dashboard';
+
+$navItems = [
+    ['key' => 'dashboard', 'label' => 'Dashboard', 'href' => 'dashboard.php', 'enabled' => true],
+    ['key' => 'cotizaciones', 'label' => 'Cotizaciones', 'href' => '#', 'enabled' => false],
+    ['key' => 'clientes', 'label' => 'Clientes', 'href' => '#', 'enabled' => false],
+    ['key' => 'atenciones', 'label' => 'Atenciones', 'href' => '#', 'enabled' => false],
+    ['key' => 'configuracion', 'label' => 'Configuración', 'href' => '#', 'enabled' => false],
+];
 
 $escape = static fn (string $value): string => htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
 ?>
@@ -29,11 +38,35 @@ $escape = static fn (string $value): string => htmlspecialchars($value, ENT_QUOT
       <p class="subtitle">Bienvenido, <?php echo $escape($userName); ?>.</p>
     </section>
 
-    <?php echo $content; ?>
+    <nav class="card" aria-label="Navegación interna" style="display:flex;flex-wrap:wrap;gap:10px;margin-top:22px;align-items:center;">
+      <?php foreach ($navItems as $item): ?>
+        <?php
+        $isActive = $activeNav === $item['key'];
+        $isEnabled = (bool) $item['enabled'];
+        $itemStyle = $isActive
+            ? 'background:#1d75cf;color:#ffffff;border-color:#1d75cf;'
+            : 'background:#ffffff;color:#1f2a44;border-color:rgba(17,34,64,0.16);';
+        $disabledStyle = !$isEnabled ? 'opacity:0.55;cursor:not-allowed;' : '';
+        ?>
+        <a
+          href="<?php echo $escape($item['href']); ?>"
+          style="display:inline-flex;align-items:center;justify-content:center;padding:10px 14px;border:1px solid;border-radius:999px;text-decoration:none;font-weight:600;font-size:0.95rem;<?php echo $itemStyle . $disabledStyle; ?>"
+          <?php echo $isActive ? 'aria-current="page"' : ''; ?>
+          <?php echo !$isEnabled ? 'aria-disabled="true" tabindex="-1"' : ''; ?>
+        >
+          <?php echo $escape($item['label']); ?>
+        </a>
+      <?php endforeach; ?>
 
-    <div class="button-wrapper" style="margin-top:22px;">
-      <a href="logout.php" class="button-disabled" role="button">Cerrar sesión</a>
-    </div>
+      <a
+        href="logout.php"
+        style="display:inline-flex;align-items:center;justify-content:center;padding:10px 14px;border:1px solid rgba(26,61,143,0.2);border-radius:999px;text-decoration:none;font-weight:600;font-size:0.95rem;background:#f3f6fb;color:#1a3d8f;"
+      >
+        Cerrar sesión
+      </a>
+    </nav>
+
+    <?php echo $content; ?>
 
     <footer>
       <small>Panel de control interno protegido.</small>
