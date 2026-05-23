@@ -2,24 +2,9 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/../app/Core/SessionManager.php';
-require_once __DIR__ . '/../app/Core/AuthGuard.php';
+require_once __DIR__ . '/../app/Support/InternalPage.php';
 
-use DAndASystems\Internal\Core\SessionManager;
-use DAndASystems\Internal\Core\AuthGuard;
-
-$session = new SessionManager();
-$session->start();
-
-$guard = new AuthGuard();
-$guard->requireAuth('login.php');
-
-$authUserName = $guard->userName() ?: 'Usuario';
-
-$pageTitle = 'Atenciones — Sistema interno D&A Systems';
-$pageHeading = 'Atenciones';
-$userName = $authUserName;
-$activeNav = 'atenciones';
+use DAndASystems\Internal\Support\InternalPage;
 
 ob_start();
 ?>
@@ -30,4 +15,9 @@ ob_start();
 <?php
 $content = ob_get_clean();
 
-require __DIR__ . '/../app/Views/layouts/internal.php';
+InternalPage::render(
+    'Atenciones — Sistema interno D&A Systems',
+    'Atenciones',
+    'atenciones',
+    $content
+);
