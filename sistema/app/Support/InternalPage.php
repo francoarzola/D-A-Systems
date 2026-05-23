@@ -16,7 +16,7 @@ final class InternalPage
         string $pageTitle,
         string $pageHeading,
         string $activeNav,
-        string $content,
+        callable $contentCallback,
         string $redirectTo = 'login.php'
     ): void {
         $session = new SessionManager();
@@ -26,6 +26,10 @@ final class InternalPage
         $guard->requireAuth($redirectTo);
 
         $userName = $guard->userName() ?: 'Usuario';
+
+        ob_start();
+        $contentCallback();
+        $content = ob_get_clean();
 
         require __DIR__ . '/../Views/layouts/internal.php';
     }
