@@ -11,10 +11,10 @@ $activeNav = isset($activeNav) && is_string($activeNav) ? $activeNav : 'dashboar
 
 $navItems = [
     ['key' => 'dashboard', 'label' => 'Dashboard', 'href' => 'dashboard.php', 'enabled' => true],
-    ['key' => 'cotizaciones', 'label' => 'Cotizaciones', 'href' => '#', 'enabled' => false],
-    ['key' => 'clientes', 'label' => 'Clientes', 'href' => '#', 'enabled' => false],
-    ['key' => 'atenciones', 'label' => 'Atenciones', 'href' => '#', 'enabled' => false],
-    ['key' => 'configuracion', 'label' => 'Configuración', 'href' => '#', 'enabled' => false],
+    ['key' => 'cotizaciones', 'label' => 'Cotizaciones', 'href' => 'cotizaciones.php', 'enabled' => true],
+    ['key' => 'clientes', 'label' => 'Clientes', 'href' => 'clientes.php', 'enabled' => true],
+    ['key' => 'atenciones', 'label' => 'Atenciones', 'href' => 'atenciones.php', 'enabled' => true],
+    ['key' => 'configuracion', 'label' => 'Configuración', 'href' => 'configuracion.php', 'enabled' => true],
 ];
 
 $escape = static fn (string $value): string => htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
