@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../app/Support/InternalPage.php';
+require_once __DIR__ . '/../app/Support/ViewFormatter.php';
 require_once __DIR__ . '/../app/Infrastructure/Config/DatabaseConfig.php';
 require_once __DIR__ . '/../app/Infrastructure/Database/Connection.php';
 require_once __DIR__ . '/../app/Repositories/QuoteRepository.php';
@@ -11,6 +12,7 @@ use DAndASystems\Internal\Infrastructure\Config\DatabaseConfig;
 use DAndASystems\Internal\Infrastructure\Database\Connection;
 use DAndASystems\Internal\Repositories\QuoteRepository;
 use DAndASystems\Internal\Support\InternalPage;
+use DAndASystems\Internal\Support\ViewFormatter;
 
 InternalPage::render(
     'Detalle de cotización - Sistema interno D&A Systems',
@@ -45,7 +47,7 @@ InternalPage::render(
 <?php if ($errorMessage !== null): ?>
 <section class="status-panel">
   <h3>Detalle no disponible</h3>
-  <p><?php echo e($errorMessage); ?></p>
+  <p><?php echo ViewFormatter::e($errorMessage); ?></p>
 </section>
 
 <div class="quote-actions">
@@ -54,49 +56,49 @@ InternalPage::render(
 <?php else: ?>
 <section class="status-panel">
   <h3>Detalle de cotización</h3>
-  <p><strong>Estado:</strong> <?php echo e(formatQuoteStatus($quote['estado'] ?? null)); ?></p>
-  <p><strong>Número:</strong> <?php echo e(formatQuoteNumber($quote['numero_cotizacion'] ?? null)); ?></p>
+  <p><strong>Estado:</strong> <?php echo ViewFormatter::e(ViewFormatter::quoteStatus($quote['estado'] ?? null)); ?></p>
+  <p><strong>Número:</strong> <?php echo ViewFormatter::e(ViewFormatter::quoteNumber($quote['numero_cotizacion'] ?? null)); ?></p>
 </section>
 
 <section class="grid">
   <article class="card">
     <h2>Datos generales</h2>
-    <p><strong>Fecha:</strong> <?php echo e(formatQuoteDate($quote['fecha_cotizacion'] ?? null)); ?></p>
-    <p><strong>Validez:</strong> <?php echo e(formatQuoteDate($quote['valido_hasta'] ?? null)); ?></p>
-    <p><strong>Estado:</strong> <?php echo e(formatQuoteStatus($quote['estado'] ?? null)); ?></p>
-    <p><strong>Total:</strong> <?php echo e(formatQuoteMoney($quote['total'] ?? null)); ?></p>
+    <p><strong>Fecha:</strong> <?php echo ViewFormatter::e(ViewFormatter::quoteDate($quote['fecha_cotizacion'] ?? null)); ?></p>
+    <p><strong>Validez:</strong> <?php echo ViewFormatter::e(ViewFormatter::quoteDate($quote['valido_hasta'] ?? null)); ?></p>
+    <p><strong>Estado:</strong> <?php echo ViewFormatter::e(ViewFormatter::quoteStatus($quote['estado'] ?? null)); ?></p>
+    <p><strong>Total:</strong> <?php echo ViewFormatter::e(ViewFormatter::money($quote['total'] ?? null)); ?></p>
   </article>
 
   <article class="card">
     <h2>Cliente</h2>
-    <p><strong>Nombre:</strong> <?php echo e(formatText($quote['nombre_cliente'] ?? null)); ?></p>
-    <p><strong>RUT:</strong> <?php echo e(formatText($quote['rut_cliente'] ?? null)); ?></p>
-    <p><strong>Contacto:</strong> <?php echo e(formatText($quote['nombre_contacto'] ?? null)); ?></p>
-    <p><strong>Correo:</strong> <?php echo e(formatText($quote['correo_contacto'] ?? null)); ?></p>
-    <p><strong>Teléfono:</strong> <?php echo e(formatText($quote['telefono_contacto'] ?? null)); ?></p>
+    <p><strong>Nombre:</strong> <?php echo ViewFormatter::e(ViewFormatter::text($quote['nombre_cliente'] ?? null)); ?></p>
+    <p><strong>RUT:</strong> <?php echo ViewFormatter::e(ViewFormatter::text($quote['rut_cliente'] ?? null)); ?></p>
+    <p><strong>Contacto:</strong> <?php echo ViewFormatter::e(ViewFormatter::text($quote['nombre_contacto'] ?? null)); ?></p>
+    <p><strong>Correo:</strong> <?php echo ViewFormatter::e(ViewFormatter::text($quote['correo_contacto'] ?? null)); ?></p>
+    <p><strong>Teléfono:</strong> <?php echo ViewFormatter::e(ViewFormatter::text($quote['telefono_contacto'] ?? null)); ?></p>
   </article>
 
   <article class="card">
     <h2>Resumen</h2>
-    <p><strong>Subtotal neto:</strong> <?php echo e(formatQuoteMoney($quote['subtotal_neto'] ?? null)); ?></p>
-    <p><strong>Descuento:</strong> <?php echo e(formatQuoteMoney($quote['descuento_monto'] ?? null)); ?></p>
-    <p><strong>IVA <?php echo e(formatPercent($quote['iva_porcentaje'] ?? null)); ?>:</strong> <?php echo e(formatQuoteMoney($quote['iva_monto'] ?? null)); ?></p>
-    <p><strong>Total:</strong> <?php echo e(formatQuoteMoney($quote['total'] ?? null)); ?></p>
+    <p><strong>Subtotal neto:</strong> <?php echo ViewFormatter::e(ViewFormatter::money($quote['subtotal_neto'] ?? null)); ?></p>
+    <p><strong>Descuento:</strong> <?php echo ViewFormatter::e(ViewFormatter::money($quote['descuento_monto'] ?? null)); ?></p>
+    <p><strong>IVA <?php echo ViewFormatter::e(ViewFormatter::percent($quote['iva_porcentaje'] ?? null)); ?>:</strong> <?php echo ViewFormatter::e(ViewFormatter::money($quote['iva_monto'] ?? null)); ?></p>
+    <p><strong>Total:</strong> <?php echo ViewFormatter::e(ViewFormatter::money($quote['total'] ?? null)); ?></p>
   </article>
 </section>
 
 <section class="grid">
   <article class="card quote-span-2">
     <h2>Descripción y condiciones</h2>
-    <p><strong>Descripción:</strong> <?php echo e(formatText($quote['descripcion'] ?? null)); ?></p>
-    <p><strong>Condiciones comerciales:</strong> <?php echo e(formatText($quote['condiciones_comerciales'] ?? null)); ?></p>
-    <p><strong>Observaciones:</strong> <?php echo e(formatText($quote['observaciones'] ?? null)); ?></p>
+    <p><strong>Descripción:</strong> <?php echo ViewFormatter::e(ViewFormatter::text($quote['descripcion'] ?? null)); ?></p>
+    <p><strong>Condiciones comerciales:</strong> <?php echo ViewFormatter::e(ViewFormatter::text($quote['condiciones_comerciales'] ?? null)); ?></p>
+    <p><strong>Observaciones:</strong> <?php echo ViewFormatter::e(ViewFormatter::text($quote['observaciones'] ?? null)); ?></p>
   </article>
 
   <article class="card">
     <h2>Registro</h2>
-    <p><strong>Creado:</strong> <?php echo e(formatText($quote['creado_en'] ?? null)); ?></p>
-    <p><strong>Actualizado:</strong> <?php echo e(formatText($quote['actualizado_en'] ?? null)); ?></p>
+    <p><strong>Creado:</strong> <?php echo ViewFormatter::e(ViewFormatter::text($quote['creado_en'] ?? null)); ?></p>
+    <p><strong>Actualizado:</strong> <?php echo ViewFormatter::e(ViewFormatter::text($quote['actualizado_en'] ?? null)); ?></p>
   </article>
 </section>
 
@@ -120,13 +122,13 @@ InternalPage::render(
     <tbody>
       <?php foreach ($details as $detail): ?>
       <tr>
-        <td><?php echo e((string) ($detail['numero_linea'] ?? '')); ?></td>
-        <td><?php echo e(formatText($detail['descripcion'] ?? null)); ?></td>
-        <td><?php echo e(formatQuantity($detail['cantidad'] ?? null)); ?></td>
-        <td><?php echo e(formatText($detail['unidad'] ?? null)); ?></td>
-        <td class="quote-align-right"><?php echo e(formatQuoteMoney($detail['precio_unitario_neto'] ?? null)); ?></td>
-        <td class="quote-align-right"><?php echo e(formatQuoteMoney($detail['descuento_monto'] ?? null)); ?></td>
-        <td class="quote-align-right"><?php echo e(formatQuoteMoney($detail['total_linea_neto'] ?? null)); ?></td>
+        <td><?php echo ViewFormatter::e((string) ($detail['numero_linea'] ?? '')); ?></td>
+        <td><?php echo ViewFormatter::e(ViewFormatter::text($detail['descripcion'] ?? null)); ?></td>
+        <td><?php echo ViewFormatter::e(ViewFormatter::quantity($detail['cantidad'] ?? null)); ?></td>
+        <td><?php echo ViewFormatter::e(ViewFormatter::text($detail['unidad'] ?? null)); ?></td>
+        <td class="quote-align-right"><?php echo ViewFormatter::e(ViewFormatter::money($detail['precio_unitario_neto'] ?? null)); ?></td>
+        <td class="quote-align-right"><?php echo ViewFormatter::e(ViewFormatter::money($detail['descuento_monto'] ?? null)); ?></td>
+        <td class="quote-align-right"><?php echo ViewFormatter::e(ViewFormatter::money($detail['total_linea_neto'] ?? null)); ?></td>
       </tr>
       <?php endforeach; ?>
     </tbody>
@@ -143,63 +145,3 @@ InternalPage::render(
 <?php
     }
 );
-
-function e(string $value): string
-{
-    return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
-}
-
-function formatQuoteNumber(mixed $value): string
-{
-    $number = is_string($value) ? trim($value) : '';
-
-    return $number !== '' ? $number : 'Sin emitir';
-}
-
-function formatQuoteDate(mixed $value): string
-{
-    $date = is_string($value) ? trim($value) : '';
-
-    return $date !== '' ? $date : 'Pendiente';
-}
-
-function formatQuoteStatus(mixed $value): string
-{
-    $status = is_string($value) ? trim($value) : '';
-
-    return $status !== '' ? ucfirst($status) : 'Sin estado';
-}
-
-function formatQuoteMoney(mixed $value): string
-{
-    if (!is_numeric($value)) {
-        return '$0';
-    }
-
-    return '$' . number_format((float) $value, 0, ',', '.');
-}
-
-function formatPercent(mixed $value): string
-{
-    if (!is_numeric($value)) {
-        return '0%';
-    }
-
-    return number_format((float) $value, 2, ',', '.') . '%';
-}
-
-function formatQuantity(mixed $value): string
-{
-    if (!is_numeric($value)) {
-        return '0';
-    }
-
-    return number_format((float) $value, 2, ',', '.');
-}
-
-function formatText(mixed $value): string
-{
-    $text = is_string($value) ? trim($value) : '';
-
-    return $text !== '' ? $text : 'Pendiente';
-}
