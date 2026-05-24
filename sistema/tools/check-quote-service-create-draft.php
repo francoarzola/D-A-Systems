@@ -55,8 +55,11 @@ try {
         exit(1);
     }
 
+    assertTechnicalPersistenceErrorIsPropagated();
+
     outputOk('QuoteService creó un borrador válido usando validador, calculadora y repositorio.');
     outputOk('QuoteService rechazó un borrador inválido sin persistirlo.');
+    outputOk('QuoteService propagó una excepción técnica de persistencia.');
     exit(0);
 } catch (\Throwable $exception) {
     outputError('No fue posible verificar la creación de borradores en QuoteService.');
@@ -103,6 +106,35 @@ function createInMemorySchema(PDO $pdo): void
             descuento_monto NUMERIC NOT NULL DEFAULT 0,
             subtotal_linea_neto NUMERIC NOT NULL DEFAULT 0,
             total_linea_neto NUMERIC NOT NULL DEFAULT 0,
+            creado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            actualizado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )'
+    );
+}
+
+function createBrokenInMemorySchema(PDO $pdo): void
+{
+    $pdo->exec(
+        'CREATE TABLE cotizaciones (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            numero_cotizacion TEXT NULL,
+            fecha_cotizacion TEXT NOT NULL,
+            valido_hasta TEXT NULL,
+            nombre_cliente TEXT NULL,
+            rut_cliente TEXT NULL,
+            nombre_contacto TEXT NULL,
+            correo_contacto TEXT NULL,
+            telefono_contacto TEXT NULL,
+            descripcion TEXT NULL,
+            estado TEXT NOT NULL,
+            subtotal_neto NUMERIC NOT NULL DEFAULT 0,
+            descuento_monto NUMERIC NOT NULL DEFAULT 0,
+            iva_porcentaje NUMERIC NOT NULL DEFAULT 19,
+            iva_monto NUMERIC NOT NULL DEFAULT 0,
+            total NUMERIC NOT NULL DEFAULT 0,
+            condiciones_comerciales TEXT NULL,
+            observaciones TEXT NULL,
+            creado_por INTEGER NULL,
             creado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
             actualizado_en TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
         )'
@@ -184,6 +216,28 @@ function assertTotals(array $totals): void
         || !sameMoney((float) ($totals['total'] ?? 0), 1428000.00)) {
         throw new RuntimeException('Los totales devueltos por el servicio no son los esperados.');
     }
+}
+
+function assertTechnicalPersistenceErrorIsPropagated(): void
+{
+    $pdo = new PDO('sqlite::memory:');
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+    createBrokenInMemorySchema($pdo);
+
+    $service = new QuoteService(
+        new QuoteRepository($pdo),
+        new QuoteDraftValidator(),
+        new QuoteTotalsCalculator()
+    );
+
+    try {
+        $service->createDraft(buildDraftData());
+    } catch (\Throwable $exception) {
+        return;
+    }
+
+    throw new RuntimeException('La excepción técnica de persistencia no fue propagada.');
 }
 
 function countQuotes(PDO $pdo): int

@@ -47,7 +47,7 @@ QuoteService::createDraft()
 
 Si la validación falla, el servicio no calcula ni persiste.
 
-Si la persistencia falla, el servicio devuelve un error genérico sin exponer detalles técnicos.
+Si la persistencia falla por error técnico, la excepción sube hacia la capa CLI o endpoint futuro. Esa capa debe mostrar un mensaje genérico y, más adelante, registrar el detalle técnico en logging.
 
 ## Herramienta CLI actualizada
 
@@ -86,6 +86,7 @@ Valida:
 - creación de detalles
 - totales esperados
 - rechazo de un borrador inválido
+- propagación de una excepción técnica de persistencia simulada en SQLite en memoria
 
 ## Qué NO se implementó
 

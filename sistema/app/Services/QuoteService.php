@@ -66,18 +66,7 @@ final class QuoteService
         }
 
         $totals = $this->totalsCalculator()->calculate($draftData['detalles'] ?? []);
-
-        try {
-            $quoteId = $this->quotes->createDraft($draftData, $totals, $createdBy);
-        } catch (\Throwable $exception) {
-            return [
-                'success' => false,
-                'quote_id' => null,
-                'errors' => ['No fue posible guardar el borrador de cotización.'],
-                'warnings' => $validation['warnings'],
-                'totals' => $totals,
-            ];
-        }
+        $quoteId = $this->quotes->createDraft($draftData, $totals, $createdBy);
 
         return [
             'success' => true,
