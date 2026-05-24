@@ -5,14 +5,22 @@ declare(strict_types=1);
 namespace DAndASystems\Internal\Services;
 
 use DAndASystems\Internal\Repositories\QuoteRepository;
+use DAndASystems\Internal\Validation\QuoteDraftValidator;
 
 final class QuoteService
 {
     private QuoteRepository $quotes;
+    private ?QuoteDraftValidator $draftValidator;
+    private ?QuoteTotalsCalculator $totalsCalculator;
 
-    public function __construct(QuoteRepository $quotes)
-    {
+    public function __construct(
+        QuoteRepository $quotes,
+        ?QuoteDraftValidator $draftValidator = null,
+        ?QuoteTotalsCalculator $totalsCalculator = null
+    ) {
         $this->quotes = $quotes;
+        $this->draftValidator = $draftValidator;
+        $this->totalsCalculator = $totalsCalculator;
     }
 
     public function countQuotes(): int
@@ -41,5 +49,60 @@ final class QuoteService
             'quote' => $quote,
             'details' => $this->quotes->findDetailsByQuoteId($id),
         ];
+    }
+
+    public function createDraft(array $draftData, ?int $createdBy = null): array
+    {
+        $validation = $this->draftValidator()->validateDraft($draftData);
+
+        if ($validation['valid'] !== true) {
+            return [
+                'success' => false,
+                'quote_id' => null,
+                'errors' => $validation['errors'],
+                'warnings' => $validation['warnings'],
+                'totals' => null,
+            ];
+        }
+
+        $totals = $this->totalsCalculator()->calculate($draftData['detalles'] ?? []);
+
+        try {
+            $quoteId = $this->quotes->createDraft($draftData, $totals, $createdBy);
+        } catch (\Throwable $exception) {
+            return [
+                'success' => false,
+                'quote_id' => null,
+                'errors' => ['No fue posible guardar el borrador de cotización.'],
+                'warnings' => $validation['warnings'],
+                'totals' => $totals,
+            ];
+        }
+
+        return [
+            'success' => true,
+            'quote_id' => $quoteId,
+            'errors' => [],
+            'warnings' => $validation['warnings'],
+            'totals' => $totals,
+        ];
+    }
+
+    private function draftValidator(): QuoteDraftValidator
+    {
+        if (!$this->draftValidator instanceof QuoteDraftValidator) {
+            $this->draftValidator = new QuoteDraftValidator();
+        }
+
+        return $this->draftValidator;
+    }
+
+    private function totalsCalculator(): QuoteTotalsCalculator
+    {
+        if (!$this->totalsCalculator instanceof QuoteTotalsCalculator) {
+            $this->totalsCalculator = new QuoteTotalsCalculator();
+        }
+
+        return $this->totalsCalculator;
     }
 }
