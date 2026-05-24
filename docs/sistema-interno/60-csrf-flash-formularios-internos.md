@@ -32,6 +32,7 @@ Métodos disponibles:
 - Permite claves separadas por formulario, por ejemplo `quote_draft`.
 - Genera tokens con `random_bytes`.
 - No regenera el token si ya existe uno válido para la clave.
+- Normaliza el contenedor de sesión si detecta datos corruptos o no esperados en `_internal_csrf_tokens`.
 - Valida con `hash_equals`.
 - `inputField()` devuelve un campo hidden con valor escapado mediante `htmlspecialchars`.
 - No imprime nada directamente.
@@ -107,6 +108,7 @@ La herramienta:
 - prueba generación de token
 - prueba validación correcta
 - prueba validación incorrecta
+- prueba normalización de contenedor CSRF corrupto
 - prueba `inputField()`
 - prueba `set`, `get`, `pull` y `has`
 - confirma que `pull()` elimina el mensaje

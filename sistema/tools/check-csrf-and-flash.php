@@ -31,6 +31,7 @@ try {
     $_SESSION = [];
 
     checkCsrfToken();
+    checkCorruptedCsrfSessionContainer();
     checkFlashMessage();
 
     outputOk('CsrfToken y FlashMessage funcionan correctamente.');
@@ -80,6 +81,28 @@ function checkCsrfToken(): void
     }
 
     outputOk('CSRF generó, recuperó, validó y renderizó el input hidden.');
+}
+
+function checkCorruptedCsrfSessionContainer(): void
+{
+    $_SESSION['_internal_csrf_tokens'] = 'valor_corrupto';
+
+    $csrf = new CsrfToken();
+    $token = $csrf->generate('quote_draft');
+
+    if ($token === '' || strlen($token) < 64) {
+        throw new RuntimeException('No se generó token tras normalizar sesión corrupta.');
+    }
+
+    if (!isset($_SESSION['_internal_csrf_tokens']) || !is_array($_SESSION['_internal_csrf_tokens'])) {
+        throw new RuntimeException('El contenedor CSRF corrupto no fue normalizado como array.');
+    }
+
+    if (!$csrf->validate($token, 'quote_draft')) {
+        throw new RuntimeException('El token generado tras normalizar sesión corrupta no fue validado.');
+    }
+
+    outputOk('CSRF normalizó un contenedor de sesión corrupto.');
 }
 
 function checkFlashMessage(): void

@@ -18,6 +18,7 @@ final class CsrfToken
         }
 
         $token = bin2hex(random_bytes(32));
+        $this->ensureTokenContainer();
         $_SESSION[self::SESSION_KEY][$key] = $token;
 
         return $token;
@@ -64,5 +65,12 @@ final class CsrfToken
         $key = trim($key);
 
         return $key !== '' ? $key : 'default';
+    }
+
+    private function ensureTokenContainer(): void
+    {
+        if (!isset($_SESSION[self::SESSION_KEY]) || !is_array($_SESSION[self::SESSION_KEY])) {
+            $_SESSION[self::SESSION_KEY] = [];
+        }
     }
 }
