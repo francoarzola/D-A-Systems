@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../app/Support/InternalPage.php';
 require_once __DIR__ . '/../app/Support/ViewFormatter.php';
+require_once __DIR__ . '/../app/Security/CsrfToken.php';
+require_once __DIR__ . '/../app/Support/FlashMessage.php';
 require_once __DIR__ . '/../app/Infrastructure/Config/DatabaseConfig.php';
 require_once __DIR__ . '/../app/Infrastructure/Database/Connection.php';
 require_once __DIR__ . '/../app/Repositories/QuoteRepository.php';
@@ -12,7 +14,9 @@ require_once __DIR__ . '/../app/Services/QuoteService.php';
 use DAndASystems\Internal\Infrastructure\Config\DatabaseConfig;
 use DAndASystems\Internal\Infrastructure\Database\Connection;
 use DAndASystems\Internal\Repositories\QuoteRepository;
+use DAndASystems\Internal\Security\CsrfToken;
 use DAndASystems\Internal\Services\QuoteService;
+use DAndASystems\Internal\Support\FlashMessage;
 use DAndASystems\Internal\Support\InternalPage;
 use DAndASystems\Internal\Support\ViewFormatter;
 
@@ -24,6 +28,10 @@ InternalPage::render(
         $quoteCount = 0;
         $recentQuotes = [];
         $quotesLoadError = false;
+        $csrf = new CsrfToken();
+        $flash = (new FlashMessage())->pull();
+        $today = new DateTimeImmutable('today');
+        $validUntil = $today->modify('+30 days');
 
         try {
             $config = DatabaseConfig::fromDefaultPath()->load();
@@ -37,6 +45,13 @@ InternalPage::render(
             $quotesLoadError = true;
         }
         ?>
+<?php if ($flash !== null): ?>
+<section class="status-panel">
+  <h3><?php echo ViewFormatter::e(ViewFormatter::text($flash['type'] ?? 'info')); ?></h3>
+  <p><?php echo ViewFormatter::e(ViewFormatter::text($flash['message'] ?? null)); ?></p>
+</section>
+<?php endif; ?>
+
 <section class="status-panel">
   <h3>Módulo de cotizaciones</h3>
   <p>Listado conectado a lectura real de cotizaciones. La captura, edición, emisión y acciones comerciales siguen pendientes para etapas posteriores.</p>
@@ -59,6 +74,106 @@ InternalPage::render(
     <h2>Acciones</h2>
     <p>Las acciones visibles siguen siendo referencias no funcionales.</p>
   </article>
+</section>
+
+<section class="card quote-section">
+  <h2>Crear borrador de cotización</h2>
+  <p class="quote-section-copy">Formulario mínimo real para guardar un borrador con un detalle. Los totales se calculan en el servidor.</p>
+
+  <form method="post" action="cotizaciones-guardar.php">
+    <?php echo $csrf->inputField('quote_draft'); ?>
+    <input type="hidden" name="form_action" value="guardar_borrador">
+
+    <div class="grid quote-subgrid">
+      <article class="card quote-nested-card">
+        <h2>Datos generales</h2>
+        <label class="quote-field">
+          <span class="quote-label">Fecha</span>
+          <input class="quote-input" type="date" name="fecha_cotizacion" value="<?php echo ViewFormatter::e($today->format('Y-m-d')); ?>" required>
+        </label>
+        <label class="quote-field">
+          <span class="quote-label">Validez</span>
+          <input class="quote-input" type="date" name="valido_hasta" value="<?php echo ViewFormatter::e($validUntil->format('Y-m-d')); ?>">
+        </label>
+        <label class="quote-field quote-field-last">
+          <span class="quote-label">Descripción</span>
+          <input class="quote-input" type="text" name="descripcion" placeholder="Servicios a cotizar">
+        </label>
+      </article>
+
+      <article class="card quote-nested-card">
+        <h2>Cliente</h2>
+        <label class="quote-field">
+          <span class="quote-label">Razón social</span>
+          <input class="quote-input" type="text" name="nombre_cliente" required>
+        </label>
+        <label class="quote-field">
+          <span class="quote-label">RUT</span>
+          <input class="quote-input" type="text" name="rut_cliente">
+        </label>
+        <label class="quote-field quote-field-last">
+          <span class="quote-label">Condiciones comerciales</span>
+          <input class="quote-input" type="text" name="condiciones_comerciales" placeholder="Validez, forma de pago u observaciones comerciales">
+        </label>
+      </article>
+
+      <article class="card quote-nested-card">
+        <h2>Contacto</h2>
+        <label class="quote-field">
+          <span class="quote-label">Nombre</span>
+          <input class="quote-input" type="text" name="nombre_contacto">
+        </label>
+        <label class="quote-field">
+          <span class="quote-label">Correo</span>
+          <input class="quote-input" type="email" name="correo_contacto">
+        </label>
+        <label class="quote-field quote-field-last">
+          <span class="quote-label">Teléfono</span>
+          <input class="quote-input" type="text" name="telefono_contacto">
+        </label>
+      </article>
+    </div>
+
+    <div class="grid quote-subgrid-large">
+      <article class="card quote-nested-card quote-span-2">
+        <h2>Detalle</h2>
+        <label class="quote-field">
+          <span class="quote-label">Descripción del ítem</span>
+          <input class="quote-input" type="text" name="detalles[0][descripcion]" required>
+        </label>
+        <div class="grid quote-subgrid">
+          <label class="quote-field">
+            <span class="quote-label">Cantidad</span>
+            <input class="quote-input" type="number" name="detalles[0][cantidad]" value="1" min="0.01" step="0.01" required>
+          </label>
+          <label class="quote-field">
+            <span class="quote-label">Unidad</span>
+            <input class="quote-input" type="text" name="detalles[0][unidad]" value="servicio">
+          </label>
+          <label class="quote-field">
+            <span class="quote-label">Precio unitario neto</span>
+            <input class="quote-input" type="number" name="detalles[0][precio_unitario_neto]" min="0" step="1" required>
+          </label>
+          <label class="quote-field quote-field-last">
+            <span class="quote-label">Descuento línea</span>
+            <input class="quote-input" type="number" name="detalles[0][descuento_monto]" value="0" min="0" step="1">
+          </label>
+        </div>
+      </article>
+
+      <article class="card quote-nested-card">
+        <h2>Observaciones</h2>
+        <label class="quote-field quote-field-last">
+          <span class="quote-label">Notas internas</span>
+          <textarea class="quote-input" name="observaciones" rows="7" placeholder="Notas visibles en el borrador"></textarea>
+        </label>
+      </article>
+    </div>
+
+    <div class="quote-actions">
+      <button class="quote-action quote-action-primary" type="submit">Guardar borrador</button>
+    </div>
+  </form>
 </section>
 
 <section class="card quote-section">
