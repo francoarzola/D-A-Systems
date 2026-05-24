@@ -28,25 +28,70 @@ Devuelve una estructura simple:
 ]
 ```
 
+## Claves esperadas en español
+
+Cabecera:
+
+- `form_action`
+- `numero_cotizacion`
+- `nombre_cliente`
+- `rut_cliente`
+- `nombre_contacto`
+- `correo_contacto`
+- `telefono_contacto`
+- `descripcion`
+- `fecha_cotizacion`
+- `valido_hasta`
+- `condiciones_comerciales`
+- `observaciones`
+- `detalles`
+
+Detalle:
+
+- `descripcion`
+- `cantidad`
+- `unidad`
+- `precio_unitario_neto`
+- `descuento_monto`
+
 ## Reglas implementadas
 
 - `form_action`, si viene informado, debe ser `guardar_borrador`.
-- `quote_number` no se acepta como dato de borrador; si viene informado, genera advertencia.
-- `client_name` es obligatorio.
-- `quote_date` es obligatoria y debe tener formato `Y-m-d`.
-- `valid_until`, si viene informada, debe tener formato `Y-m-d`.
-- `valid_until` no puede ser anterior a `quote_date`.
-- `contact_email`, si viene informado, debe tener formato válido.
-- `items` debe ser una lista si viene informado.
-- Líneas de ítem completamente vacías se ignoran.
-- Ítems parciales generan errores.
-- La descripción del ítem es obligatoria cuando la línea tiene datos.
+- `numero_cotizacion` no se acepta como dato de borrador; si viene informado, genera advertencia.
+- `nombre_cliente` es obligatorio.
+- `fecha_cotizacion` es obligatoria y debe tener formato `Y-m-d`.
+- `valido_hasta`, si viene informada, debe tener formato `Y-m-d`.
+- `valido_hasta` no puede ser anterior a `fecha_cotizacion`.
+- `correo_contacto`, si viene informado, debe tener formato válido.
+- `detalles` debe ser una lista si viene informado.
+- Líneas de detalle completamente vacías se ignoran.
+- Detalles parciales generan errores.
+- La descripción del detalle es obligatoria cuando la línea tiene datos.
 - La cantidad debe ser mayor que cero.
 - El precio unitario neto debe ser mayor o igual a cero.
 - El descuento debe ser mayor o igual a cero.
 - El total de línea calculado no puede ser negativo.
 - La unidad faltante genera advertencia.
-- Un borrador sin ítems válidos se permite, pero genera advertencia.
+- Un borrador sin detalles válidos se permite, pero genera advertencia.
+
+## Regla de redondeo decimal
+
+Para evitar falsos errores por precisión binaria de floats, el validador redondea a 2 decimales antes de comparar el total de línea:
+
+```php
+$lineSubtotal = round($quantity * $unitPrice, 2);
+$lineTotal = round($lineSubtotal - $discount, 2);
+```
+
+Luego valida que `$lineTotal` no sea negativo.
+
+Esto permite casos como:
+
+- `cantidad = 0.1`
+- `precio_unitario_neto = 0.7`
+- `descuento_monto = 0.07`
+
+El total esperado es `0.00` y no debe generar error.
 
 ## Herramienta CLI creada
 
@@ -56,12 +101,20 @@ La herramienta:
 
 - se ejecuta solo por CLI
 - carga `QuoteDraftValidator`
-- valida un caso correcto
-- valida un caso incorrecto
-- confirma que el caso correcto sea aceptado
-- confirma que el caso incorrecto genere errores
+- valida casos correctos e incorrectos
+- no conecta a base de datos
+- no guarda información
 
-No conecta a base de datos y no guarda información.
+## Casos probados por CLI
+
+La herramienta valida al menos:
+
+1. Caso válido mínimo.
+2. Caso válido con detalles.
+3. Caso inválido sin nombre de cliente.
+4. Caso inválido con correo incorrecto.
+5. Caso inválido con descuento mayor al subtotal de línea.
+6. Caso decimal sensible donde `0.1 * 0.7 - 0.07` debe quedar válido después de redondear.
 
 ## Qué NO se implementó
 
