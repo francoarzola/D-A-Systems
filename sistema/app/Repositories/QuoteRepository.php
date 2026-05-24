@@ -15,12 +15,31 @@ final class QuoteRepository
         'valido_hasta',
         'nombre_cliente',
         'rut_cliente',
+        'nombre_contacto',
+        'correo_contacto',
+        'telefono_contacto',
+        'descripcion',
         'estado',
         'subtotal_neto',
+        'descuento_monto',
+        'iva_porcentaje',
         'iva_monto',
         'total',
+        'condiciones_comerciales',
+        'observaciones',
         'creado_en',
         'actualizado_en',
+    ];
+
+    private const DETAIL_COLUMNS = [
+        'numero_linea',
+        'descripcion',
+        'cantidad',
+        'unidad',
+        'precio_unitario_neto',
+        'descuento_monto',
+        'subtotal_linea_neto',
+        'total_linea_neto',
     ];
 
     private PDO $pdo;
@@ -79,8 +98,32 @@ final class QuoteRepository
         return is_array($quote) ? $quote : null;
     }
 
+    public function findDetailsByQuoteId(int $quoteId): array
+    {
+        if ($quoteId <= 0) {
+            return [];
+        }
+
+        $columns = $this->detailColumnsSql();
+        $statement = $this->pdo->prepare(
+            "SELECT {$columns}
+             FROM cotizacion_detalles
+             WHERE cotizacion_id = :quote_id
+             ORDER BY numero_linea ASC, id ASC"
+        );
+        $statement->bindValue(':quote_id', $quoteId, PDO::PARAM_INT);
+        $statement->execute();
+
+        return $statement->fetchAll();
+    }
+
     private function readColumnsSql(): string
     {
         return implode(', ', self::READ_COLUMNS);
+    }
+
+    private function detailColumnsSql(): string
+    {
+        return implode(', ', self::DETAIL_COLUMNS);
     }
 }

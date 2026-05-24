@@ -192,7 +192,7 @@ InternalPage::render(
         <td><?php echo e(formatQuoteDate($quote['valido_hasta'] ?? null)); ?></td>
         <td><?php echo e(formatQuoteStatus($quote['estado'] ?? null)); ?></td>
         <td class="quote-align-right"><?php echo e(formatQuoteMoney($quote['total'] ?? null)); ?></td>
-        <td class="quote-visual-action">Ver detalle futuro</td>
+        <td><a class="quote-visual-action" href="cotizacion-detalle.php?id=<?php echo e((string) ($quote['id'] ?? '')); ?>">Ver detalle</a></td>
       </tr>
       <?php endforeach; ?>
     </tbody>
