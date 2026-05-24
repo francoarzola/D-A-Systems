@@ -30,6 +30,7 @@ InternalPage::render(
         $quotesLoadError = false;
         $csrf = new CsrfToken();
         $flash = (new FlashMessage())->pull();
+        $flashType = normalizeFlashType($flash['type'] ?? null);
         $today = new DateTimeImmutable('today');
         $validUntil = $today->modify('+30 days');
 
@@ -46,8 +47,8 @@ InternalPage::render(
         }
         ?>
 <?php if ($flash !== null): ?>
-<section class="status-panel">
-  <h3><?php echo ViewFormatter::e(ViewFormatter::text($flash['type'] ?? 'info')); ?></h3>
+<section class="flash-message flash-message-<?php echo ViewFormatter::e($flashType); ?>">
+  <h3><?php echo ViewFormatter::e(flashTitle($flashType)); ?></h3>
   <p><?php echo ViewFormatter::e(ViewFormatter::text($flash['message'] ?? null)); ?></p>
 </section>
 <?php endif; ?>
@@ -376,3 +377,25 @@ InternalPage::render(
 <?php
     }
 );
+
+function normalizeFlashType(mixed $type): string
+{
+    if (!is_string($type)) {
+        return 'info';
+    }
+
+    $type = strtolower(trim($type));
+    $allowedTypes = ['success', 'error', 'warning', 'info'];
+
+    return in_array($type, $allowedTypes, true) ? $type : 'info';
+}
+
+function flashTitle(string $type): string
+{
+    return match ($type) {
+        'success' => 'Confirmación',
+        'error' => 'Error',
+        'warning' => 'Advertencia',
+        default => 'Información',
+    };
+}
