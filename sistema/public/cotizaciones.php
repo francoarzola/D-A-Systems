@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../app/Support/InternalPage.php';
+require_once __DIR__ . '/../app/Support/ViewFormatter.php';
 require_once __DIR__ . '/../app/Infrastructure/Config/DatabaseConfig.php';
 require_once __DIR__ . '/../app/Infrastructure/Database/Connection.php';
 require_once __DIR__ . '/../app/Repositories/QuoteRepository.php';
@@ -11,6 +12,7 @@ use DAndASystems\Internal\Infrastructure\Config\DatabaseConfig;
 use DAndASystems\Internal\Infrastructure\Database\Connection;
 use DAndASystems\Internal\Repositories\QuoteRepository;
 use DAndASystems\Internal\Support\InternalPage;
+use DAndASystems\Internal\Support\ViewFormatter;
 
 InternalPage::render(
     'Cotizaciones - Sistema interno D&A Systems',
@@ -43,7 +45,7 @@ InternalPage::render(
     <?php if ($quotesLoadError): ?>
     <p>No disponible.</p>
     <?php else: ?>
-    <p><?php echo e((string) $quoteCount); ?> cotizaciones registradas.</p>
+    <p><?php echo ViewFormatter::e((string) $quoteCount); ?> cotizaciones registradas.</p>
     <?php endif; ?>
   </article>
   <article class="card">
@@ -186,13 +188,13 @@ InternalPage::render(
     <tbody>
       <?php foreach ($recentQuotes as $quote): ?>
       <tr>
-        <td><?php echo e(formatQuoteNumber($quote['numero_cotizacion'] ?? null)); ?></td>
-        <td><?php echo e((string) ($quote['nombre_cliente'] ?? '')); ?></td>
-        <td><?php echo e(formatQuoteDate($quote['fecha_cotizacion'] ?? null)); ?></td>
-        <td><?php echo e(formatQuoteDate($quote['valido_hasta'] ?? null)); ?></td>
-        <td><?php echo e(formatQuoteStatus($quote['estado'] ?? null)); ?></td>
-        <td class="quote-align-right"><?php echo e(formatQuoteMoney($quote['total'] ?? null)); ?></td>
-        <td><a class="quote-visual-action" href="cotizacion-detalle.php?id=<?php echo e((string) ($quote['id'] ?? '')); ?>">Ver detalle</a></td>
+        <td><?php echo ViewFormatter::e(ViewFormatter::quoteNumber($quote['numero_cotizacion'] ?? null)); ?></td>
+        <td><?php echo ViewFormatter::e((string) ($quote['nombre_cliente'] ?? '')); ?></td>
+        <td><?php echo ViewFormatter::e(ViewFormatter::quoteDate($quote['fecha_cotizacion'] ?? null)); ?></td>
+        <td><?php echo ViewFormatter::e(ViewFormatter::quoteDate($quote['valido_hasta'] ?? null)); ?></td>
+        <td><?php echo ViewFormatter::e(ViewFormatter::quoteStatus($quote['estado'] ?? null)); ?></td>
+        <td class="quote-align-right"><?php echo ViewFormatter::e(ViewFormatter::money($quote['total'] ?? null)); ?></td>
+        <td><a class="quote-visual-action" href="cotizacion-detalle.php?id=<?php echo ViewFormatter::e((string) ($quote['id'] ?? '')); ?>">Ver detalle</a></td>
       </tr>
       <?php endforeach; ?>
     </tbody>
@@ -256,38 +258,3 @@ InternalPage::render(
 <?php
     }
 );
-
-function e(string $value): string
-{
-    return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
-}
-
-function formatQuoteNumber(mixed $value): string
-{
-    $number = is_string($value) ? trim($value) : '';
-
-    return $number !== '' ? $number : 'Sin emitir';
-}
-
-function formatQuoteDate(mixed $value): string
-{
-    $date = is_string($value) ? trim($value) : '';
-
-    return $date !== '' ? $date : 'Pendiente';
-}
-
-function formatQuoteStatus(mixed $value): string
-{
-    $status = is_string($value) ? trim($value) : '';
-
-    return $status !== '' ? ucfirst($status) : 'Sin estado';
-}
-
-function formatQuoteMoney(mixed $value): string
-{
-    if (!is_numeric($value)) {
-        return '$0';
-    }
-
-    return '$' . number_format((float) $value, 0, ',', '.');
-}
