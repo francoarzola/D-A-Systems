@@ -7,10 +7,12 @@ require_once __DIR__ . '/../app/Support/ViewFormatter.php';
 require_once __DIR__ . '/../app/Infrastructure/Config/DatabaseConfig.php';
 require_once __DIR__ . '/../app/Infrastructure/Database/Connection.php';
 require_once __DIR__ . '/../app/Repositories/QuoteRepository.php';
+require_once __DIR__ . '/../app/Services/QuoteService.php';
 
 use DAndASystems\Internal\Infrastructure\Config\DatabaseConfig;
 use DAndASystems\Internal\Infrastructure\Database\Connection;
 use DAndASystems\Internal\Repositories\QuoteRepository;
+use DAndASystems\Internal\Services\QuoteService;
 use DAndASystems\Internal\Support\InternalPage;
 use DAndASystems\Internal\Support\ViewFormatter;
 
@@ -31,13 +33,15 @@ InternalPage::render(
                 $config = DatabaseConfig::fromDefaultPath()->load();
                 $connection = new Connection($config);
                 $repository = new QuoteRepository($connection->pdo());
+                $service = new QuoteService($repository);
 
-                $quote = $repository->findById($quoteId);
+                $quoteDetail = $service->getQuoteDetail($quoteId);
 
-                if ($quote === null) {
+                if ($quoteDetail === null) {
                     $errorMessage = 'No se encontró la cotización solicitada.';
                 } else {
-                    $details = $repository->findDetailsByQuoteId($quoteId);
+                    $quote = $quoteDetail['quote'];
+                    $details = $quoteDetail['details'];
                 }
             } catch (\Throwable $exception) {
                 $errorMessage = 'No fue posible cargar el detalle de la cotización.';
