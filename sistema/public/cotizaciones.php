@@ -3,32 +3,56 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../app/Support/InternalPage.php';
+require_once __DIR__ . '/../app/Infrastructure/Config/DatabaseConfig.php';
+require_once __DIR__ . '/../app/Infrastructure/Database/Connection.php';
+require_once __DIR__ . '/../app/Repositories/QuoteRepository.php';
 
+use DAndASystems\Internal\Infrastructure\Config\DatabaseConfig;
+use DAndASystems\Internal\Infrastructure\Database\Connection;
+use DAndASystems\Internal\Repositories\QuoteRepository;
 use DAndASystems\Internal\Support\InternalPage;
 
 InternalPage::render(
-    'Cotizaciones — Sistema interno D&A Systems',
+    'Cotizaciones - Sistema interno D&A Systems',
     'Cotizaciones',
     'cotizaciones',
     static function (): void {
+        $quoteCount = 0;
+        $recentQuotes = [];
+        $quotesLoadError = false;
+
+        try {
+            $config = DatabaseConfig::fromDefaultPath()->load();
+            $connection = new Connection($config);
+            $repository = new QuoteRepository($connection->pdo());
+
+            $quoteCount = $repository->countAll();
+            $recentQuotes = $repository->findRecent(10);
+        } catch (\Throwable $exception) {
+            $quotesLoadError = true;
+        }
         ?>
 <section class="status-panel">
   <h3>Módulo de cotizaciones</h3>
-  <p>Maqueta estática para validar el flujo visual del listado, estados y detalle de cotizaciones. Los datos mostrados son de ejemplo y no provienen de una base de datos.</p>
+  <p>Listado conectado a lectura real de cotizaciones. La captura, edición, emisión y acciones comerciales siguen pendientes para etapas posteriores.</p>
 </section>
 
 <section class="grid">
   <article class="card">
-    <h2>Borrador</h2>
-    <p>2 cotizaciones de ejemplo en preparación.</p>
+    <h2>Total</h2>
+    <?php if ($quotesLoadError): ?>
+    <p>No disponible.</p>
+    <?php else: ?>
+    <p><?php echo e((string) $quoteCount); ?> cotizaciones registradas.</p>
+    <?php endif; ?>
   </article>
   <article class="card">
-    <h2>Enviadas</h2>
-    <p>1 cotización de ejemplo enviada a cliente.</p>
+    <h2>Lectura</h2>
+    <p>Mostrando hasta 10 registros recientes desde la base de datos.</p>
   </article>
   <article class="card">
-    <h2>Aceptadas</h2>
-    <p>1 cotización de ejemplo aceptada.</p>
+    <h2>Acciones</h2>
+    <p>Las acciones visibles siguen siendo referencias no funcionales.</p>
   </article>
 </section>
 
@@ -141,7 +165,12 @@ InternalPage::render(
 
 <section class="card quote-section quote-table-wrapper">
   <h2>Listado de cotizaciones</h2>
-  <p class="quote-section-copy">Datos de ejemplo para validar columnas, lectura y estados. Las acciones son solo referencias visuales.</p>
+  <p class="quote-section-copy">Datos reales leídos desde la tabla cotizaciones. Las acciones son solo referencias visuales.</p>
+  <?php if ($quotesLoadError): ?>
+    <p class="quote-section-copy">No fue posible cargar el listado de cotizaciones.</p>
+  <?php elseif ($recentQuotes === []): ?>
+    <p class="quote-section-copy">Aún no hay cotizaciones registradas.</p>
+  <?php else: ?>
   <table class="quote-table quote-table-list">
     <thead>
       <tr>
@@ -155,43 +184,28 @@ InternalPage::render(
       </tr>
     </thead>
     <tbody>
+      <?php foreach ($recentQuotes as $quote): ?>
       <tr>
-        <td>COT-2026-0001</td>
-        <td>Comercial Los Andes</td>
-        <td>2026-05-20</td>
-        <td>2026-06-19</td>
-        <td>Enviada</td>
-        <td class="quote-align-right">$1.428.000</td>
-        <td class="quote-visual-action">Ver maqueta</td>
+        <td><?php echo e(formatQuoteNumber($quote['numero_cotizacion'] ?? null)); ?></td>
+        <td><?php echo e((string) ($quote['nombre_cliente'] ?? '')); ?></td>
+        <td><?php echo e(formatQuoteDate($quote['fecha_cotizacion'] ?? null)); ?></td>
+        <td><?php echo e(formatQuoteDate($quote['valido_hasta'] ?? null)); ?></td>
+        <td><?php echo e(formatQuoteStatus($quote['estado'] ?? null)); ?></td>
+        <td class="quote-align-right"><?php echo e(formatQuoteMoney($quote['total'] ?? null)); ?></td>
+        <td class="quote-visual-action">Ver detalle futuro</td>
       </tr>
-      <tr>
-        <td>Sin emitir</td>
-        <td>Constructora Norte</td>
-        <td>2026-05-22</td>
-        <td>Pendiente</td>
-        <td>Borrador</td>
-        <td class="quote-align-right">$845.000</td>
-        <td class="quote-visual-action">Ver maqueta</td>
-      </tr>
-      <tr>
-        <td>COT-2026-0002</td>
-        <td>Servicios Delta</td>
-        <td>2026-05-23</td>
-        <td>2026-06-22</td>
-        <td>Aceptada</td>
-        <td class="quote-align-right">$2.120.000</td>
-        <td class="quote-visual-action">Ver maqueta</td>
-      </tr>
+      <?php endforeach; ?>
     </tbody>
   </table>
+  <?php endif; ?>
 </section>
 
 <section class="grid">
   <article class="card quote-span-2">
-    <h2>Detalle de cotización de ejemplo</h2>
+    <h2>Vista de referencia: detalle de cotización</h2>
     <p><strong>Número:</strong> COT-2026-0001</p>
     <p><strong>Cliente:</strong> Comercial Los Andes</p>
-    <p><strong>Contacto:</strong> Paula Méndez — paula@example.test</p>
+    <p><strong>Contacto:</strong> Paula Méndez - paula@example.test</p>
     <p><strong>Estado:</strong> Enviada</p>
     <p><strong>Condiciones:</strong> Validez 30 días, valores netos sujetos a IVA.</p>
   </article>
@@ -205,7 +219,7 @@ InternalPage::render(
 </section>
 
 <section class="card quote-section quote-table-wrapper">
-  <h2>Ítems de ejemplo</h2>
+  <h2>Vista de referencia: ítems</h2>
   <table class="quote-table quote-table-compact">
     <thead>
       <tr>
@@ -236,9 +250,44 @@ InternalPage::render(
 </section>
 
 <section class="status-panel">
-  <h3>Sin funcionalidad real todavía</h3>
-  <p>Esta pantalla no consulta base de datos, no guarda información, no calcula totales, no genera PDF y no ejecuta acciones. Es solo una maqueta visual estática para revisar el flujo del módulo.</p>
+  <h3>Solo lectura inicial</h3>
+  <p>Esta pantalla lee el listado de cotizaciones, pero no guarda información, no calcula totales, no genera PDF y no ejecuta acciones. Las secciones de nueva cotización y detalle siguen siendo referencias visuales.</p>
 </section>
 <?php
     }
 );
+
+function e(string $value): string
+{
+    return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+}
+
+function formatQuoteNumber(mixed $value): string
+{
+    $number = is_string($value) ? trim($value) : '';
+
+    return $number !== '' ? $number : 'Sin emitir';
+}
+
+function formatQuoteDate(mixed $value): string
+{
+    $date = is_string($value) ? trim($value) : '';
+
+    return $date !== '' ? $date : 'Pendiente';
+}
+
+function formatQuoteStatus(mixed $value): string
+{
+    $status = is_string($value) ? trim($value) : '';
+
+    return $status !== '' ? ucfirst($status) : 'Sin estado';
+}
+
+function formatQuoteMoney(mixed $value): string
+{
+    if (!is_numeric($value)) {
+        return '$0';
+    }
+
+    return '$' . number_format((float) $value, 0, ',', '.');
+}
