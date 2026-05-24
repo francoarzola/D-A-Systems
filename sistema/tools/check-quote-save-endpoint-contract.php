@@ -51,9 +51,12 @@ foreach ($requiredFragments as $fragment) {
 
 $forbiddenFragments = [
     'subtotal_neto',
+    'descuento_monto',
+    'iva_porcentaje',
     'iva_monto',
-    'total_amount',
+    'total',
     'numero_cotizacion',
+    'estado',
     'cotizacion_correlativos',
 ];
 
