@@ -23,7 +23,7 @@ El endpoint:
 - construye datos compatibles con `QuoteDraftValidator`
 - usa `QuoteService::createDraft()`
 - usa `FlashMessage`
-- redirige con POST/Redirect/GET
+- redirige con POST/Redirect/GET usando HTTP 303 See Other
 - no imprime HTML
 - no muestra errores técnicos
 
@@ -50,6 +50,8 @@ Si falla validación, CSRF, método o persistencia, redirige a:
 ```text
 cotizaciones.php
 ```
+
+Todas las redirecciones del endpoint usan código HTTP `303` para evitar que el navegador reintente el POST al refrescar o volver a cargar.
 
 ## Validación de autenticación
 

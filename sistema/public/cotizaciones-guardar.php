@@ -131,6 +131,6 @@ function scalarFromArray(array $source, string $key): ?string
 
 function redirectTo(string $path): never
 {
-    header('Location: ' . $path);
+    header('Location: ' . $path, true, 303);
     exit;
 }

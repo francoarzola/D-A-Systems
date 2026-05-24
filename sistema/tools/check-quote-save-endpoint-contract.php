@@ -39,6 +39,7 @@ $requiredFragments = [
     'POST',
     'cotizacion-detalle.php?id=',
     'cotizaciones.php',
+    "header('Location: ' . \$path, true, 303)",
 ];
 
 foreach ($requiredFragments as $fragment) {
