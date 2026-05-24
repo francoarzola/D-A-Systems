@@ -18,10 +18,12 @@ require_once __DIR__ . '/../app/Infrastructure/Database/Connection.php';
 require_once __DIR__ . '/../app/Repositories/QuoteRepository.php';
 require_once __DIR__ . '/../app/Validation/QuoteDraftValidator.php';
 require_once __DIR__ . '/../app/Services/QuoteTotalsCalculator.php';
+require_once __DIR__ . '/../app/Services/QuoteService.php';
 
 use DAndASystems\Internal\Infrastructure\Config\DatabaseConfig;
 use DAndASystems\Internal\Infrastructure\Database\Connection;
 use DAndASystems\Internal\Repositories\QuoteRepository;
+use DAndASystems\Internal\Services\QuoteService;
 use DAndASystems\Internal\Services\QuoteTotalsCalculator;
 use DAndASystems\Internal\Validation\QuoteDraftValidator;
 
@@ -57,20 +59,16 @@ try {
         $exitCode = 0;
     } else {
         $draft = buildDraftData();
-        $validator = new QuoteDraftValidator();
-        $validation = $validator->validateDraft($draft);
+        $service = new QuoteService($repository, new QuoteDraftValidator(), new QuoteTotalsCalculator());
+        $result = $service->createDraft($draft);
 
-        if ($validation['valid'] !== true) {
-            outputError('El borrador de prueba no pasó la validación controlada.');
+        if ($result['success'] !== true) {
+            outputError('El borrador de prueba no pudo guardarse mediante QuoteService.');
             $exitCode = 1;
         } else {
-            $calculator = new QuoteTotalsCalculator();
-            $totals = $calculator->calculate($draft['detalles']);
-            $quoteId = $repository->createDraft($draft, $totals);
-
-            outputOk("Borrador de cotización creado con ID {$quoteId}.");
+            outputOk("Borrador de cotización creado con ID {$result['quote_id']}.");
             outputOk('Estado: borrador, sin número de cotización.');
-            outputOk('Totales calculados desde QuoteTotalsCalculator.');
+            outputOk('Validación, cálculo y guardado coordinados desde QuoteService.');
             $exitCode = 0;
         }
     }
