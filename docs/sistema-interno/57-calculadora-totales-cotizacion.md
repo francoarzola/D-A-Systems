@@ -63,6 +63,7 @@ Cada detalle calculado incluye:
 - El subtotal neto de cabecera corresponde a la suma de los totales de línea.
 - El descuento de cabecera se resta del subtotal neto.
 - El IVA se calcula sobre la base neta después del descuento de cabecera.
+- Si el descuento de cabecera es mayor que el subtotal neto, la base imponible para IVA y total se limita a mínimo `0.00`.
 - El total se calcula como base neta más IVA.
 - Los montos se redondean a 2 decimales.
 - Las cantidades se redondean a 4 decimales.
@@ -72,6 +73,8 @@ Cada detalle calculado incluye:
 La calculadora no reemplaza a `QuoteDraftValidator`.
 
 El validador sigue siendo responsable de rechazar datos incompletos o inválidos. La calculadora solo normaliza y calcula montos a partir de los datos recibidos.
+
+El descuento de cabecera puede ser mayor al subtotal desde el punto de vista de cálculo. La calculadora no valida si esa regla comercial debe permitirse; solo evita generar IVA o total negativos. La decisión de permitir o rechazar ese descuento corresponde a `QuoteDraftValidator` o a futuras reglas de negocio.
 
 ## Herramienta CLI
 
@@ -91,6 +94,7 @@ La herramienta prueba:
 
 - cotización de prueba con dos detalles
 - descuento de cabecera
+- descuento de cabecera mayor que el subtotal neto
 - líneas vacías ignoradas
 - caso decimal sensible con `0.1 * 0.7 - 0.07`
 

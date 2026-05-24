@@ -37,6 +37,7 @@ $cases = [
         'expected' => [
             'details_count' => 2,
             'subtotal_neto' => 1200000.00,
+            'descuento_monto' => 0.00,
             'iva_monto' => 228000.00,
             'total' => 1428000.00,
         ],
@@ -56,8 +57,29 @@ $cases = [
         'expected' => [
             'details_count' => 1,
             'subtotal_neto' => 100000.00,
+            'descuento_monto' => 10000.00,
             'iva_monto' => 17100.00,
             'total' => 107100.00,
+        ],
+    ],
+    'descuento mayor al subtotal' => [
+        'details' => [
+            [
+                'descripcion' => 'Servicio con descuento de cabecera mayor',
+                'cantidad' => '1',
+                'unidad' => 'servicio',
+                'precio_unitario_neto' => '100000',
+                'descuento_monto' => '0',
+            ],
+        ],
+        'header_discount' => 150000.00,
+        'tax_rate' => 19.00,
+        'expected' => [
+            'details_count' => 1,
+            'subtotal_neto' => 100000.00,
+            'descuento_monto' => 150000.00,
+            'iva_monto' => 0.00,
+            'total' => 0.00,
         ],
     ],
     'líneas vacías ignoradas' => [
@@ -76,6 +98,7 @@ $cases = [
         'expected' => [
             'details_count' => 0,
             'subtotal_neto' => 0.00,
+            'descuento_monto' => 0.00,
             'iva_monto' => 0.00,
             'total' => 0.00,
         ],
@@ -95,6 +118,7 @@ $cases = [
         'expected' => [
             'details_count' => 1,
             'subtotal_neto' => 0.00,
+            'descuento_monto' => 0.00,
             'iva_monto' => 0.00,
             'total' => 0.00,
         ],
@@ -109,7 +133,7 @@ foreach ($cases as $caseName => $case) {
         exit(1);
     }
 
-    foreach (['subtotal_neto', 'iva_monto', 'total'] as $field) {
+    foreach (['subtotal_neto', 'descuento_monto', 'iva_monto', 'total'] as $field) {
         if (!sameMoney($result[$field], $case['expected'][$field])) {
             outputError("Falló el caso {$caseName}: {$field} inesperado.");
             exit(1);

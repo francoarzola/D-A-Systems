@@ -39,7 +39,7 @@ final class QuoteTotalsCalculator
         $subtotalNet = $this->roundMoney(array_sum(array_column($calculatedDetails, 'total_linea_neto')));
         $headerDiscount = $this->roundMoney($headerDiscount);
         $taxRate = $this->roundMoney($taxRate);
-        $taxableBase = $this->roundMoney($subtotalNet - $headerDiscount);
+        $taxableBase = max(0.00, $this->roundMoney($subtotalNet - $headerDiscount));
         $taxAmount = $this->roundMoney($taxableBase * ($taxRate / 100));
         $total = $this->roundMoney($taxableBase + $taxAmount);
 
