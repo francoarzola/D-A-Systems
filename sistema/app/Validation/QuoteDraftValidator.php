@@ -21,17 +21,17 @@ final class QuoteDraftValidator
             $errors[] = 'La acción del formulario no es válida para guardar borrador.';
         }
 
-        if (array_key_exists('quote_number', $data) && $this->stringValue($data['quote_number']) !== '') {
+        if (array_key_exists('numero_cotizacion', $data) && $this->stringValue($data['numero_cotizacion']) !== '') {
             $warnings[] = 'El número de cotización se ignora al guardar borrador.';
         }
 
-        $clientName = $this->stringValue($data['client_name'] ?? null);
+        $clientName = $this->stringValue($data['nombre_cliente'] ?? null);
 
         if ($clientName === '') {
             $errors[] = 'El nombre del cliente es obligatorio para guardar un borrador.';
         }
 
-        $quoteDate = $this->parseDate($data['quote_date'] ?? null);
+        $quoteDate = $this->parseDate($data['fecha_cotizacion'] ?? null);
 
         if ($quoteDate === null) {
             $errors[] = 'La fecha de cotización es obligatoria y debe ser válida.';
@@ -39,8 +39,8 @@ final class QuoteDraftValidator
 
         $validUntil = null;
 
-        if ($this->stringValue($data['valid_until'] ?? null) !== '') {
-            $validUntil = $this->parseDate($data['valid_until']);
+        if ($this->stringValue($data['valido_hasta'] ?? null) !== '') {
+            $validUntil = $this->parseDate($data['valido_hasta']);
 
             if ($validUntil === null) {
                 $errors[] = 'La fecha de validez debe ser válida.';
@@ -51,38 +51,38 @@ final class QuoteDraftValidator
             $errors[] = 'La fecha de validez no puede ser anterior a la fecha de cotización.';
         }
 
-        $contactEmail = $this->stringValue($data['contact_email'] ?? null);
+        $contactEmail = $this->stringValue($data['correo_contacto'] ?? null);
 
         if ($contactEmail !== '' && filter_var($contactEmail, FILTER_VALIDATE_EMAIL) === false) {
             $errors[] = 'El correo de contacto no tiene un formato válido.';
         }
 
-        $items = $data['items'] ?? [];
+        $details = $data['detalles'] ?? [];
 
-        if (!is_array($items)) {
-            $errors[] = 'Los ítems deben recibirse como una lista.';
-            $items = [];
+        if (!is_array($details)) {
+            $errors[] = 'Los detalles deben recibirse como una lista.';
+            $details = [];
         }
 
-        $validItemCount = 0;
+        $validDetailCount = 0;
 
-        foreach ($items as $index => $item) {
-            if (!is_array($item)) {
-                $errors[] = sprintf('El ítem %d debe ser una estructura válida.', (int) $index + 1);
+        foreach ($details as $index => $detail) {
+            if (!is_array($detail)) {
+                $errors[] = sprintf('El detalle %d debe ser una estructura válida.', (int) $index + 1);
                 continue;
             }
 
-            $itemResult = $this->validateItem($item, (int) $index + 1);
-            $errors = array_merge($errors, $itemResult['errors']);
-            $warnings = array_merge($warnings, $itemResult['warnings']);
+            $detailResult = $this->validateDetail($detail, (int) $index + 1);
+            $errors = array_merge($errors, $detailResult['errors']);
+            $warnings = array_merge($warnings, $detailResult['warnings']);
 
-            if ($itemResult['valid_item']) {
-                $validItemCount++;
+            if ($detailResult['valid_detail']) {
+                $validDetailCount++;
             }
         }
 
-        if ($validItemCount === 0) {
-            $warnings[] = 'El borrador se puede guardar sin ítems, pero los totales quedarán en cero.';
+        if ($validDetailCount === 0) {
+            $warnings[] = 'El borrador se puede guardar sin detalles, pero los totales quedarán en cero.';
         }
 
         return [
@@ -92,15 +92,15 @@ final class QuoteDraftValidator
         ];
     }
 
-    private function validateItem(array $item, int $lineNumber): array
+    private function validateDetail(array $detail, int $lineNumber): array
     {
         $errors = [];
         $warnings = [];
-        $description = $this->stringValue($item['description'] ?? null);
-        $quantityRaw = $this->stringValue($item['quantity'] ?? null);
-        $unitPriceRaw = $this->stringValue($item['unit_price_net'] ?? null);
-        $discountRaw = $this->stringValue($item['discount_amount'] ?? null);
-        $unit = $this->stringValue($item['unit'] ?? null);
+        $description = $this->stringValue($detail['descripcion'] ?? null);
+        $quantityRaw = $this->stringValue($detail['cantidad'] ?? null);
+        $unitPriceRaw = $this->stringValue($detail['precio_unitario_neto'] ?? null);
+        $discountRaw = $this->stringValue($detail['descuento_monto'] ?? null);
+        $unit = $this->stringValue($detail['unidad'] ?? null);
         $hasAnyValue = $description !== ''
             || $quantityRaw !== ''
             || $unitPriceRaw !== ''
@@ -109,49 +109,49 @@ final class QuoteDraftValidator
 
         if (!$hasAnyValue) {
             return [
-                'valid_item' => false,
+                'valid_detail' => false,
                 'errors' => [],
                 'warnings' => [],
             ];
         }
 
         if ($description === '') {
-            $errors[] = sprintf('El ítem %d requiere descripción.', $lineNumber);
+            $errors[] = sprintf('El detalle %d requiere descripción.', $lineNumber);
         }
 
         $quantity = $this->parseDecimal($quantityRaw);
 
         if ($quantity === null || $quantity <= 0) {
-            $errors[] = sprintf('El ítem %d requiere cantidad mayor que cero.', $lineNumber);
+            $errors[] = sprintf('El detalle %d requiere cantidad mayor que cero.', $lineNumber);
         }
 
         $unitPrice = $this->parseDecimal($unitPriceRaw);
 
         if ($unitPrice === null || $unitPrice < 0) {
-            $errors[] = sprintf('El ítem %d requiere precio unitario neto mayor o igual a cero.', $lineNumber);
+            $errors[] = sprintf('El detalle %d requiere precio unitario neto mayor o igual a cero.', $lineNumber);
         }
 
         $discount = $discountRaw !== '' ? $this->parseDecimal($discountRaw) : 0.00;
 
         if ($discount === null || $discount < 0) {
-            $errors[] = sprintf('El ítem %d requiere descuento mayor o igual a cero.', $lineNumber);
+            $errors[] = sprintf('El detalle %d requiere descuento mayor o igual a cero.', $lineNumber);
         }
 
         if ($unit === '') {
-            $warnings[] = sprintf('El ítem %d no tiene unidad informada.', $lineNumber);
+            $warnings[] = sprintf('El detalle %d no tiene unidad informada.', $lineNumber);
         }
 
         if ($quantity !== null && $unitPrice !== null && $discount !== null) {
-            $lineSubtotal = $quantity * $unitPrice;
-            $lineTotal = $lineSubtotal - $discount;
+            $lineSubtotal = round($quantity * $unitPrice, 2);
+            $lineTotal = round($lineSubtotal - $discount, 2);
 
             if ($lineTotal < 0) {
-                $errors[] = sprintf('El ítem %d no puede tener total de línea negativo.', $lineNumber);
+                $errors[] = sprintf('El detalle %d no puede tener total de línea negativo.', $lineNumber);
             }
         }
 
         return [
-            'valid_item' => $errors === [],
+            'valid_detail' => $errors === [],
             'errors' => $errors,
             'warnings' => $warnings,
         ];
