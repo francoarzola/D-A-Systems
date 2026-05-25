@@ -79,10 +79,13 @@ quote_draft_edit
 
 Esto deja preparada la vista para un futuro endpoint de actualización, pero en esta etapa no se procesa POST real.
 
+La vista de edición es solo visual/preparatoria: no usa `method="post"` ni `action="cotizacion-actualizar.php"`. Esto evita que el navegador envíe accidentalmente el formulario al presionar Enter dentro de un campo mientras el endpoint real todavía no existe.
+
 ## Qué NO se implementó
 
 - No se creó `cotizacion-actualizar.php`.
 - No se implementó POST de edición.
+- No existe acción POST activa desde la vista preparatoria.
 - No se guardan cambios.
 - No se actualiza base de datos.
 - No se implementó emisión.
@@ -110,7 +113,7 @@ Con Laragon:
 C:\laragon\bin\php\php-8.3.30-Win32-vs16-x64\php.exe sistema/tools/check-quote-edit-draft-contract.php
 ```
 
-La herramienta valida que exista la página de edición, que listado y detalle enlacen a ella solo como preparación, que no exista `cotizacion-actualizar.php` y que no se hayan agregado operaciones de escritura.
+La herramienta valida que exista la página de edición, que listado y detalle enlacen a ella solo como preparación, que la vista no use `method="post"` ni `action="cotizacion-actualizar.php"`, que no exista `cotizacion-actualizar.php` y que no se hayan agregado operaciones de escritura.
 
 ## Prueba manual recomendada
 

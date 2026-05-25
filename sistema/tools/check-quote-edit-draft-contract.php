@@ -33,6 +33,18 @@ foreach ($editFragments as $fragment) {
     assertContains($edit, $fragment, "cotizacion-editar.php no contiene {$fragment}");
 }
 
+if (str_contains($edit, 'action="cotizacion-actualizar.php"')
+    || str_contains($edit, "action='cotizacion-actualizar.php'")) {
+    outputError('cotizacion-editar.php no debe apuntar a cotizacion-actualizar.php mientras la edición sea preparatoria.');
+    exit(1);
+}
+
+if (str_contains($edit, 'method="post"')
+    || str_contains($edit, "method='post'")) {
+    outputError('cotizacion-editar.php no debe tener method="post" mientras la edición sea preparatoria.');
+    exit(1);
+}
+
 $listFragments = [
     'cotizacion-editar.php?id=',
     'borrador',
