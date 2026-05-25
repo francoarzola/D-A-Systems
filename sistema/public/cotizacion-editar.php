@@ -78,7 +78,7 @@ InternalPage::render(
   <h2>Borrador en edición</h2>
   <p class="quote-section-copy">Número: <?php echo ViewFormatter::e(ViewFormatter::quoteNumber($quote['numero_cotizacion'] ?? null)); ?> · Estado: <?php echo ViewFormatter::e(ViewFormatter::quoteStatus($quote['estado'] ?? null)); ?></p>
 
-  <form method="post" action="cotizacion-actualizar.php">
+  <div class="quote-edit-preview">
     <?php echo $csrf->inputField('quote_draft_edit'); ?>
     <input type="hidden" name="cotizacion_id" value="<?php echo ViewFormatter::e((string) ($quote['id'] ?? '')); ?>">
 
@@ -173,7 +173,7 @@ InternalPage::render(
       <a class="quote-action quote-action-muted" href="cotizacion-detalle.php?id=<?php echo ViewFormatter::e((string) ($quote['id'] ?? '')); ?>">Ver detalle</a>
       <a class="quote-action quote-action-muted" href="cotizaciones.php">Volver al listado</a>
     </div>
-  </form>
+  </div>
 </section>
 <?php endif; ?>
 <?php
