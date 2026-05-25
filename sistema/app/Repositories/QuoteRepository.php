@@ -154,6 +154,35 @@ final class QuoteRepository
         }
     }
 
+    public function updateDraft(int $quoteId, array $header, array $calculatedTotals): bool
+    {
+        if ($quoteId <= 0) {
+            return false;
+        }
+
+        $this->pdo->beginTransaction();
+
+        try {
+            if (!$this->lockDraftForUpdate($quoteId)) {
+                $this->pdo->rollBack();
+                return false;
+            }
+
+            $this->updateDraftHeader($quoteId, $header, $calculatedTotals);
+            $this->deleteDraftDetails($quoteId);
+            $this->insertDraftDetails($quoteId, $calculatedTotals['details'] ?? []);
+            $this->pdo->commit();
+
+            return true;
+        } catch (\Throwable $exception) {
+            if ($this->pdo->inTransaction()) {
+                $this->pdo->rollBack();
+            }
+
+            throw $exception;
+        }
+    }
+
     private function readColumnsSql(): string
     {
         return implode(', ', self::READ_COLUMNS);
@@ -277,6 +306,84 @@ final class QuoteRepository
                 'total_linea_neto' => $this->decimalValue($detail['total_linea_neto'] ?? 0.00),
             ]);
         }
+    }
+
+    private function lockDraftForUpdate(int $quoteId): bool
+    {
+        $statement = $this->pdo->prepare(
+            'SELECT estado, numero_cotizacion
+             FROM cotizaciones
+             WHERE id = :id
+             LIMIT 1
+             FOR UPDATE'
+        );
+        $statement->bindValue(':id', $quoteId, PDO::PARAM_INT);
+        $statement->execute();
+
+        $quote = $statement->fetch();
+
+        if (!is_array($quote)) {
+            return false;
+        }
+
+        $quoteNumber = $quote['numero_cotizacion'] ?? null;
+
+        return ($quote['estado'] ?? null) === 'borrador'
+            && ($quoteNumber === null || $quoteNumber === '');
+    }
+
+    private function updateDraftHeader(int $quoteId, array $header, array $calculatedTotals): void
+    {
+        $statement = $this->pdo->prepare(
+            'UPDATE cotizaciones
+             SET fecha_cotizacion = :fecha_cotizacion,
+                 valido_hasta = :valido_hasta,
+                 nombre_cliente = :nombre_cliente,
+                 rut_cliente = :rut_cliente,
+                 nombre_contacto = :nombre_contacto,
+                 correo_contacto = :correo_contacto,
+                 telefono_contacto = :telefono_contacto,
+                 descripcion = :descripcion,
+                 subtotal_neto = :subtotal_neto,
+                 descuento_monto = :descuento_monto,
+                 iva_porcentaje = :iva_porcentaje,
+                 iva_monto = :iva_monto,
+                 total = :total,
+                 condiciones_comerciales = :condiciones_comerciales,
+                 observaciones = :observaciones
+             WHERE id = :id
+               AND estado = :estado
+               AND numero_cotizacion IS NULL'
+        );
+        $statement->execute([
+            'fecha_cotizacion' => $this->dateValue($header['fecha_cotizacion'] ?? null) ?? date('Y-m-d'),
+            'valido_hasta' => $this->dateValue($header['valido_hasta'] ?? null),
+            'nombre_cliente' => $this->stringOrNull($header['nombre_cliente'] ?? null),
+            'rut_cliente' => $this->stringOrNull($header['rut_cliente'] ?? null),
+            'nombre_contacto' => $this->stringOrNull($header['nombre_contacto'] ?? null),
+            'correo_contacto' => $this->stringOrNull($header['correo_contacto'] ?? null),
+            'telefono_contacto' => $this->stringOrNull($header['telefono_contacto'] ?? null),
+            'descripcion' => $this->stringOrNull($header['descripcion'] ?? null),
+            'subtotal_neto' => $this->decimalValue($calculatedTotals['subtotal_neto'] ?? 0.00),
+            'descuento_monto' => $this->decimalValue($calculatedTotals['descuento_monto'] ?? 0.00),
+            'iva_porcentaje' => $this->decimalValue($calculatedTotals['iva_porcentaje'] ?? 0.00),
+            'iva_monto' => $this->decimalValue($calculatedTotals['iva_monto'] ?? 0.00),
+            'total' => $this->decimalValue($calculatedTotals['total'] ?? 0.00),
+            'condiciones_comerciales' => $this->stringOrNull($header['condiciones_comerciales'] ?? null),
+            'observaciones' => $this->stringOrNull($header['observaciones'] ?? null),
+            'id' => $quoteId,
+            'estado' => 'borrador',
+        ]);
+    }
+
+    private function deleteDraftDetails(int $quoteId): void
+    {
+        $statement = $this->pdo->prepare(
+            'DELETE FROM cotizacion_detalles
+             WHERE cotizacion_id = :quote_id'
+        );
+        $statement->bindValue(':quote_id', $quoteId, PDO::PARAM_INT);
+        $statement->execute();
     }
 
     private function stringOrNull(mixed $value): ?string

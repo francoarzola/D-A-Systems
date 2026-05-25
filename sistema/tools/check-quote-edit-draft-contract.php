@@ -33,17 +33,24 @@ foreach ($editFragments as $fragment) {
     assertContains($edit, $fragment, "cotizacion-editar.php no contiene {$fragment}");
 }
 
-$forbiddenEditFragments = [
-    'method="post"',
-    "method='post'",
-    'action="cotizacion-actualizar.php"',
-    "action='cotizacion-actualizar.php'",
-];
+$updateEndpointExists = file_exists($futureUpdatePath);
 
-foreach ($forbiddenEditFragments as $fragment) {
-    if (str_contains($edit, $fragment)) {
-        outputError("cotizacion-editar.php no debe contener {$fragment} en esta etapa.");
-        exit(1);
+if ($updateEndpointExists) {
+    assertContains($edit, 'method="post"', 'cotizacion-editar.php debe enviar POST cuando existe cotizacion-actualizar.php.');
+    assertContains($edit, 'action="cotizacion-actualizar.php"', 'cotizacion-editar.php debe apuntar a cotizacion-actualizar.php cuando existe el endpoint.');
+} else {
+    $forbiddenEditFragments = [
+        'method="post"',
+        "method='post'",
+        'action="cotizacion-actualizar.php"',
+        "action='cotizacion-actualizar.php'",
+    ];
+
+    foreach ($forbiddenEditFragments as $fragment) {
+        if (str_contains($edit, $fragment)) {
+            outputError("cotizacion-editar.php no debe contener {$fragment} en esta etapa.");
+            exit(1);
+        }
     }
 }
 
@@ -63,11 +70,6 @@ $detailFragments = [
 
 foreach ($detailFragments as $fragment) {
     assertContains($detail, $fragment, "cotizacion-detalle.php no contiene {$fragment}");
-}
-
-if (file_exists($futureUpdatePath)) {
-    outputError('No debe existir sistema/public/cotizacion-actualizar.php en esta etapa.');
-    exit(1);
 }
 
 $writingFragments = [

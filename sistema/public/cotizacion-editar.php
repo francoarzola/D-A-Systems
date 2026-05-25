@@ -5,6 +5,8 @@ declare(strict_types=1);
 require_once __DIR__ . '/../app/Support/InternalPage.php';
 require_once __DIR__ . '/../app/Support/ViewFormatter.php';
 require_once __DIR__ . '/../app/Security/CsrfToken.php';
+require_once __DIR__ . '/../app/Support/FlashMessage.php';
+require_once __DIR__ . '/../app/Support/FormState.php';
 require_once __DIR__ . '/../app/Infrastructure/Config/DatabaseConfig.php';
 require_once __DIR__ . '/../app/Infrastructure/Database/Connection.php';
 require_once __DIR__ . '/../app/Repositories/QuoteRepository.php';
@@ -15,6 +17,8 @@ use DAndASystems\Internal\Infrastructure\Database\Connection;
 use DAndASystems\Internal\Repositories\QuoteRepository;
 use DAndASystems\Internal\Security\CsrfToken;
 use DAndASystems\Internal\Services\QuoteService;
+use DAndASystems\Internal\Support\FlashMessage;
+use DAndASystems\Internal\Support\FormState;
 use DAndASystems\Internal\Support\InternalPage;
 use DAndASystems\Internal\Support\ViewFormatter;
 
@@ -29,6 +33,11 @@ InternalPage::render(
         $details = [];
         $errorMessage = null;
         $csrf = new CsrfToken();
+        $flash = (new FlashMessage())->pull();
+        $flashType = normalizeFlashType($flash['type'] ?? null);
+        $formState = new FormState();
+        $editState = $formState->pull('quote_draft_edit') ?? [];
+        $editErrors = normalizeFormErrors($formState->pull('quote_draft_edit_errors') ?? []);
 
         if (!is_int($quoteId) || $quoteId <= 0) {
             $errorMessage = 'La cotización solicitada no es válida.';
@@ -54,8 +63,22 @@ InternalPage::render(
             }
         }
 
+        if ($quote !== null && editStateBelongsToQuote($editState, (int) ($quote['id'] ?? 0))) {
+            $quote = array_merge($quote, $editState);
+            $details = isset($editState['detalles']) && is_array($editState['detalles']) ? $editState['detalles'] : $details;
+        } else {
+            $editErrors = [];
+        }
+
         $firstDetail = isset($details[0]) && is_array($details[0]) ? $details[0] : [];
         ?>
+<?php if ($flash !== null): ?>
+<section class="flash-message flash-message-<?php echo ViewFormatter::e($flashType); ?>">
+  <h3><?php echo ViewFormatter::e(flashTitle($flashType)); ?></h3>
+  <p><?php echo ViewFormatter::e(ViewFormatter::text($flash['message'] ?? null)); ?></p>
+</section>
+<?php endif; ?>
+
 <?php if ($errorMessage !== null): ?>
 <section class="status-panel">
   <h3>Edición no disponible</h3>
@@ -71,16 +94,28 @@ InternalPage::render(
 <?php else: ?>
 <section class="status-panel">
   <h3>Preparación de edición</h3>
-  <p>Este formulario carga datos reales del borrador, pero todavía no guarda cambios. La actualización se implementará en una etapa posterior.</p>
+  <p>Modifica los datos del borrador. Los cambios se validan, recalculan y guardan en el servidor.</p>
 </section>
 
 <section class="card quote-section">
   <h2>Borrador en edición</h2>
   <p class="quote-section-copy">Número: <?php echo ViewFormatter::e(ViewFormatter::quoteNumber($quote['numero_cotizacion'] ?? null)); ?> · Estado: <?php echo ViewFormatter::e(ViewFormatter::quoteStatus($quote['estado'] ?? null)); ?></p>
 
-  <div class="quote-edit-preview">
+<?php if ($editErrors !== []): ?>
+  <div class="form-error-summary">
+    <h3>Revise los datos del formulario</h3>
+    <ul>
+      <?php foreach ($editErrors as $editError): ?>
+      <li><?php echo ViewFormatter::e($editError); ?></li>
+      <?php endforeach; ?>
+    </ul>
+  </div>
+<?php endif; ?>
+
+  <form method="post" action="cotizacion-actualizar.php">
     <?php echo $csrf->inputField('quote_draft_edit'); ?>
     <input type="hidden" name="cotizacion_id" value="<?php echo ViewFormatter::e((string) ($quote['id'] ?? '')); ?>">
+    <input type="hidden" name="form_action" value="guardar_borrador">
 
     <div class="grid quote-subgrid">
       <article class="card quote-nested-card">
@@ -169,11 +204,11 @@ InternalPage::render(
     </div>
 
     <div class="quote-actions">
-      <button class="quote-action quote-action-muted" type="button" disabled>Guardar cambios próximamente</button>
+      <button class="quote-action quote-action-primary" type="submit">Guardar cambios</button>
       <a class="quote-action quote-action-muted" href="cotizacion-detalle.php?id=<?php echo ViewFormatter::e((string) ($quote['id'] ?? '')); ?>">Ver detalle</a>
       <a class="quote-action quote-action-muted" href="cotizaciones.php">Volver al listado</a>
     </div>
-  </div>
+  </form>
 </section>
 <?php endif; ?>
 <?php
@@ -194,4 +229,48 @@ function editValue(array $data, string $key): string
     }
 
     return (string) $value;
+}
+
+function editStateBelongsToQuote(array $editState, int $quoteId): bool
+{
+    return $quoteId > 0 && (int) ($editState['cotizacion_id'] ?? 0) === $quoteId;
+}
+
+function normalizeFormErrors(array $errors): array
+{
+    $messages = [];
+
+    foreach ($errors as $error) {
+        if (is_scalar($error)) {
+            $message = trim((string) $error);
+
+            if ($message !== '') {
+                $messages[] = $message;
+            }
+        }
+    }
+
+    return $messages;
+}
+
+function normalizeFlashType(mixed $type): string
+{
+    if (!is_string($type)) {
+        return 'info';
+    }
+
+    $type = strtolower(trim($type));
+    $allowedTypes = ['success', 'error', 'warning', 'info'];
+
+    return in_array($type, $allowedTypes, true) ? $type : 'info';
+}
+
+function flashTitle(string $type): string
+{
+    return match ($type) {
+        'success' => 'Confirmación',
+        'error' => 'Error',
+        'warning' => 'Advertencia',
+        default => 'Información',
+    };
 }
