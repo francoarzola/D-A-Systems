@@ -49,6 +49,9 @@ foreach ($detailFragments as $fragment) {
     assertContains($detail, $fragment, "cotizacion-detalle.php no contiene {$fragment}");
 }
 
+assertNoMojibake($issueEndpoint, 'cotizacion-emitir.php');
+assertNoMojibake($detail, 'cotizacion-detalle.php');
+
 assertContains($service, 'issueDraft', 'QuoteService.php no contiene issueDraft');
 
 $repositoryFragments = [
@@ -133,6 +136,16 @@ function hasPostRead(string $contents, string $field): bool
     $doubleQuote = '$_POST["' . $field . '"]';
 
     return str_contains($contents, $singleQuote) || str_contains($contents, $doubleQuote);
+}
+
+function assertNoMojibake(string $contents, string $label): void
+{
+    foreach (['Ã', 'Â'] as $fragment) {
+        if (str_contains($contents, $fragment)) {
+            outputError("{$label} contiene texto con codificacion incorrecta: {$fragment}");
+            exit(1);
+        }
+    }
 }
 
 function outputOk(string $message): void

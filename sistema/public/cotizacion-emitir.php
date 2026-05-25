@@ -34,14 +34,14 @@ $guard->requireAuth('login.php');
 $flash = new FlashMessage();
 
 if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
-    $flash->set('error', 'La solicitud no es valida.');
+    $flash->set('error', 'La solicitud no es válida.');
     redirectTo(QUOTE_LIST_URL);
 }
 
 $quoteId = positiveIntFromPost('cotizacion_id');
 
 if ($quoteId === null) {
-    $flash->set('error', 'La cotizacion solicitada no es valida.');
+    $flash->set('error', 'La cotización solicitada no es válida.');
     redirectTo(QUOTE_LIST_URL);
 }
 
@@ -49,7 +49,7 @@ $csrf = new CsrfToken();
 $csrfToken = postScalar('csrf_token');
 
 if (!$csrf->validate($csrfToken, QUOTE_ISSUE_CSRF_KEY)) {
-    $flash->set('error', 'La sesion del formulario expiro. Intente nuevamente.');
+    $flash->set('error', 'La sesión del formulario expiró. Intente nuevamente.');
     redirectTo(QUOTE_DETAIL_URL . $quoteId);
 }
 
@@ -61,14 +61,14 @@ try {
     $result = $service->issueDraft($quoteId);
 
     if ($result['success'] !== true) {
-        $flash->set('warning', 'No fue posible emitir la cotizacion. Verifique que siga en estado borrador.');
+        $flash->set('warning', 'No fue posible emitir la cotización. Verifique que siga en estado borrador.');
         redirectTo(QUOTE_DETAIL_URL . $quoteId);
     }
 
-    $flash->set('success', 'Cotizacion emitida correctamente.');
+    $flash->set('success', 'Cotización emitida correctamente.');
     redirectTo(QUOTE_DETAIL_URL . $quoteId);
 } catch (\Throwable $exception) {
-    $flash->set('error', 'No fue posible emitir la cotizacion.');
+    $flash->set('error', 'No fue posible emitir la cotización.');
     redirectTo(QUOTE_DETAIL_URL . $quoteId);
 }
 

@@ -191,9 +191,9 @@ function normalizeFlashType(mixed $type): string
 function flashTitle(string $type): string
 {
     return match ($type) {
-        'success' => 'ConfirmaciÃ³n',
+        'success' => 'Confirmación',
         'error' => 'Error',
         'warning' => 'Advertencia',
-        default => 'InformaciÃ³n',
+        default => 'Información',
     };
 }
