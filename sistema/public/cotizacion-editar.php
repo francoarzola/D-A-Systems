@@ -94,7 +94,7 @@ InternalPage::render(
 <?php else: ?>
 <section class="status-panel">
   <h3>Preparación de edición</h3>
-  <p>Este formulario carga datos reales del borrador, pero todavía no guarda cambios. La actualización se implementará en una etapa posterior.</p>
+  <p>Modifica los datos del borrador. Los cambios se validan, recalculan y guardan en el servidor.</p>
 </section>
 
 <section class="card quote-section">

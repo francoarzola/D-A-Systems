@@ -311,7 +311,7 @@ final class QuoteRepository
     private function lockDraftForUpdate(int $quoteId): bool
     {
         $statement = $this->pdo->prepare(
-            'SELECT estado
+            'SELECT estado, numero_cotizacion
              FROM cotizaciones
              WHERE id = :id
              LIMIT 1
@@ -320,9 +320,16 @@ final class QuoteRepository
         $statement->bindValue(':id', $quoteId, PDO::PARAM_INT);
         $statement->execute();
 
-        $status = $statement->fetchColumn();
+        $quote = $statement->fetch();
 
-        return $status === 'borrador';
+        if (!is_array($quote)) {
+            return false;
+        }
+
+        $quoteNumber = $quote['numero_cotizacion'] ?? null;
+
+        return ($quote['estado'] ?? null) === 'borrador'
+            && ($quoteNumber === null || $quoteNumber === '');
     }
 
     private function updateDraftHeader(int $quoteId, array $header, array $calculatedTotals): void

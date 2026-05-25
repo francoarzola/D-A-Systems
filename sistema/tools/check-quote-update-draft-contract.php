@@ -84,8 +84,16 @@ $forbiddenEndpointFragments = [
     "scalarFromArray(\$post, \"subtotal_neto\")",
     "scalarFromArray(\$post, 'iva_monto')",
     "scalarFromArray(\$post, \"iva_monto\")",
+    "scalarFromArray(\$post, 'iva_porcentaje')",
+    "scalarFromArray(\$post, \"iva_porcentaje\")",
     "scalarFromArray(\$post, 'total')",
     "scalarFromArray(\$post, \"total\")",
+    "scalarFromArray(\$post, 'creado_por')",
+    "scalarFromArray(\$post, \"creado_por\")",
+    "scalarFromArray(\$post, 'creado_en')",
+    "scalarFromArray(\$post, \"creado_en\")",
+    "scalarFromArray(\$post, 'actualizado_en')",
+    "scalarFromArray(\$post, \"actualizado_en\")",
     'cotizacion_correlativos',
 ];
 

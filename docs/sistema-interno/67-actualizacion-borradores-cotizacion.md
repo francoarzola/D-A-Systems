@@ -69,7 +69,7 @@ El repositorio:
 
 - usa transacción
 - bloquea la cotización con `FOR UPDATE`
-- permite actualizar solo si `estado = 'borrador'`
+- permite actualizar solo si `estado = 'borrador'` y `numero_cotizacion` sigue vacío
 - no modifica `numero_cotizacion`
 - no modifica `estado`
 - actualiza cabecera y montos calculados
@@ -109,6 +109,9 @@ No se aceptan ni se confía en:
 - `iva_porcentaje`
 - `iva_monto`
 - `total`
+- `creado_por`
+- `creado_en`
+- `actualizado_en`
 - campos de correlativos
 
 Los totales se recalculan siempre en backend.
