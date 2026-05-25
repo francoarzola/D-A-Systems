@@ -142,7 +142,9 @@ InternalPage::render(
 
 <div class="quote-actions">
   <a class="quote-action quote-action-muted" href="cotizaciones.php">Volver al listado</a>
-  <span class="quote-action quote-action-primary">Editar futuro</span>
+  <?php if (($quote['estado'] ?? null) === 'borrador'): ?>
+  <a class="quote-action quote-action-primary" href="cotizacion-editar.php?id=<?php echo ViewFormatter::e((string) ($quote['id'] ?? '')); ?>">Editar borrador</a>
+  <?php endif; ?>
   <span class="quote-action quote-action-strong">Emitir futuro</span>
 </div>
 <?php endif; ?>

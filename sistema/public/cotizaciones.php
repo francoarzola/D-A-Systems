@@ -353,6 +353,10 @@ InternalPage::render(
     </thead>
     <tbody>
       <?php foreach ($recentQuotes as $quote): ?>
+      <?php
+        $quoteId = (int) ($quote['id'] ?? 0);
+        $isDraft = ($quote['estado'] ?? null) === 'borrador';
+      ?>
       <tr>
         <td><?php echo ViewFormatter::e(ViewFormatter::quoteNumber($quote['numero_cotizacion'] ?? null)); ?></td>
         <td><?php echo ViewFormatter::e((string) ($quote['nombre_cliente'] ?? '')); ?></td>
@@ -360,7 +364,12 @@ InternalPage::render(
         <td><?php echo ViewFormatter::e(ViewFormatter::quoteDate($quote['valido_hasta'] ?? null)); ?></td>
         <td><?php echo ViewFormatter::e(ViewFormatter::quoteStatus($quote['estado'] ?? null)); ?></td>
         <td class="quote-align-right"><?php echo ViewFormatter::e(ViewFormatter::money($quote['total'] ?? null)); ?></td>
-        <td><a class="quote-visual-action" href="cotizacion-detalle.php?id=<?php echo ViewFormatter::e((string) ($quote['id'] ?? '')); ?>">Ver detalle</a></td>
+        <td>
+          <a class="quote-visual-action" href="cotizacion-detalle.php?id=<?php echo ViewFormatter::e((string) $quoteId); ?>">Ver detalle</a>
+          <?php if ($isDraft && $quoteId > 0): ?>
+          <a class="quote-visual-action" href="cotizacion-editar.php?id=<?php echo ViewFormatter::e((string) $quoteId); ?>">Editar</a>
+          <?php endif; ?>
+        </td>
       </tr>
       <?php endforeach; ?>
     </tbody>
