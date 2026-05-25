@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../app/Support/InternalPage.php';
 require_once __DIR__ . '/../app/Support/ViewFormatter.php';
+require_once __DIR__ . '/../app/Security/CsrfToken.php';
+require_once __DIR__ . '/../app/Support/FlashMessage.php';
 require_once __DIR__ . '/../app/Infrastructure/Config/DatabaseConfig.php';
 require_once __DIR__ . '/../app/Infrastructure/Database/Connection.php';
 require_once __DIR__ . '/../app/Repositories/QuoteRepository.php';
@@ -12,7 +14,9 @@ require_once __DIR__ . '/../app/Services/QuoteService.php';
 use DAndASystems\Internal\Infrastructure\Config\DatabaseConfig;
 use DAndASystems\Internal\Infrastructure\Database\Connection;
 use DAndASystems\Internal\Repositories\QuoteRepository;
+use DAndASystems\Internal\Security\CsrfToken;
 use DAndASystems\Internal\Services\QuoteService;
+use DAndASystems\Internal\Support\FlashMessage;
 use DAndASystems\Internal\Support\InternalPage;
 use DAndASystems\Internal\Support\ViewFormatter;
 
@@ -25,6 +29,9 @@ InternalPage::render(
         $quote = null;
         $details = [];
         $errorMessage = null;
+        $csrf = new CsrfToken();
+        $flash = (new FlashMessage())->pull();
+        $flashType = normalizeFlashType($flash['type'] ?? null);
 
         if (!is_int($quoteId) || $quoteId <= 0) {
             $errorMessage = 'La cotización solicitada no es válida.';
@@ -48,6 +55,13 @@ InternalPage::render(
             }
         }
         ?>
+<?php if ($flash !== null): ?>
+<section class="flash-message flash-message-<?php echo ViewFormatter::e($flashType); ?>">
+  <h3><?php echo ViewFormatter::e(flashTitle($flashType)); ?></h3>
+  <p><?php echo ViewFormatter::e(ViewFormatter::text($flash['message'] ?? null)); ?></p>
+</section>
+<?php endif; ?>
+
 <?php if ($errorMessage !== null): ?>
 <section class="status-panel">
   <h3>Detalle no disponible</h3>
@@ -144,10 +158,42 @@ InternalPage::render(
   <a class="quote-action quote-action-muted" href="cotizaciones.php">Volver al listado</a>
   <?php if (($quote['estado'] ?? null) === 'borrador'): ?>
   <a class="quote-action quote-action-primary" href="cotizacion-editar.php?id=<?php echo ViewFormatter::e((string) ($quote['id'] ?? '')); ?>">Editar borrador</a>
+  <form method="post" action="cotizacion-emitir.php" class="quote-inline-form">
+    <?php echo $csrf->inputField('quote_issue'); ?>
+    <input type="hidden" name="cotizacion_id" value="<?php echo ViewFormatter::e((string) ($quote['id'] ?? '')); ?>">
+    <button class="quote-action quote-action-strong" type="submit">Emitir cotizaci&oacute;n</button>
+  </form>
   <?php endif; ?>
-  <span class="quote-action quote-action-strong">Emitir futuro</span>
 </div>
+<?php if (($quote['estado'] ?? null) === 'borrador'): ?>
+<section class="status-panel">
+  <h3>Emisi&oacute;n oficial</h3>
+  <p>Al emitir, se asignar&aacute; un n&uacute;mero oficial y la cotizaci&oacute;n dejar&aacute; de ser editable.</p>
+</section>
+<?php endif; ?>
 <?php endif; ?>
 <?php
     }
 );
+
+function normalizeFlashType(mixed $type): string
+{
+    if (!is_string($type)) {
+        return 'info';
+    }
+
+    $type = strtolower(trim($type));
+    $allowedTypes = ['success', 'error', 'warning', 'info'];
+
+    return in_array($type, $allowedTypes, true) ? $type : 'info';
+}
+
+function flashTitle(string $type): string
+{
+    return match ($type) {
+        'success' => 'Confirmación',
+        'error' => 'Error',
+        'warning' => 'Advertencia',
+        default => 'Información',
+    };
+}
