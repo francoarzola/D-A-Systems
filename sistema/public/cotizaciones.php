@@ -6,6 +6,7 @@ require_once __DIR__ . '/../app/Support/InternalPage.php';
 require_once __DIR__ . '/../app/Support/ViewFormatter.php';
 require_once __DIR__ . '/../app/Security/CsrfToken.php';
 require_once __DIR__ . '/../app/Support/FlashMessage.php';
+require_once __DIR__ . '/../app/Support/FormState.php';
 require_once __DIR__ . '/../app/Infrastructure/Config/DatabaseConfig.php';
 require_once __DIR__ . '/../app/Infrastructure/Database/Connection.php';
 require_once __DIR__ . '/../app/Repositories/QuoteRepository.php';
@@ -17,6 +18,7 @@ use DAndASystems\Internal\Repositories\QuoteRepository;
 use DAndASystems\Internal\Security\CsrfToken;
 use DAndASystems\Internal\Services\QuoteService;
 use DAndASystems\Internal\Support\FlashMessage;
+use DAndASystems\Internal\Support\FormState;
 use DAndASystems\Internal\Support\InternalPage;
 use DAndASystems\Internal\Support\ViewFormatter;
 
@@ -31,8 +33,16 @@ InternalPage::render(
         $csrf = new CsrfToken();
         $flash = (new FlashMessage())->pull();
         $flashType = normalizeFlashType($flash['type'] ?? null);
+        $draftState = (new FormState())->pull('quote_draft') ?? [];
+        $draftDetails = isset($draftState['detalles']) && is_array($draftState['detalles']) ? $draftState['detalles'] : [];
+        $draftFirstDetail = isset($draftDetails[0]) && is_array($draftDetails[0]) ? $draftDetails[0] : [];
         $today = new DateTimeImmutable('today');
         $validUntil = $today->modify('+30 days');
+        $quoteDateValue = formValue($draftState, 'fecha_cotizacion', $today->format('Y-m-d'));
+        $validUntilValue = formValue($draftState, 'valido_hasta', $validUntil->format('Y-m-d'));
+        $quantityValue = formValue($draftFirstDetail, 'cantidad', '1');
+        $unitValue = formValue($draftFirstDetail, 'unidad', 'servicio');
+        $lineDiscountValue = formValue($draftFirstDetail, 'descuento_monto', '0');
 
         try {
             $config = DatabaseConfig::fromDefaultPath()->load();
@@ -90,15 +100,15 @@ InternalPage::render(
         <h2>Datos generales</h2>
         <label class="quote-field">
           <span class="quote-label">Fecha</span>
-          <input class="quote-input" type="date" name="fecha_cotizacion" value="<?php echo ViewFormatter::e($today->format('Y-m-d')); ?>" required>
+          <input class="quote-input" type="date" name="fecha_cotizacion" value="<?php echo ViewFormatter::e($quoteDateValue); ?>" required>
         </label>
         <label class="quote-field">
           <span class="quote-label">Validez</span>
-          <input class="quote-input" type="date" name="valido_hasta" value="<?php echo ViewFormatter::e($validUntil->format('Y-m-d')); ?>">
+          <input class="quote-input" type="date" name="valido_hasta" value="<?php echo ViewFormatter::e($validUntilValue); ?>">
         </label>
         <label class="quote-field quote-field-last">
           <span class="quote-label">Descripción</span>
-          <input class="quote-input" type="text" name="descripcion" placeholder="Servicios a cotizar">
+          <input class="quote-input" type="text" name="descripcion" value="<?php echo ViewFormatter::e(formValue($draftState, 'descripcion')); ?>" placeholder="Servicios a cotizar">
         </label>
       </article>
 
@@ -106,15 +116,15 @@ InternalPage::render(
         <h2>Cliente</h2>
         <label class="quote-field">
           <span class="quote-label">Razón social</span>
-          <input class="quote-input" type="text" name="nombre_cliente" required>
+          <input class="quote-input" type="text" name="nombre_cliente" value="<?php echo ViewFormatter::e(formValue($draftState, 'nombre_cliente')); ?>" required>
         </label>
         <label class="quote-field">
           <span class="quote-label">RUT</span>
-          <input class="quote-input" type="text" name="rut_cliente">
+          <input class="quote-input" type="text" name="rut_cliente" value="<?php echo ViewFormatter::e(formValue($draftState, 'rut_cliente')); ?>">
         </label>
         <label class="quote-field quote-field-last">
           <span class="quote-label">Condiciones comerciales</span>
-          <input class="quote-input" type="text" name="condiciones_comerciales" placeholder="Validez, forma de pago u observaciones comerciales">
+          <input class="quote-input" type="text" name="condiciones_comerciales" value="<?php echo ViewFormatter::e(formValue($draftState, 'condiciones_comerciales')); ?>" placeholder="Validez, forma de pago u observaciones comerciales">
         </label>
       </article>
 
@@ -122,15 +132,15 @@ InternalPage::render(
         <h2>Contacto</h2>
         <label class="quote-field">
           <span class="quote-label">Nombre</span>
-          <input class="quote-input" type="text" name="nombre_contacto">
+          <input class="quote-input" type="text" name="nombre_contacto" value="<?php echo ViewFormatter::e(formValue($draftState, 'nombre_contacto')); ?>">
         </label>
         <label class="quote-field">
           <span class="quote-label">Correo</span>
-          <input class="quote-input" type="email" name="correo_contacto">
+          <input class="quote-input" type="email" name="correo_contacto" value="<?php echo ViewFormatter::e(formValue($draftState, 'correo_contacto')); ?>">
         </label>
         <label class="quote-field quote-field-last">
           <span class="quote-label">Teléfono</span>
-          <input class="quote-input" type="text" name="telefono_contacto">
+          <input class="quote-input" type="text" name="telefono_contacto" value="<?php echo ViewFormatter::e(formValue($draftState, 'telefono_contacto')); ?>">
         </label>
       </article>
     </div>
@@ -140,24 +150,24 @@ InternalPage::render(
         <h2>Detalle</h2>
         <label class="quote-field">
           <span class="quote-label">Descripción del ítem</span>
-          <input class="quote-input" type="text" name="detalles[0][descripcion]" required>
+          <input class="quote-input" type="text" name="detalles[0][descripcion]" value="<?php echo ViewFormatter::e(formValue($draftFirstDetail, 'descripcion')); ?>" required>
         </label>
         <div class="grid quote-subgrid">
           <label class="quote-field">
             <span class="quote-label">Cantidad</span>
-            <input class="quote-input" type="number" name="detalles[0][cantidad]" value="1" min="0.01" step="0.01" required>
+            <input class="quote-input" type="number" name="detalles[0][cantidad]" value="<?php echo ViewFormatter::e($quantityValue); ?>" min="0.01" step="0.01" required>
           </label>
           <label class="quote-field">
             <span class="quote-label">Unidad</span>
-            <input class="quote-input" type="text" name="detalles[0][unidad]" value="servicio">
+            <input class="quote-input" type="text" name="detalles[0][unidad]" value="<?php echo ViewFormatter::e($unitValue); ?>">
           </label>
           <label class="quote-field">
             <span class="quote-label">Precio unitario neto</span>
-            <input class="quote-input" type="number" name="detalles[0][precio_unitario_neto]" min="0" step="1" required>
+            <input class="quote-input" type="number" name="detalles[0][precio_unitario_neto]" value="<?php echo ViewFormatter::e(formValue($draftFirstDetail, 'precio_unitario_neto')); ?>" min="0" step="1" required>
           </label>
           <label class="quote-field quote-field-last">
             <span class="quote-label">Descuento línea</span>
-            <input class="quote-input" type="number" name="detalles[0][descuento_monto]" value="0" min="0" step="1">
+            <input class="quote-input" type="number" name="detalles[0][descuento_monto]" value="<?php echo ViewFormatter::e($lineDiscountValue); ?>" min="0" step="1">
           </label>
         </div>
       </article>
@@ -166,7 +176,7 @@ InternalPage::render(
         <h2>Observaciones</h2>
         <label class="quote-field quote-field-last">
           <span class="quote-label">Notas internas</span>
-          <textarea class="quote-input" name="observaciones" rows="7" placeholder="Notas visibles en el borrador"></textarea>
+          <textarea class="quote-input" name="observaciones" rows="7" placeholder="Notas visibles en el borrador"><?php echo ViewFormatter::e(formValue($draftState, 'observaciones')); ?></textarea>
         </label>
       </article>
     </div>
@@ -398,4 +408,15 @@ function flashTitle(string $type): string
         'warning' => 'Advertencia',
         default => 'Información',
     };
+}
+
+function formValue(array $data, string $key, string $default = ''): string
+{
+    $value = $data[$key] ?? null;
+
+    if ($value === null || !is_scalar($value)) {
+        return $default;
+    }
+
+    return (string) $value;
 }

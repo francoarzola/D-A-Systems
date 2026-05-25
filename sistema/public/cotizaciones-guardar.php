@@ -6,6 +6,7 @@ require_once __DIR__ . '/../app/Core/SessionManager.php';
 require_once __DIR__ . '/../app/Core/AuthGuard.php';
 require_once __DIR__ . '/../app/Security/CsrfToken.php';
 require_once __DIR__ . '/../app/Support/FlashMessage.php';
+require_once __DIR__ . '/../app/Support/FormState.php';
 require_once __DIR__ . '/../app/Infrastructure/Config/DatabaseConfig.php';
 require_once __DIR__ . '/../app/Infrastructure/Database/Connection.php';
 require_once __DIR__ . '/../app/Repositories/QuoteRepository.php';
@@ -22,6 +23,7 @@ use DAndASystems\Internal\Security\CsrfToken;
 use DAndASystems\Internal\Services\QuoteService;
 use DAndASystems\Internal\Services\QuoteTotalsCalculator;
 use DAndASystems\Internal\Support\FlashMessage;
+use DAndASystems\Internal\Support\FormState;
 use DAndASystems\Internal\Validation\QuoteDraftValidator;
 
 const QUOTE_DRAFT_CSRF_KEY = 'quote_draft';
@@ -35,6 +37,7 @@ $guard = new AuthGuard();
 $guard->requireAuth('login.php');
 
 $flash = new FlashMessage();
+$formState = new FormState();
 
 if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
     $flash->set('error', 'La solicitud no es válida.');
@@ -59,10 +62,12 @@ try {
     $result = $service->createDraft($draftData, $guard->userId());
 
     if ($result['success'] !== true || !is_int($result['quote_id'])) {
+        $formState->set('quote_draft', $draftData);
         $flash->set('warning', 'No fue posible guardar el borrador. Revise los datos ingresados.');
         redirectTo(QUOTE_LIST_URL);
     }
 
+    $formState->clear('quote_draft');
     $flash->set('success', 'Borrador de cotización guardado correctamente.');
     redirectTo(QUOTE_DETAIL_URL . $result['quote_id']);
 } catch (\Throwable $exception) {
