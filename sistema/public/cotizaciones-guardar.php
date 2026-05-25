@@ -40,6 +40,7 @@ $flash = new FlashMessage();
 $formState = new FormState();
 
 if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
+    $formState->clear('quote_draft');
     $flash->set('error', 'La solicitud no es válida.');
     redirectTo(QUOTE_LIST_URL);
 }
@@ -48,6 +49,7 @@ $csrf = new CsrfToken();
 $csrfToken = postScalar('csrf_token');
 
 if (!$csrf->validate($csrfToken, QUOTE_DRAFT_CSRF_KEY)) {
+    $formState->clear('quote_draft');
     $flash->set('error', 'La sesión del formulario expiró. Intente nuevamente.');
     redirectTo(QUOTE_LIST_URL);
 }
@@ -71,6 +73,7 @@ try {
     $flash->set('success', 'Borrador de cotización guardado correctamente.');
     redirectTo(QUOTE_DETAIL_URL . $result['quote_id']);
 } catch (\Throwable $exception) {
+    $formState->clear('quote_draft');
     $flash->set('error', 'No fue posible guardar el borrador de cotización.');
     redirectTo(QUOTE_LIST_URL);
 }

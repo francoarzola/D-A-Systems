@@ -40,6 +40,13 @@ foreach ($endpointFragments as $fragment) {
     assertContains($endpoint, $fragment, "cotizaciones-guardar.php no contiene {$fragment}");
 }
 
+$clearCount = substr_count($endpoint, "clear('quote_draft'");
+
+if ($clearCount < 4) {
+    outputError('cotizaciones-guardar.php debe limpiar quote_draft en método inválido, CSRF inválido, guardado correcto y error técnico.');
+    exit(1);
+}
+
 $pageFragments = [
     'FormState',
     "pull('quote_draft'",

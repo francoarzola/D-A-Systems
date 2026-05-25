@@ -76,6 +76,8 @@ Si el guardado es exitoso, se ejecuta:
 FormState::clear('quote_draft')
 ```
 
+También se limpia explícitamente `quote_draft` antes de redirigir cuando la solicitud no es POST, cuando el CSRF es inválido o cuando ocurre un error técnico. Así el estado temporal solo sobrevive ante errores de validación de negocio.
+
 ## Integración con cotizaciones.php
 
 La página lee el estado con:
