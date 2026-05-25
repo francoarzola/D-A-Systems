@@ -77,6 +77,52 @@ final class QuoteService
         ];
     }
 
+    public function updateDraft(int $quoteId, array $draftData): array
+    {
+        if ($quoteId <= 0) {
+            return [
+                'success' => false,
+                'quote_id' => null,
+                'errors' => ['La cotización solicitada no es válida.'],
+                'warnings' => [],
+                'totals' => null,
+            ];
+        }
+
+        $validation = $this->draftValidator()->validateDraft($draftData);
+
+        if ($validation['valid'] !== true) {
+            return [
+                'success' => false,
+                'quote_id' => $quoteId,
+                'errors' => $validation['errors'],
+                'warnings' => $validation['warnings'],
+                'totals' => null,
+            ];
+        }
+
+        $totals = $this->totalsCalculator()->calculate($draftData['detalles'] ?? []);
+        $updated = $this->quotes->updateDraft($quoteId, $draftData, $totals);
+
+        if (!$updated) {
+            return [
+                'success' => false,
+                'quote_id' => $quoteId,
+                'errors' => ['Solo se pueden actualizar cotizaciones en estado borrador.'],
+                'warnings' => $validation['warnings'],
+                'totals' => $totals,
+            ];
+        }
+
+        return [
+            'success' => true,
+            'quote_id' => $quoteId,
+            'errors' => [],
+            'warnings' => $validation['warnings'],
+            'totals' => $totals,
+        ];
+    }
+
     private function draftValidator(): QuoteDraftValidator
     {
         if (!$this->draftValidator instanceof QuoteDraftValidator) {
