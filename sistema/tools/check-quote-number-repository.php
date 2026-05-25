@@ -15,6 +15,8 @@ $requiredFragments = [
     'final class QuoteNumberRepository',
     'public function __construct(PDO $pdo)',
     'public function reserveNextNumber(string $documentType, int $year): string',
+    'public function reserveNextNumberInCurrentTransaction(string $documentType, int $year): string',
+    '$this->reserveNextNumberInCurrentTransaction($documentType, $year)',
     'beginTransaction',
     'commit',
     'rollBack',
@@ -24,6 +26,7 @@ $requiredFragments = [
     'ultimo_numero',
     'FOR UPDATE',
     'INSERT INTO cotizacion_correlativos',
+    'ON DUPLICATE KEY UPDATE',
     'UPDATE cotizacion_correlativos',
     "sprintf('%s-%d-%04d'",
 ];
@@ -36,6 +39,8 @@ $forbiddenFragments = [
     'UPDATE cotizaciones',
     'INSERT INTO cotizaciones',
     'DELETE FROM cotizaciones',
+    'FROM cotizaciones',
+    'MAX(',
     "estado = 'emitida'",
     'quote_draft',
     '$_POST',
@@ -49,8 +54,19 @@ foreach ($forbiddenFragments as $fragment) {
     }
 }
 
+assertMethodDoesNotContainTransactionControl(
+    $repository,
+    'reserveNextNumberInCurrentTransaction',
+    [
+        'beginTransaction',
+        'commit',
+        'rollBack',
+    ]
+);
+
 outputOk('El contrato de QuoteNumberRepository está completo.');
 outputOk('No se reservó número real, no se ejecutó SQL y no se usó base de datos.');
+outputOk('reserveNextNumberInCurrentTransaction reutiliza la transaccion abierta por el caller.');
 exit(0);
 
 function readFileOrFail(string $path, string $label): string
@@ -76,6 +92,56 @@ function assertContains(string $contents, string $fragment, string $message): vo
         outputError($message);
         exit(1);
     }
+}
+
+function assertMethodDoesNotContainTransactionControl(string $contents, string $methodName, array $fragments): void
+{
+    $method = extractMethodBody($contents, $methodName);
+
+    foreach ($fragments as $fragment) {
+        if (str_contains($method, $fragment)) {
+            outputError("{$methodName} contiene control de transaccion fuera de alcance: {$fragment}");
+            exit(1);
+        }
+    }
+}
+
+function extractMethodBody(string $contents, string $methodName): string
+{
+    $needle = 'function ' . $methodName . '(';
+    $start = strpos($contents, $needle);
+
+    if ($start === false) {
+        outputError("No existe el metodo {$methodName}.");
+        exit(1);
+    }
+
+    $openBrace = strpos($contents, '{', $start);
+
+    if ($openBrace === false) {
+        outputError("No fue posible leer el metodo {$methodName}.");
+        exit(1);
+    }
+
+    $depth = 0;
+    $length = strlen($contents);
+
+    for ($index = $openBrace; $index < $length; $index++) {
+        if ($contents[$index] === '{') {
+            $depth++;
+        }
+
+        if ($contents[$index] === '}') {
+            $depth--;
+
+            if ($depth === 0) {
+                return substr($contents, $openBrace, $index - $openBrace + 1);
+            }
+        }
+    }
+
+    outputError("No fue posible delimitar el metodo {$methodName}.");
+    exit(1);
 }
 
 function outputOk(string $message): void

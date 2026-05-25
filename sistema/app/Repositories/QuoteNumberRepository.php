@@ -18,28 +18,13 @@ final class QuoteNumberRepository
 
     public function reserveNextNumber(string $documentType, int $year): string
     {
-        $documentType = $this->normalizeDocumentType($documentType);
-        $this->validateYear($year);
-
         $this->pdo->beginTransaction();
 
         try {
-            $lastNumber = $this->findLastNumberForUpdate($documentType, $year);
-
-            if ($lastNumber === null) {
-                $this->createCounter($documentType, $year);
-                $lastNumber = $this->findLastNumberForUpdate($documentType, $year);
-            }
-
-            if ($lastNumber === null) {
-                throw new InvalidArgumentException('No fue posible reservar el correlativo.');
-            }
-
-            $nextNumber = $lastNumber + 1;
-            $this->updateCounter($documentType, $year, $nextNumber);
+            $quoteNumber = $this->reserveNextNumberInCurrentTransaction($documentType, $year);
             $this->pdo->commit();
 
-            return $this->formatQuoteNumber($documentType, $year, $nextNumber);
+            return $quoteNumber;
         } catch (\Throwable $exception) {
             if ($this->pdo->inTransaction()) {
                 $this->pdo->rollBack();
@@ -47,6 +32,25 @@ final class QuoteNumberRepository
 
             throw $exception;
         }
+    }
+
+    public function reserveNextNumberInCurrentTransaction(string $documentType, int $year): string
+    {
+        $documentType = $this->normalizeDocumentType($documentType);
+        $this->validateYear($year);
+
+        $this->createCounterIfMissing($documentType, $year);
+
+        $lastNumber = $this->findLastNumberForUpdate($documentType, $year);
+
+        if ($lastNumber === null) {
+            throw new InvalidArgumentException('No fue posible reservar el correlativo.');
+        }
+
+        $nextNumber = $lastNumber + 1;
+        $this->updateCounter($documentType, $year, $nextNumber);
+
+        return $this->formatQuoteNumber($documentType, $year, $nextNumber);
     }
 
     private function findLastNumberForUpdate(string $documentType, int $year): ?int
@@ -69,7 +73,7 @@ final class QuoteNumberRepository
         return $lastNumber !== false ? (int) $lastNumber : null;
     }
 
-    private function createCounter(string $documentType, int $year): void
+    private function createCounterIfMissing(string $documentType, int $year): void
     {
         $statement = $this->pdo->prepare(
             'INSERT INTO cotizacion_correlativos (
@@ -80,7 +84,8 @@ final class QuoteNumberRepository
                 :tipo_documento,
                 :anio,
                 0
-            )'
+            )
+            ON DUPLICATE KEY UPDATE ultimo_numero = ultimo_numero'
         );
         $statement->execute([
             'tipo_documento' => $documentType,
