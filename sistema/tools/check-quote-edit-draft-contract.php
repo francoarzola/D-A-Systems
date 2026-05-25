@@ -33,6 +33,20 @@ foreach ($editFragments as $fragment) {
     assertContains($edit, $fragment, "cotizacion-editar.php no contiene {$fragment}");
 }
 
+$forbiddenEditFragments = [
+    'method="post"',
+    "method='post'",
+    'action="cotizacion-actualizar.php"',
+    "action='cotizacion-actualizar.php'",
+];
+
+foreach ($forbiddenEditFragments as $fragment) {
+    if (str_contains($edit, $fragment)) {
+        outputError("cotizacion-editar.php no debe contener {$fragment} en esta etapa.");
+        exit(1);
+    }
+}
+
 $listFragments = [
     'cotizacion-editar.php?id=',
     'borrador',
