@@ -41,6 +41,7 @@ $formState = new FormState();
 
 if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
     $formState->clear('quote_draft');
+    $formState->clear('quote_draft_errors');
     $flash->set('error', 'La solicitud no es válida.');
     redirectTo(QUOTE_LIST_URL);
 }
@@ -50,6 +51,7 @@ $csrfToken = postScalar('csrf_token');
 
 if (!$csrf->validate($csrfToken, QUOTE_DRAFT_CSRF_KEY)) {
     $formState->clear('quote_draft');
+    $formState->clear('quote_draft_errors');
     $flash->set('error', 'La sesión del formulario expiró. Intente nuevamente.');
     redirectTo(QUOTE_LIST_URL);
 }
@@ -65,15 +67,18 @@ try {
 
     if ($result['success'] !== true || !is_int($result['quote_id'])) {
         $formState->set('quote_draft', $draftData);
+        $formState->set('quote_draft_errors', validationErrorsFromResult($result['errors'] ?? []));
         $flash->set('warning', 'No fue posible guardar el borrador. Revise los datos ingresados.');
         redirectTo(QUOTE_LIST_URL);
     }
 
     $formState->clear('quote_draft');
+    $formState->clear('quote_draft_errors');
     $flash->set('success', 'Borrador de cotización guardado correctamente.');
     redirectTo(QUOTE_DETAIL_URL . $result['quote_id']);
 } catch (\Throwable $exception) {
     $formState->clear('quote_draft');
+    $formState->clear('quote_draft_errors');
     $flash->set('error', 'No fue posible guardar el borrador de cotización.');
     redirectTo(QUOTE_LIST_URL);
 }
@@ -124,6 +129,23 @@ function detailsFromPost(mixed $rawDetails): array
 function postScalar(string $key): ?string
 {
     return scalarFromArray($_POST, $key);
+}
+
+function validationErrorsFromResult(mixed $errors): array
+{
+    if (!is_array($errors)) {
+        return [];
+    }
+
+    $messages = [];
+
+    foreach ($errors as $error) {
+        if (is_scalar($error)) {
+            $messages[] = (string) $error;
+        }
+    }
+
+    return $messages;
 }
 
 function scalarFromArray(array $source, string $key): ?string

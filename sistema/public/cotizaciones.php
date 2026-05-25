@@ -33,7 +33,9 @@ InternalPage::render(
         $csrf = new CsrfToken();
         $flash = (new FlashMessage())->pull();
         $flashType = normalizeFlashType($flash['type'] ?? null);
-        $draftState = (new FormState())->pull('quote_draft') ?? [];
+        $formState = new FormState();
+        $draftState = $formState->pull('quote_draft') ?? [];
+        $draftErrors = normalizeFormErrors($formState->pull('quote_draft_errors') ?? []);
         $draftDetails = isset($draftState['detalles']) && is_array($draftState['detalles']) ? $draftState['detalles'] : [];
         $draftFirstDetail = isset($draftDetails[0]) && is_array($draftDetails[0]) ? $draftDetails[0] : [];
         $today = new DateTimeImmutable('today');
@@ -91,6 +93,17 @@ InternalPage::render(
   <h2>Crear borrador de cotización</h2>
   <p class="quote-section-copy">Formulario mínimo real para guardar un borrador con un detalle. Los totales se calculan en el servidor.</p>
 
+<?php if ($draftErrors !== []): ?>
+  <div class="form-error-summary">
+    <h3>Revise los datos del formulario</h3>
+    <ul>
+      <?php foreach ($draftErrors as $draftError): ?>
+      <li><?php echo ViewFormatter::e($draftError); ?></li>
+      <?php endforeach; ?>
+    </ul>
+  </div>
+<?php endif; ?>
+
   <form method="post" action="cotizaciones-guardar.php">
     <?php echo $csrf->inputField('quote_draft'); ?>
     <input type="hidden" name="form_action" value="guardar_borrador">
@@ -98,13 +111,19 @@ InternalPage::render(
     <div class="grid quote-subgrid">
       <article class="card quote-nested-card">
         <h2>Datos generales</h2>
-        <label class="quote-field">
+        <label class="quote-field<?php echo hasFieldError($draftErrors, 'fecha_cotizacion') ? ' field-has-error' : ''; ?>">
           <span class="quote-label">Fecha</span>
           <input class="quote-input" type="date" name="fecha_cotizacion" value="<?php echo ViewFormatter::e($quoteDateValue); ?>" required>
+          <?php if (hasFieldError($draftErrors, 'fecha_cotizacion')): ?>
+          <span class="field-error"><?php echo ViewFormatter::e(fieldError($draftErrors, 'fecha_cotizacion')); ?></span>
+          <?php endif; ?>
         </label>
-        <label class="quote-field">
+        <label class="quote-field<?php echo hasFieldError($draftErrors, 'valido_hasta') ? ' field-has-error' : ''; ?>">
           <span class="quote-label">Validez</span>
           <input class="quote-input" type="date" name="valido_hasta" value="<?php echo ViewFormatter::e($validUntilValue); ?>">
+          <?php if (hasFieldError($draftErrors, 'valido_hasta')): ?>
+          <span class="field-error"><?php echo ViewFormatter::e(fieldError($draftErrors, 'valido_hasta')); ?></span>
+          <?php endif; ?>
         </label>
         <label class="quote-field quote-field-last">
           <span class="quote-label">Descripción</span>
@@ -117,6 +136,9 @@ InternalPage::render(
         <label class="quote-field">
           <span class="quote-label">Razón social</span>
           <input class="quote-input" type="text" name="nombre_cliente" value="<?php echo ViewFormatter::e(formValue($draftState, 'nombre_cliente')); ?>" required>
+          <?php if (hasFieldError($draftErrors, 'nombre_cliente')): ?>
+          <span class="field-error"><?php echo ViewFormatter::e(fieldError($draftErrors, 'nombre_cliente')); ?></span>
+          <?php endif; ?>
         </label>
         <label class="quote-field">
           <span class="quote-label">RUT</span>
@@ -134,9 +156,12 @@ InternalPage::render(
           <span class="quote-label">Nombre</span>
           <input class="quote-input" type="text" name="nombre_contacto" value="<?php echo ViewFormatter::e(formValue($draftState, 'nombre_contacto')); ?>">
         </label>
-        <label class="quote-field">
+        <label class="quote-field<?php echo hasFieldError($draftErrors, 'correo_contacto') ? ' field-has-error' : ''; ?>">
           <span class="quote-label">Correo</span>
           <input class="quote-input" type="email" name="correo_contacto" value="<?php echo ViewFormatter::e(formValue($draftState, 'correo_contacto')); ?>">
+          <?php if (hasFieldError($draftErrors, 'correo_contacto')): ?>
+          <span class="field-error"><?php echo ViewFormatter::e(fieldError($draftErrors, 'correo_contacto')); ?></span>
+          <?php endif; ?>
         </label>
         <label class="quote-field quote-field-last">
           <span class="quote-label">Teléfono</span>
@@ -151,11 +176,17 @@ InternalPage::render(
         <label class="quote-field">
           <span class="quote-label">Descripción del ítem</span>
           <input class="quote-input" type="text" name="detalles[0][descripcion]" value="<?php echo ViewFormatter::e(formValue($draftFirstDetail, 'descripcion')); ?>" required>
+          <?php if (detailFieldError($draftErrors, 'descripcion') !== ''): ?>
+          <span class="field-error"><?php echo ViewFormatter::e(detailFieldError($draftErrors, 'descripcion')); ?></span>
+          <?php endif; ?>
         </label>
         <div class="grid quote-subgrid">
           <label class="quote-field">
             <span class="quote-label">Cantidad</span>
             <input class="quote-input" type="number" name="detalles[0][cantidad]" value="<?php echo ViewFormatter::e($quantityValue); ?>" min="0.01" step="0.01" required>
+            <?php if (detailFieldError($draftErrors, 'cantidad') !== ''): ?>
+            <span class="field-error"><?php echo ViewFormatter::e(detailFieldError($draftErrors, 'cantidad')); ?></span>
+            <?php endif; ?>
           </label>
           <label class="quote-field">
             <span class="quote-label">Unidad</span>
@@ -164,10 +195,16 @@ InternalPage::render(
           <label class="quote-field">
             <span class="quote-label">Precio unitario neto</span>
             <input class="quote-input" type="number" name="detalles[0][precio_unitario_neto]" value="<?php echo ViewFormatter::e(formValue($draftFirstDetail, 'precio_unitario_neto')); ?>" min="0" step="1" required>
+            <?php if (detailFieldError($draftErrors, 'precio_unitario_neto') !== ''): ?>
+            <span class="field-error"><?php echo ViewFormatter::e(detailFieldError($draftErrors, 'precio_unitario_neto')); ?></span>
+            <?php endif; ?>
           </label>
           <label class="quote-field quote-field-last">
             <span class="quote-label">Descuento línea</span>
             <input class="quote-input" type="number" name="detalles[0][descuento_monto]" value="<?php echo ViewFormatter::e($lineDiscountValue); ?>" min="0" step="1">
+            <?php if (detailFieldError($draftErrors, 'descuento_monto') !== ''): ?>
+            <span class="field-error"><?php echo ViewFormatter::e(detailFieldError($draftErrors, 'descuento_monto')); ?></span>
+            <?php endif; ?>
           </label>
         </div>
       </article>
@@ -419,4 +456,66 @@ function formValue(array $data, string $key, string $default = ''): string
     }
 
     return (string) $value;
+}
+
+function normalizeFormErrors(array $errors): array
+{
+    $messages = [];
+
+    foreach ($errors as $error) {
+        if (is_scalar($error)) {
+            $message = trim((string) $error);
+
+            if ($message !== '') {
+                $messages[] = $message;
+            }
+        }
+    }
+
+    return $messages;
+}
+
+function fieldError(array $errors, string $key): string
+{
+    $patterns = [
+        'nombre_cliente' => ['nombre del cliente'],
+        'correo_contacto' => ['correo de contacto'],
+        'fecha_cotizacion' => ['fecha de cotización'],
+        'valido_hasta' => ['fecha de validez'],
+    ];
+
+    foreach ($patterns[$key] ?? [] as $pattern) {
+        foreach ($errors as $error) {
+            if (stripos($error, $pattern) !== false) {
+                return $error;
+            }
+        }
+    }
+
+    return '';
+}
+
+function hasFieldError(array $errors, string $key): bool
+{
+    return fieldError($errors, $key) !== '';
+}
+
+function detailFieldError(array $errors, string $field): string
+{
+    $patterns = [
+        'descripcion' => ['El detalle 1 requiere descripción', 'El detalle 1 debe ser una estructura válida'],
+        'cantidad' => ['El detalle 1 requiere cantidad'],
+        'precio_unitario_neto' => ['El detalle 1 requiere precio unitario neto'],
+        'descuento_monto' => ['El detalle 1 requiere descuento', 'El detalle 1 no puede tener total de línea negativo'],
+    ];
+
+    foreach ($patterns[$field] ?? [] as $pattern) {
+        foreach ($errors as $error) {
+            if (stripos($error, $pattern) !== false) {
+                return $error;
+            }
+        }
+    }
+
+    return '';
 }

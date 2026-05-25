@@ -298,6 +298,38 @@ footer small {
   margin-bottom: 0;
 }
 
+.field-has-error .quote-input {
+  border-color: rgba(184, 44, 44, 0.55);
+  background: #fff8f8;
+}
+
+.field-error {
+  display: block;
+  margin-top: 6px;
+  color: #9f2d2d;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.form-error-summary {
+  margin: 18px 0;
+  padding: 14px 16px;
+  border: 1px solid rgba(184, 44, 44, 0.26);
+  border-radius: 8px;
+  background: #fff8f8;
+  color: #7f2626;
+}
+
+.form-error-summary h3 {
+  margin: 0 0 8px;
+  color: #7f2626;
+}
+
+.form-error-summary ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
 .quote-label {
   display: block;
   margin-bottom: 6px;
