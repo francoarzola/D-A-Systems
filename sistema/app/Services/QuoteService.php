@@ -123,6 +123,39 @@ final class QuoteService
         ];
     }
 
+    public function issueDraft(int $quoteId): array
+    {
+        if ($quoteId <= 0) {
+            return [
+                'success' => false,
+                'quote_id' => $quoteId,
+                'numero_cotizacion' => null,
+                'estado' => null,
+                'errors' => ['La cotizacion solicitada no es valida.'],
+            ];
+        }
+
+        $issued = $this->quotes->issueDraft($quoteId);
+
+        if ($issued === null) {
+            return [
+                'success' => false,
+                'quote_id' => $quoteId,
+                'numero_cotizacion' => null,
+                'estado' => null,
+                'errors' => ['Solo se pueden emitir cotizaciones en estado borrador.'],
+            ];
+        }
+
+        return [
+            'success' => true,
+            'quote_id' => (int) $issued['id'],
+            'numero_cotizacion' => $issued['numero_cotizacion'],
+            'estado' => 'emitida',
+            'errors' => [],
+        ];
+    }
+
     private function draftValidator(): QuoteDraftValidator
     {
         if (!$this->draftValidator instanceof QuoteDraftValidator) {

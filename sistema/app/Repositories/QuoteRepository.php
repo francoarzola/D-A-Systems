@@ -183,6 +183,53 @@ final class QuoteRepository
         }
     }
 
+    public function issueDraft(int $quoteId, string $documentType = 'COT'): ?array
+    {
+        if ($quoteId <= 0) {
+            return null;
+        }
+
+        $this->pdo->beginTransaction();
+
+        try {
+            $quote = $this->lockQuoteForIssue($quoteId);
+
+            if (!$this->canIssueLockedQuote($quote)) {
+                $this->pdo->rollBack();
+                return null;
+            }
+
+            if (!$this->hasIssueMinimumData($quote)) {
+                $this->pdo->rollBack();
+                return null;
+            }
+
+            if (!$this->quoteHasDetails($quoteId)) {
+                $this->pdo->rollBack();
+                return null;
+            }
+
+            $year = $this->issueYearFromQuote($quote);
+            $numbers = new QuoteNumberRepository($this->pdo);
+            $quoteNumber = $numbers->reserveNextNumberInCurrentTransaction($documentType, $year);
+
+            $this->markQuoteAsIssued($quoteId, $quoteNumber);
+            $this->pdo->commit();
+
+            return [
+                'id' => $quoteId,
+                'numero_cotizacion' => $quoteNumber,
+                'estado' => 'emitida',
+            ];
+        } catch (\Throwable $exception) {
+            if ($this->pdo->inTransaction()) {
+                $this->pdo->rollBack();
+            }
+
+            throw $exception;
+        }
+    }
+
     private function readColumnsSql(): string
     {
         return implode(', ', self::READ_COLUMNS);
@@ -330,6 +377,97 @@ final class QuoteRepository
 
         return ($quote['estado'] ?? null) === 'borrador'
             && ($quoteNumber === null || $quoteNumber === '');
+    }
+
+    private function lockQuoteForIssue(int $quoteId): ?array
+    {
+        $columns = $this->readColumnsSql();
+        $statement = $this->pdo->prepare(
+            "SELECT {$columns}
+             FROM cotizaciones
+             WHERE id = :id
+             LIMIT 1
+             FOR UPDATE"
+        );
+        $statement->bindValue(':id', $quoteId, PDO::PARAM_INT);
+        $statement->execute();
+
+        $quote = $statement->fetch();
+
+        return is_array($quote) ? $quote : null;
+    }
+
+    private function canIssueLockedQuote(?array $quote): bool
+    {
+        if ($quote === null) {
+            return false;
+        }
+
+        $quoteNumber = $quote['numero_cotizacion'] ?? null;
+
+        return ($quote['estado'] ?? null) === 'borrador'
+            && ($quoteNumber === null || $quoteNumber === '');
+    }
+
+    private function hasIssueMinimumData(array $quote): bool
+    {
+        return $this->stringOrNull($quote['nombre_cliente'] ?? null) !== null
+            && $this->stringOrNull($quote['fecha_cotizacion'] ?? null) !== null;
+    }
+
+    private function quoteHasDetails(int $quoteId): bool
+    {
+        $statement = $this->pdo->prepare(
+            'SELECT COUNT(*)
+             FROM cotizacion_detalles
+             WHERE cotizacion_id = :quote_id'
+        );
+        $statement->bindValue(':quote_id', $quoteId, PDO::PARAM_INT);
+        $statement->execute();
+
+        return (int) $statement->fetchColumn() > 0;
+    }
+
+    private function issueYearFromQuote(array $quote): int
+    {
+        $quoteDate = $this->dateValue($quote['fecha_cotizacion'] ?? null);
+
+        if ($quoteDate !== null) {
+            $date = \DateTimeImmutable::createFromFormat('!Y-m-d', $quoteDate);
+            $errors = \DateTimeImmutable::getLastErrors();
+
+            if (
+                $date !== false
+                && ($errors === false || $errors['warning_count'] === 0 && $errors['error_count'] === 0)
+            ) {
+                return (int) $date->format('Y');
+            }
+        }
+
+        return (int) date('Y');
+    }
+
+    private function markQuoteAsIssued(int $quoteId, string $quoteNumber): void
+    {
+        $statement = $this->pdo->prepare(
+            'UPDATE cotizaciones
+             SET numero_cotizacion = :numero_cotizacion,
+                 estado = :estado,
+                 actualizado_en = CURRENT_TIMESTAMP
+             WHERE id = :id
+               AND estado = :previous_estado
+               AND (numero_cotizacion IS NULL OR numero_cotizacion = "")'
+        );
+        $statement->execute([
+            'numero_cotizacion' => $quoteNumber,
+            'estado' => 'emitida',
+            'id' => $quoteId,
+            'previous_estado' => 'borrador',
+        ]);
+
+        if ($statement->rowCount() < 1) {
+            throw new \RuntimeException('No fue posible emitir la cotizacion bloqueada.');
+        }
     }
 
     private function updateDraftHeader(int $quoteId, array $header, array $calculatedTotals): void
