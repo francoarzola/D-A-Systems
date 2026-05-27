@@ -164,6 +164,9 @@ InternalPage::render(
     <button class="quote-action quote-action-strong" type="submit">Emitir cotizaci&oacute;n</button>
   </form>
   <?php endif; ?>
+  <?php if (($quote['estado'] ?? null) === 'emitida' && trim((string) ($quote['numero_cotizacion'] ?? '')) !== ''): ?>
+  <a class="quote-action quote-action-primary" href="cotizacion-imprimir.php?id=<?php echo ViewFormatter::e((string) ($quote['id'] ?? '')); ?>">Vista imprimible</a>
+  <?php endif; ?>
 </div>
 <?php if (($quote['estado'] ?? null) === 'borrador'): ?>
 <section class="status-panel">
