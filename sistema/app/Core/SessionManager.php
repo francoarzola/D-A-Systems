@@ -7,7 +7,7 @@ namespace DAndASystems\Internal\Core;
 final class SessionManager
 {
     private string $name = 'DA_SYSTEMS_INTERNAL_SESSION';
-    private string $path = '/sistema';
+    private string $fallbackPath = '/';
     private int $lifetime = 0; // session cookie lifetime (0 = until browser close)
     private bool $httponly = true;
     private string $sameSite = 'Lax';
@@ -27,11 +27,12 @@ final class SessionManager
             session_name($this->name);
 
             $secure = $this->isHttps();
+            $cookiePath = $this->resolveCookiePath();
 
             // Use array-style options supported in PHP 7.3+ and PHP 8.3
             $params = [
                 'lifetime' => $this->lifetime,
-                'path' => $this->path,
+                'path' => $cookiePath,
                 'domain' => '',
                 'secure' => $secure,
                 'httponly' => $this->httponly,
@@ -76,15 +77,19 @@ final class SessionManager
 
         // Use same path and secure settings as when started
         $secure = $this->isHttps();
+        $cookiePath = $this->resolveCookiePath() ?: ($params['path'] ?? $this->fallbackPath);
 
         setcookie(
             $name,
             '',
-            time() - 3600,
-            $this->path ?: ($params['path'] ?? '/'),
-            $params['domain'] ?? '',
-            $secure,
-            $this->httponly
+            [
+                'expires' => time() - 3600,
+                'path' => $cookiePath,
+                'domain' => $params['domain'] ?? '',
+                'secure' => $secure,
+                'httponly' => $this->httponly,
+                'samesite' => $this->sameSite,
+            ]
         );
 
         // Destroy session data on server
@@ -150,5 +155,27 @@ final class SessionManager
         }
 
         return false;
+    }
+
+    private function resolveCookiePath(): string
+    {
+        $scriptName = $_SERVER['SCRIPT_NAME'] ?? null;
+
+        if (!is_string($scriptName) || trim($scriptName) === '') {
+            return $this->fallbackPath;
+        }
+
+        $scriptName = str_replace('\\', '/', $scriptName);
+        $directory = str_replace('\\', '/', dirname($scriptName));
+
+        if ($directory === '.' || $directory === '' || $directory === '/') {
+            return $this->fallbackPath;
+        }
+
+        if (!str_starts_with($directory, '/')) {
+            $directory = '/' . $directory;
+        }
+
+        return rtrim($directory, '/') ?: $this->fallbackPath;
     }
 }
