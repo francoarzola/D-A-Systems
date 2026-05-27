@@ -490,6 +490,13 @@ footer small {
   font-size: 1.15rem;
 }
 
+.print-footer {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(17, 34, 64, 0.14);
+  color: #50617d;
+}
+
 .print-actions {
   display: flex;
   gap: 12px;

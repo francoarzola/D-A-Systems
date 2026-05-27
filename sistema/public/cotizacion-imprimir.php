@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../app/Core/SessionManager.php';
 require_once __DIR__ . '/../app/Core/AuthGuard.php';
+require_once __DIR__ . '/../app/Support/CompanyProfile.php';
 require_once __DIR__ . '/../app/Support/ViewFormatter.php';
 require_once __DIR__ . '/../app/Infrastructure/Config/DatabaseConfig.php';
 require_once __DIR__ . '/../app/Infrastructure/Database/Connection.php';
@@ -16,6 +17,7 @@ use DAndASystems\Internal\Infrastructure\Config\DatabaseConfig;
 use DAndASystems\Internal\Infrastructure\Database\Connection;
 use DAndASystems\Internal\Repositories\QuoteRepository;
 use DAndASystems\Internal\Services\QuoteService;
+use DAndASystems\Internal\Support\CompanyProfile;
 use DAndASystems\Internal\Support\ViewFormatter;
 
 $session = new SessionManager();
@@ -24,6 +26,7 @@ $session->start();
 $guard = new AuthGuard();
 $guard->requireAuth('login.php');
 
+$company = CompanyProfile::fromDefaultConfig();
 $quoteId = filter_var($_GET['id'] ?? null, FILTER_VALIDATE_INT);
 $quote = null;
 $details = [];
@@ -58,7 +61,7 @@ if (!is_int($quoteId) || $quoteId <= 0) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cotización imprimible - D&A Systems</title>
+  <title>Cotización imprimible - <?php echo ViewFormatter::e($company->commercialName()); ?></title>
   <link rel="stylesheet" href="assets/css/internal.css">
 </head>
 <body class="print-page">
@@ -72,7 +75,7 @@ if (!is_int($quoteId) || $quoteId <= 0) {
     <?php else: ?>
     <header class="print-header">
       <div>
-        <p class="print-brand">D&amp;A Systems</p>
+        <p class="print-brand"><?php echo ViewFormatter::e($company->commercialName()); ?></p>
         <h1>Cotización</h1>
       </div>
       <div class="print-meta">
@@ -80,6 +83,24 @@ if (!is_int($quoteId) || $quoteId <= 0) {
         <p><strong>Estado:</strong> <?php echo ViewFormatter::e(ViewFormatter::quoteStatus($quote['estado'] ?? null)); ?></p>
       </div>
     </header>
+
+    <section class="print-grid">
+      <article class="print-panel">
+        <h2>Datos empresa</h2>
+        <p><strong>Nombre comercial:</strong> <?php echo ViewFormatter::e($company->commercialName()); ?></p>
+        <p><strong>Razón social:</strong> <?php echo ViewFormatter::e($company->legalName()); ?></p>
+        <p><strong>RUT:</strong> <?php echo ViewFormatter::e($company->taxId()); ?></p>
+        <p><strong>Giro:</strong> <?php echo ViewFormatter::e($company->businessActivity()); ?></p>
+      </article>
+      <article class="print-panel">
+        <h2>Contacto empresa</h2>
+        <p><strong>Dirección:</strong> <?php echo ViewFormatter::e($company->address()); ?></p>
+        <p><strong>Ciudad/país:</strong> <?php echo ViewFormatter::e($company->city()); ?>, <?php echo ViewFormatter::e($company->country()); ?></p>
+        <p><strong>Correo:</strong> <?php echo ViewFormatter::e($company->email()); ?></p>
+        <p><strong>Teléfono:</strong> <?php echo ViewFormatter::e($company->phone()); ?></p>
+        <p><strong>Sitio web:</strong> <?php echo ViewFormatter::e($company->website()); ?></p>
+      </article>
+    </section>
 
     <section class="print-grid">
       <article class="print-panel">
@@ -151,12 +172,18 @@ if (!is_int($quoteId) || $quoteId <= 0) {
       <article class="print-panel">
         <h2>Condiciones comerciales</h2>
         <p><?php echo ViewFormatter::e(ViewFormatter::text($quote['condiciones_comerciales'] ?? null)); ?></p>
+        <p><strong>Condiciones de pago:</strong> <?php echo ViewFormatter::e($company->defaultPaymentTerms()); ?></p>
       </article>
       <article class="print-panel">
         <h2>Observaciones</h2>
         <p><?php echo ViewFormatter::e(ViewFormatter::text($quote['observaciones'] ?? null)); ?></p>
+        <p><?php echo ViewFormatter::e($company->quoteValidityNote()); ?></p>
       </article>
     </section>
+
+    <footer class="print-footer">
+      <p><?php echo ViewFormatter::e($company->defaultFooterNote()); ?></p>
+    </footer>
 
     <nav class="print-actions">
       <button type="button" onclick="window.print()">Imprimir</button>
