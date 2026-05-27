@@ -1,6 +1,7 @@
 .env
 config/*.local.php
 *.log
+vendor/
 
 # Local database configuration files with secrets should not be versioned
 sistema/config/database.php
