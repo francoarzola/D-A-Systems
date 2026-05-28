@@ -55,6 +55,18 @@ InternalPage::render(
             }
         }
         ?>
+<section class="internal-topbar" aria-label="Navegación interna de cotizaciones">
+  <div class="internal-topbar-brand">
+    <span class="internal-topbar-title">D&amp;A Systems</span>
+    <span class="internal-topbar-subtitle">Sistema interno</span>
+  </div>
+  <nav class="internal-nav" aria-label="Accesos de cotizaciones">
+    <a class="internal-nav-link internal-nav-link-active" href="cotizaciones.php" aria-current="page">Cotizaciones</a>
+    <a class="internal-nav-link" href="cotizaciones.php">Crear borrador</a>
+    <a class="internal-nav-link" href="logout.php">Cerrar sesión</a>
+  </nav>
+</section>
+
 <?php if ($flash !== null): ?>
 <section class="flash-message flash-message-<?php echo ViewFormatter::e($flashType); ?>">
   <h3><?php echo ViewFormatter::e(flashTitle($flashType)); ?></h3>
