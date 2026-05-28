@@ -132,6 +132,71 @@ body {
   margin-top: 26px;
 }
 
+.quotes-page-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+  margin-top: 26px;
+  padding: 24px;
+  border: 1px solid rgba(17, 34, 64, 0.08);
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 18px 40px rgba(15, 30, 70, 0.05);
+}
+
+.quotes-page-heading h2 {
+  margin: 0 0 8px;
+  color: #112a56;
+  font-size: 1.7rem;
+}
+
+.quotes-page-heading p {
+  margin: 0;
+  color: #526080;
+  line-height: 1.6;
+}
+
+.quotes-eyebrow {
+  margin: 0 0 6px;
+  color: #1d75cf;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.quotes-summary-grid {
+  margin-top: 22px;
+}
+
+.quotes-list-section {
+  margin-top: 24px;
+  border-color: rgba(29, 117, 207, 0.16);
+}
+
+.quote-create-section {
+  margin-top: 24px;
+}
+
+.quotes-section-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.quotes-section-header h2 {
+  margin-bottom: 0;
+}
+
+.quotes-section-header .quote-section-copy {
+  max-width: 420px;
+  margin: 0;
+  text-align: right;
+}
+
 .grid {
   display: grid;
   gap: 20px;
@@ -362,6 +427,17 @@ footer small {
 
   .internal-nav {
     justify-content: flex-start;
+  }
+
+  .quotes-page-heading,
+  .quotes-section-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .quotes-section-header .quote-section-copy {
+    max-width: none;
+    text-align: left;
   }
 }
 
