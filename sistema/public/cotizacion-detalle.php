@@ -166,6 +166,7 @@ InternalPage::render(
   <?php endif; ?>
   <?php if (($quote['estado'] ?? null) === 'emitida' && trim((string) ($quote['numero_cotizacion'] ?? '')) !== ''): ?>
   <a class="quote-action quote-action-primary" href="cotizacion-imprimir.php?id=<?php echo ViewFormatter::e((string) ($quote['id'] ?? '')); ?>">Vista imprimible</a>
+  <a class="quote-action quote-action-strong" href="cotizacion-pdf.php?id=<?php echo ViewFormatter::e((string) ($quote['id'] ?? '')); ?>">Descargar PDF</a>
   <?php endif; ?>
 </div>
 <?php if (($quote['estado'] ?? null) === 'borrador'): ?>
