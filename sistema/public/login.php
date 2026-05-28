@@ -221,17 +221,17 @@ $token = $csrf->token();
       </div>
     <?php endif; ?>
 
-    <form method="post" action="login.php" class="card" style="margin-top:20px;">
+    <form method="post" action="login.php" class="card auth-card">
       <label for="email">Email</label>
       <input id="email" name="email" type="email" required placeholder="usuario@empresa.cl" value="<?php echo htmlspecialchars($emailValue, ENT_QUOTES, 'UTF-8'); ?>" />
 
-      <label for="password" style="margin-top:12px;">Contraseña</label>
+      <label for="password" class="auth-field-spaced">Contraseña</label>
       <input id="password" name="password" type="password" required placeholder="Contraseña" />
 
       <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($token, ENT_QUOTES, 'UTF-8'); ?>" />
 
-      <div class="button-wrapper" style="margin-top:18px;">
-        <button class="button-disabled" type="submit">Acceder</button>
+      <div class="button-wrapper">
+        <button class="button-primary" type="submit">Acceder</button>
       </div>
     </form>
 
