@@ -933,3 +933,61 @@ footer small {
     page-break-inside: avoid;
   }
 }
+
+/* Consolidation helpers for Quotes module (7B.07)
+   These are additive aliases and small spacing tweaks to ensure
+   `cotizaciones.php`, `cotizacion-detalle.php` and `cotizacion-editar.php`
+   share visual primitives without removing existing classes. */
+
+.summary-card,
+.card-summary {
+  padding: 12px 14px;
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid rgba(17,34,64,0.06);
+}
+
+.summary-item,
+.quote-detail-summary-item,
+.quote-edit-summary-item {
+  min-width: 120px;
+}
+
+.action-bar,
+.quote-detail-actions,
+.quote-edit-actions,
+.quote-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.form-grid {
+  display: grid;
+  gap: 18px;
+}
+
+.table-section,
+.quote-table-wrapper {
+  margin-top: 18px;
+}
+
+/* Buttons consistency */
+.btn-primary,
+.button-primary,
+.quote-action-primary {
+  background: #12376f;
+  color: #ffffff;
+}
+
+.btn-muted,
+.quote-action-muted {
+  background: #f3f6fb;
+  color: #1a3d8f;
+}
+
+/* Small spacing normalization for headings inside cards */
+.card h2 {
+  margin-bottom: 10px;
+}
+
