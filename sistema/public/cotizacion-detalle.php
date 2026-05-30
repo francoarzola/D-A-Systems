@@ -88,7 +88,7 @@ InternalPage::render(
 <!-- Encabezado operativo -->
 <section class="quote-detail-heading">
   <h1>Detalle de cotización</h1>
-  <p class="quote-detail-intro">Resumen ejecutivo y acciones principales.</p>
+  <p class="quote-detail-intro">Información completa y acciones disponibles.</p>
 </section>
 
 <!-- Resumen superior: número, estado, cliente, fecha, validez, total -->
