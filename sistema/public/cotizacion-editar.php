@@ -104,9 +104,40 @@ InternalPage::render(
   <?php endif; ?>
 </div>
 <?php else: ?>
+
 <section class="status-panel">
   <h3>Preparación de edición</h3>
   <p>Modifica los datos del borrador. Los cambios se validan, recalculan y guardan en el servidor.</p>
+</section>
+
+<!-- Encabezado operativo de edición -->
+<section class="quote-edit-heading">
+  <h1>Editar cotización</h1>
+  <p class="quote-edit-intro">Actualiza los datos del borrador antes de emitirlo.</p>
+</section>
+
+<!-- Resumen superior -->
+<section class="quote-edit-summary">
+  <div class="quote-edit-summary-item">
+    <strong>Estado</strong>
+    <div><?php echo ViewFormatter::e(ViewFormatter::quoteStatus($quote['estado'] ?? null)); ?></div>
+  </div>
+  <div class="quote-edit-summary-item">
+    <strong>Cliente</strong>
+    <div><?php echo ViewFormatter::e(ViewFormatter::text($quote['nombre_cliente'] ?? null)); ?></div>
+  </div>
+  <div class="quote-edit-summary-item">
+    <strong>Fecha</strong>
+    <div><?php echo ViewFormatter::e(ViewFormatter::quoteDate($quote['fecha_cotizacion'] ?? null)); ?></div>
+  </div>
+  <div class="quote-edit-summary-item">
+    <strong>Validez</strong>
+    <div><?php echo ViewFormatter::e(ViewFormatter::quoteDate($quote['valido_hasta'] ?? null)); ?></div>
+  </div>
+  <div class="quote-edit-summary-item">
+    <strong>Total</strong>
+    <div><?php echo ViewFormatter::e(ViewFormatter::money($quote['total'] ?? null)); ?></div>
+  </div>
 </section>
 
 <section class="card quote-section">
@@ -124,10 +155,17 @@ InternalPage::render(
   </div>
 <?php endif; ?>
 
-  <form method="post" action="cotizacion-actualizar.php">
+  <form class="quote-edit-form" method="post" action="cotizacion-actualizar.php">
     <?php echo $csrf->inputField('quote_draft_edit'); ?>
     <input type="hidden" name="cotizacion_id" value="<?php echo ViewFormatter::e((string) ($quote['id'] ?? '')); ?>">
     <input type="hidden" name="form_action" value="guardar_borrador">
+
+    <!-- Acciones principales visibles al inicio del formulario -->
+    <div class="quote-edit-actions">
+      <button class="quote-action quote-action-primary" type="submit">Guardar cambios</button>
+      <a class="quote-action quote-action-muted" href="cotizacion-detalle.php?id=<?php echo ViewFormatter::e((string) ($quote['id'] ?? '')); ?>">Ver detalle</a>
+      <a class="quote-action quote-action-muted" href="cotizaciones.php">Volver al listado</a>
+    </div>
 
     <div class="grid quote-subgrid">
       <article class="card quote-nested-card">
