@@ -653,6 +653,42 @@ footer small {
   margin: 0;
 }
 
+/* Quote edit visual helpers */
+.quote-edit-heading {
+  margin-top: 18px;
+}
+.quote-edit-heading h1 {
+  margin: 0 0 6px 0;
+  font-size: 1.4rem;
+  color: #112a56;
+}
+.quote-edit-intro {
+  margin: 0 0 12px 0;
+  color: #526080;
+}
+.quote-edit-summary {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 10px 0 18px 0;
+}
+.quote-edit-summary-item {
+  background: #ffffff;
+  border: 1px solid rgba(17,34,64,0.06);
+  padding: 10px 12px;
+  border-radius: 8px;
+  min-width: 120px;
+}
+.quote-edit-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+.quote-edit-form {
+  margin-top: 6px;
+}
+
 .print-page {
   margin: 0;
   background: #e8edf4;
