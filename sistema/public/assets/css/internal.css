@@ -610,6 +610,49 @@ footer small {
   border: 1px solid rgba(26, 61, 143, 0.2);
 }
 
+/* Quote detail visual ordering helpers */
+.quote-detail-heading {
+  margin-top: 18px;
+}
+.quote-detail-heading h1 {
+  margin: 0 0 6px 0;
+  font-size: 1.6rem;
+  color: #112a56;
+}
+.quote-detail-intro {
+  margin: 0 0 16px 0;
+  color: #526080;
+}
+.quote-detail-summary {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.quote-detail-summary-item {
+  background: #ffffff;
+  border: 1px solid rgba(17,34,64,0.06);
+  padding: 12px 14px;
+  border-radius: 10px;
+  min-width: 140px;
+}
+.quote-detail-summary-item strong {
+  display: block;
+  font-size: 0.85rem;
+  color: #223254;
+  margin-bottom: 6px;
+}
+.quote-detail-actions {
+  margin: 12px 0 20px 0;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.quote-inline-form {
+  display: inline-block;
+  margin: 0;
+}
+
 .print-page {
   margin: 0;
   background: #e8edf4;

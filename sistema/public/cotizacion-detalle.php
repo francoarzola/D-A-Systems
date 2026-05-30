@@ -84,12 +84,59 @@ InternalPage::render(
   <a class="quote-action quote-action-muted" href="cotizaciones.php">Volver al listado</a>
 </div>
 <?php else: ?>
-<section class="status-panel">
-  <h3>Detalle de cotización</h3>
-  <p><strong>Estado:</strong> <?php echo ViewFormatter::e(ViewFormatter::quoteStatus($quote['estado'] ?? null)); ?></p>
-  <p><strong>Número:</strong> <?php echo ViewFormatter::e(ViewFormatter::quoteNumber($quote['numero_cotizacion'] ?? null)); ?></p>
+
+<!-- Encabezado operativo -->
+<section class="quote-detail-heading">
+  <h1>Detalle de cotización</h1>
+  <p class="quote-detail-intro">Resumen ejecutivo y acciones principales.</p>
 </section>
 
+<!-- Resumen superior: número, estado, cliente, fecha, validez, total -->
+<section class="quote-detail-summary">
+  <div class="quote-detail-summary-item">
+    <strong>Número</strong>
+    <div><?php echo ViewFormatter::e(ViewFormatter::quoteNumber($quote['numero_cotizacion'] ?? null)); ?></div>
+  </div>
+  <div class="quote-detail-summary-item">
+    <strong>Estado</strong>
+    <div><?php echo ViewFormatter::e(ViewFormatter::quoteStatus($quote['estado'] ?? null)); ?></div>
+  </div>
+  <div class="quote-detail-summary-item">
+    <strong>Cliente</strong>
+    <div><?php echo ViewFormatter::e(ViewFormatter::text($quote['nombre_cliente'] ?? null)); ?></div>
+  </div>
+  <div class="quote-detail-summary-item">
+    <strong>Fecha</strong>
+    <div><?php echo ViewFormatter::e(ViewFormatter::quoteDate($quote['fecha_cotizacion'] ?? null)); ?></div>
+  </div>
+  <div class="quote-detail-summary-item">
+    <strong>Validez</strong>
+    <div><?php echo ViewFormatter::e(ViewFormatter::quoteDate($quote['valido_hasta'] ?? null)); ?></div>
+  </div>
+  <div class="quote-detail-summary-item">
+    <strong>Total</strong>
+    <div><?php echo ViewFormatter::e(ViewFormatter::money($quote['total'] ?? null)); ?></div>
+  </div>
+</section>
+
+<!-- Acciones principales junto al resumen -->
+<div class="quote-detail-actions">
+  <a class="quote-action quote-action-muted" href="cotizaciones.php">Volver al listado</a>
+  <?php if (($quote['estado'] ?? null) === 'borrador'): ?>
+    <a class="quote-action quote-action-primary" href="cotizacion-editar.php?id=<?php echo ViewFormatter::e((string) ($quote['id'] ?? '')); ?>">Editar borrador</a>
+    <form method="post" action="cotizacion-emitir.php" class="quote-inline-form">
+      <?php echo $csrf->inputField('quote_issue'); ?>
+      <input type="hidden" name="cotizacion_id" value="<?php echo ViewFormatter::e((string) ($quote['id'] ?? '')); ?>">
+      <button class="quote-action quote-action-strong" type="submit">Emitir cotizaci&oacute;n</button>
+    </form>
+  <?php endif; ?>
+  <?php if (($quote['estado'] ?? null) === 'emitida' && trim((string) ($quote['numero_cotizacion'] ?? '')) !== ''): ?>
+    <a class="quote-action quote-action-primary" href="cotizacion-imprimir.php?id=<?php echo ViewFormatter::e((string) ($quote['id'] ?? '')); ?>">Vista imprimible</a>
+    <a class="quote-action quote-action-strong" href="cotizacion-pdf.php?id=<?php echo ViewFormatter::e((string) ($quote['id'] ?? '')); ?>">Descargar PDF</a>
+  <?php endif; ?>
+</div>
+
+<!-- Bloques de información secundarios -->
 <section class="grid">
   <article class="card">
     <h2>Datos generales</h2>
@@ -166,21 +213,6 @@ InternalPage::render(
   <?php endif; ?>
 </section>
 
-<div class="quote-actions">
-  <a class="quote-action quote-action-muted" href="cotizaciones.php">Volver al listado</a>
-  <?php if (($quote['estado'] ?? null) === 'borrador'): ?>
-  <a class="quote-action quote-action-primary" href="cotizacion-editar.php?id=<?php echo ViewFormatter::e((string) ($quote['id'] ?? '')); ?>">Editar borrador</a>
-  <form method="post" action="cotizacion-emitir.php" class="quote-inline-form">
-    <?php echo $csrf->inputField('quote_issue'); ?>
-    <input type="hidden" name="cotizacion_id" value="<?php echo ViewFormatter::e((string) ($quote['id'] ?? '')); ?>">
-    <button class="quote-action quote-action-strong" type="submit">Emitir cotizaci&oacute;n</button>
-  </form>
-  <?php endif; ?>
-  <?php if (($quote['estado'] ?? null) === 'emitida' && trim((string) ($quote['numero_cotizacion'] ?? '')) !== ''): ?>
-  <a class="quote-action quote-action-primary" href="cotizacion-imprimir.php?id=<?php echo ViewFormatter::e((string) ($quote['id'] ?? '')); ?>">Vista imprimible</a>
-  <a class="quote-action quote-action-strong" href="cotizacion-pdf.php?id=<?php echo ViewFormatter::e((string) ($quote['id'] ?? '')); ?>">Descargar PDF</a>
-  <?php endif; ?>
-</div>
 <?php if (($quote['estado'] ?? null) === 'borrador'): ?>
 <section class="status-panel">
   <h3>Emisi&oacute;n oficial</h3>
