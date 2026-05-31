@@ -240,6 +240,10 @@ $contact->from_name = $name;
 $contact->from_email = $email;
 $contact->subject = $subject;
 
+if (isset($config['smtp']) && is_array($config['smtp'])) {
+  $contact->smtp = $config['smtp'];
+}
+
 $contact->add_message($name, 'Nombre');
 $contact->add_message($email, 'Email');
 if ($phone !== '') {
