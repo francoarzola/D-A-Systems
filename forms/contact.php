@@ -258,6 +258,42 @@ $contact->add_message($message, 'Mensaje', 10);
 $send_result = $contact->send();
 if (trim($send_result) === 'OK') {
   log_event('send_completed', 'success', 'send_ok');
+
+  $autoReplyEnabled = filter_var($config['auto_reply_enabled'] ?? false, FILTER_VALIDATE_BOOLEAN);
+  if ($autoReplyEnabled && filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    $autoReply = new PHP_Email_Form();
+    $autoReply->ajax = true;
+    $autoReply->to = $email;
+    $autoReply->from_name = 'D&A Systems';
+    $autoReply->from_email = $receiving_email_address;
+    $autoReply->subject = 'Hemos recibido tu solicitud | D&A Systems';
+    $autoReply->content_type = 'text/html';
+
+    if (isset($config['smtp']) && is_array($config['smtp'])) {
+      $autoReply->smtp = $config['smtp'];
+    }
+
+    $autoReply->message = '<div style="background:#F5F7FA;padding:24px;font-family:Arial,Helvetica,sans-serif;color:#00143B;line-height:1.5;">'
+      . '<div style="max-width:600px;margin:0 auto;background:#ffffff;padding:24px;border-radius:16px;border:1px solid #d9e2ec;">'
+      . '<h1 style="margin-top:0;font-size:24px;color:#00143B;">Hemos recibido tu solicitud</h1>'
+      . '<p>Hola,</p>'
+      . '<p>Gracias por contactar a D&A Systems. Hemos recibido tu solicitud correctamente y la estamos revisando.</p>'
+      . '<p>Te responderemos a la brevedad con la información y pasos siguientes. Si quieres agregar algún detalle adicional, responde a este mensaje.</p>'
+      . '<p style="margin-bottom:0;">Saludos,<br>D&A Systems</p>'
+      . '<hr style="border:none;border-top:1px solid #e2e8f0;margin:24px 0;">'
+      . '<p style="font-size:14px;color:#64748b;margin:0;">Si necesitas ayuda urgente, también puedes escribirnos por WhatsApp al <strong>+56 9 7300 0457</strong>.</p>'
+      . '</div></div>';
+
+    $autoReply->option('AltBody', "Hola,\n\nGracias por contactar a D&A Systems. Hemos recibido tu solicitud correctamente y la estamos revisando.\n\nTe responderemos a la brevedad con la información y pasos siguientes. Si quieres agregar algún detalle adicional, responde a este mensaje.\n\nSaludos,\nD&A Systems\n\nSi necesitas ayuda urgente, también puedes escribirnos por WhatsApp al +56 9 7300 0457.");
+
+    $autoreplyResult = trim($autoReply->send());
+    if ($autoreplyResult === 'OK') {
+      log_event('autoreply_completed', 'success', 'autoreply_ok');
+    } else {
+      log_event('autoreply_failed', 'warning', substr($autoreplyResult, 0, 255));
+    }
+  }
+
   echo 'OK';
 } else {
   log_event('send_completed', 'error', 'send_failed');
