@@ -13,7 +13,8 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://www.dasystems.cl/servicios-ti.html">
   <meta property="og:image" content="https://www.dasystems.cl/assets/img/uploads/Logoweb400.png">
-<!-- Favicons -->
+
+  <!-- Favicons -->
   <link href="assets/img/uploads/favicon-dasystems.png" rel="icon">
   <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
 
@@ -31,7 +32,6 @@
 
   <!-- Main CSS File -->
   <link href="assets/css/main.css" rel="stylesheet">
-
 </head>
 
 <body class="servicios-ti-page">
@@ -52,7 +52,7 @@
         </div>
 
         <div class="social-links d-none d-md-flex align-items-center">
-          <a href="https://wa.me/56973000457?text=Hola%20D%26A%20Systems%2C%20necesito%20apoyo%20con%20un%20requerimiento%20TI." class="whatsapp" target="_blank" rel="noopener" aria-label="Contactar a D&amp;A Systems por WhatsApp">
+          <a href="https://wa.me/56973000457?text=Hola%20D%26A%20Systems%2C%20quiero%20revisar%20la%20situaci%C3%B3n%20TI%20de%20mi%20empresa." class="whatsapp" target="_blank" rel="noopener" aria-label="Contactar a D&amp;A Systems por WhatsApp">
             <i class="bi bi-whatsapp"></i>
           </a>
         </div>
@@ -72,10 +72,11 @@
         <nav id="navmenu" class="navmenu">
           <ul>
             <li><a href="index.html#hero">Inicio</a></li>
-            <li><a href="index.html#servicios-ti">Servicios</a></li>
-            <li><a href="index.html#about">Por qué elegirnos</a></li>
+            <li><a href="servicios-ti.html" class="active">Servicios</a></li>
+            <li><a href="index.html#about">Cómo trabajamos</a></li>
             <li><a href="index.html#soluciones-ti">Soluciones</a></li>
             <li><a href="index.html#faq">Preguntas</a></li>
+            <li><a href="nosotros.html">Nosotros</a></li>
             <li><a href="index.html#contact">Contacto</a></li>
           </ul>
 
@@ -95,327 +96,786 @@
       <div class="breadcrumbs">
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="index.html#hero"><i class="bi bi-house"></i> Inicio</a></li>
+            <li class="breadcrumb-item">
+              <a href="index.html#hero"><i class="bi bi-house"></i> Inicio</a>
+            </li>
             <li class="breadcrumb-item active current">Servicios TI para empresas</li>
-            
           </ol>
         </nav>
       </div>
 
       <div class="title-wrapper">
         <h1>Servicios TI para empresas</h1>
-        <p>Soporte técnico, infraestructura, redes, respaldos, mantenimiento, licenciamiento, migración de correos e inventario tecnológico para empresas.</p>
+        <p>
+          Soporte técnico, infraestructura, redes, respaldos, mantenimiento,
+          correos corporativos, licenciamiento e inventario tecnológico para empresas.
+        </p>
       </div>
     </div><!-- End Page Title -->
 
-    <!-- Detalle de servicios -->
-    <section id="servicios-detalle" class="service-details section">
+    <!-- Intro de página -->
+    <section id="servicios-intro" class="about section light-background">
+      <div class="container" data-aos="fade-up">
+        <div class="row justify-content-center text-center">
+          <div class="col-lg-8">
+            <h2>Todo lo que una empresa necesita para que su tecnología funcione con más orden</h2>
+            <p class="mt-3">
+              No necesitas saber de TI para trabajar con nosotros. Cuéntanos qué está pasando
+              y te ayudamos a identificar qué conviene revisar primero, sin soluciones
+              sobredimensionadas y con documentación clara desde el inicio.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section><!-- /Intro de página -->
+
+    <!-- Soporte técnico -->
+    <section id="soporte" class="services section">
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Soporte técnico TI</h2>
+        <p>Resolución de incidentes, configuración y atención a usuarios, de forma remota o presencial</p>
+      </div>
+
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+        <div class="row gy-4">
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+            <div class="service-item">
+              <div class="service-icon">
+                <i class="bi bi-headset"></i>
+              </div>
+              <h3>Soporte remoto</h3>
+              <p>
+                Resolución de incidentes a distancia para problemas que no requieren presencia física.
+                Permite responder con mayor rapidez y reducir tiempos de espera.
+              </p>
+              <a href="index.html#contact" class="service-link">
+                <span>Consultar</span>
+                <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="250">
+            <div class="service-item">
+              <div class="service-icon">
+                <i class="bi bi-person-workspace"></i>
+              </div>
+              <h3>Soporte presencial</h3>
+              <p>
+                Atención en las instalaciones del cliente para casos que requieren revisión física
+                de equipos, redes, periféricos o infraestructura.
+              </p>
+              <a href="index.html#contact" class="service-link">
+                <span>Consultar</span>
+                <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+            <div class="service-item">
+              <div class="service-icon">
+                <i class="bi bi-bug"></i>
+              </div>
+              <h3>Diagnóstico de fallas</h3>
+              <p>
+                Identificación del origen de problemas en computadores, notebooks,
+                conectividad, software, impresoras y periféricos.
+              </p>
+              <a href="index.html#contact" class="service-link">
+                <span>Consultar</span>
+                <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+            <div class="service-item">
+              <div class="service-icon">
+                <i class="bi bi-gear"></i>
+              </div>
+              <h3>Configuración y formateo</h3>
+              <p>
+                Formateo de equipos, instalación de sistema operativo, configuración de software,
+                perfiles de usuario, impresoras y herramientas de trabajo.
+              </p>
+              <a href="index.html#contact" class="service-link">
+                <span>Consultar</span>
+                <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="250">
+            <div class="service-item">
+              <div class="service-icon">
+                <i class="bi bi-people"></i>
+              </div>
+              <h3>Atención a usuarios</h3>
+              <p>
+                Apoyo directo a colaboradores con problemas de acceso, configuración,
+                uso de herramientas y operación diaria de sus equipos.
+              </p>
+              <a href="index.html#contact" class="service-link">
+                <span>Consultar</span>
+                <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+            <div class="service-item">
+              <div class="service-icon">
+                <i class="bi bi-file-earmark-text"></i>
+              </div>
+              <h3>Informes técnicos de atención</h3>
+              <p>
+                Registro formal de atenciones relevantes: diagnóstico, acciones realizadas,
+                estado final y recomendaciones. Trazabilidad real para la empresa.
+              </p>
+              <a href="index.html#contact" class="service-link">
+                <span>Consultar</span>
+                <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section><!-- /Soporte técnico -->
+
+    <!-- Infraestructura y redes -->
+    <section id="infraestructura" class="services section light-background">
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Infraestructura, redes y conectividad</h2>
+        <p>La base tecnológica de tu empresa, revisada, ordenada y documentada</p>
+      </div>
+
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+        <div class="row gy-4">
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+            <div class="service-item">
+              <div class="service-icon">
+                <i class="bi bi-hdd-network"></i>
+              </div>
+              <h3>Revisión de infraestructura TI</h3>
+              <p>
+                Diagnóstico del estado general de la infraestructura tecnológica:
+                equipos, redes, accesos, recursos críticos y condiciones de operación.
+              </p>
+              <a href="index.html#contact" class="service-link">
+                <span>Consultar</span>
+                <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="250">
+            <div class="service-item">
+              <div class="service-icon">
+                <i class="bi bi-wifi"></i>
+              </div>
+              <h3>Redes y conectividad WiFi</h3>
+              <p>
+                Diagnóstico y configuración de redes inestables, puntos de acceso,
+                conectividad WiFi y comunicación entre equipos.
+              </p>
+              <a href="index.html#contact" class="service-link">
+                <span>Consultar</span>
+                <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+            <div class="service-item">
+              <div class="service-icon">
+                <i class="bi bi-server"></i>
+              </div>
+              <h3>Administración básica de servidores</h3>
+              <p>
+                Revisión, mantención y administración básica de servidores,
+                almacenamiento y recursos internos necesarios para la continuidad operativa.
+              </p>
+              <a href="index.html#contact" class="service-link">
+                <span>Consultar</span>
+                <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+            <div class="service-item">
+              <div class="service-icon">
+                <i class="bi bi-pc-display-horizontal"></i>
+              </div>
+              <h3>Revisión de estaciones de trabajo</h3>
+              <p>
+                Evaluación del estado de computadores y notebooks: rendimiento,
+                almacenamiento, memoria, software y condiciones de uso.
+              </p>
+              <a href="index.html#contact" class="service-link">
+                <span>Consultar</span>
+                <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="250">
+            <div class="service-item">
+              <div class="service-icon">
+                <i class="bi bi-printer"></i>
+              </div>
+              <h3>Impresoras en red</h3>
+              <p>
+                Configuración, diagnóstico y resolución de problemas con impresoras,
+                escáneres y periféricos compartidos en red.
+              </p>
+              <a href="index.html#contact" class="service-link">
+                <span>Consultar</span>
+                <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+            <div class="service-item">
+              <div class="service-icon">
+                <i class="bi bi-graph-up"></i>
+              </div>
+              <h3>Propuestas de mejora TI</h3>
+              <p>
+                Levantamiento de necesidades y recomendaciones concretas para mejorar
+                la infraestructura tecnológica sin sobredimensionar soluciones.
+              </p>
+              <a href="index.html#contact" class="service-link">
+                <span>Consultar</span>
+                <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section><!-- /Infraestructura y redes -->
+
+    <!-- Respaldos y continuidad -->
+    <section id="respaldos" class="services section">
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Respaldos y continuidad operativa</h2>
+        <p>Porque perder información crítica no debería ser un riesgo normal para la empresa</p>
+      </div>
 
       <div class="container" data-aos="fade-up" data-aos-delay="100">
 
-        <div class="row">
+        <div class="row justify-content-center mb-5">
+          <div class="col-lg-8 text-center" data-aos="fade-up">
+            <div class="alert alert-warning border-start border-4 text-start" role="alert">
+              <strong>¿Tu empresa tiene respaldo activo hoy?</strong><br>
+              Una falla de disco, un ransomware o un error humano pueden generar pérdida
+              de información y semanas de recuperación. Podemos revisar tu situación
+              y orientarte sobre los pasos más importantes.
+            </div>
+          </div>
+        </div>
 
-          <!-- Service Introduction -->
-          <div class="col-lg-8 mx-auto">
+        <div class="row gy-4">
 
-            <div class="service-intro" data-aos="fade-up" data-aos-delay="100">
-              <div class="service-badge">
-                <span>Servicios TI para empresas</span>
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+            <div class="service-item">
+              <div class="service-icon">
+                <i class="bi bi-cloud-upload"></i>
               </div>
-
-              <h1>Soporte, infraestructura y continuidad operativa para tu empresa</h1>
-
-              <p class="lead">
-                En D&amp;A Systems ayudamos a empresas que necesitan ordenar, mantener y proteger
-                su operación tecnológica mediante soporte técnico, administración de infraestructura,
-                respaldos, seguridad y acompañamiento técnico.
+              <h3>Diseño de soluciones de respaldo</h3>
+              <p>
+                Estrategia según el tamaño, criticidad y tipo de información de tu empresa:
+                respaldo local, en la nube o esquema combinado.
               </p>
-            </div>
-
-          </div>
-
-        </div>
-
-        <!-- Grilla de servicios -->
-        <div class="service-content">
-
-          <!-- Main Visual Section -->
-          <div class="visual-section" data-aos="fade-up" data-aos-delay="200">
-            <div class="row align-items-center gy-4">
-
-              <div class="col-lg-6">
-                <div class="service-image">
-                  <img src="assets/img/services/services-1.webp" alt="Servicios TI para empresas" class="img-fluid" loading="lazy" decoding="async">
-                </div>
-              </div>
-
-              <div class="col-lg-6">
-                <div class="service-text">
-                  <h2>Soluciones TI orientadas a continuidad, orden y soporte oportuno</h2>
-
-                  <p>
-                    Muchas empresas operan con equipos sin mantenimiento, redes inestables,
-                    respaldos poco claros o soporte reactivo. Esto aumenta el riesgo de interrupciones,
-                    pérdida de información y desorden en la gestión tecnológica.
-                  </p>
-
-                  <p>
-                    Nuestro enfoque es levantar el estado actual, identificar puntos críticos,
-                    priorizar acciones y entregar una atención técnica clara, documentada y adecuada
-                    al tamaño y necesidad de cada empresa.
-                  </p>
-                </div>
-              </div>
-
+              <a href="index.html#contact" class="service-link">
+                <span>Quiero proteger mi información</span>
+                <i class="bi bi-arrow-right"></i>
+              </a>
             </div>
           </div>
 
-          <!-- Service Features -->
-          <div class="features-section" data-aos="fade-up" data-aos-delay="300">
-            <div class="row gy-4">
-
-              <div class="col-lg-3 col-md-6">
-                <div class="feature-item">
-                  <div class="feature-icon">
-                    <i class="bi bi-headset"></i>
-                  </div>
-                  <h4>Soporte técnico</h4>
-                  <p>
-                    Atención remota y presencial para incidentes, configuración de equipos,
-                    apoyo a usuarios y continuidad operativa.
-                  </p>
-                </div>
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="250">
+            <div class="service-item">
+              <div class="service-icon">
+                <i class="bi bi-clock-history"></i>
               </div>
-
-              <div class="col-lg-3 col-md-6">
-                <div class="feature-item">
-                  <div class="feature-icon">
-                    <i class="bi bi-hdd-network"></i>
-                  </div>
-                  <h4>Redes e infraestructura</h4>
-                  <p>
-                    Revisión de conectividad, redes, estaciones de trabajo, periféricos,
-                    servidores y recursos tecnológicos.
-                  </p>
-                </div>
-              </div>
-
-              <div class="col-lg-3 col-md-6">
-                <div class="feature-item">
-                  <div class="feature-icon">
-                    <i class="bi bi-cloud-arrow-up"></i>
-                  </div>
-                  <h4>Respaldos</h4>
-                  <p>
-                    Implementación y revisión de rutinas de respaldo para proteger
-                    información crítica y facilitar recuperación.
-                  </p>
-                </div>
-              </div>
-
-              <div class="col-lg-3 col-md-6">
-                <div class="feature-item">
-                  <div class="feature-icon">
-                    <i class="bi bi-shield-check"></i>
-                  </div>
-                  <h4>Seguridad y mantención</h4>
-                  <p>
-                    Buenas prácticas, actualizaciones, revisión de configuraciones
-                    y medidas preventivas para disminuir riesgos.
-                  </p>
-                </div>
-              </div>
-
+              <h3>Respaldos programados</h3>
+              <p>
+                Implementación de rutinas automáticas de respaldo para que la protección
+                de información no dependa de acciones manuales.
+              </p>
+              <a href="index.html#contact" class="service-link">
+                <span>Consultar</span>
+                <i class="bi bi-arrow-right"></i>
+              </a>
             </div>
           </div>
 
-          <!-- Service Process -->
-          <div class="process-section" data-aos="fade-up" data-aos-delay="400">
-            <div class="row align-items-start gy-4">
-
-              <div class="col-lg-6">
-                <div class="process-info">
-                  <h3>Cómo abordamos un requerimiento TI</h3>
-
-                  <p>
-                    Antes de proponer una solución, buscamos entender el contexto técnico y operativo
-                    de la empresa. Esto permite definir un alcance realista, evitar soluciones
-                    sobredimensionadas y priorizar lo que impacta directamente en la continuidad.
-                  </p>
-
-                  <a href="index.html#contact" class="process-link">
-                    Solicitar evaluación TI <i class="bi bi-arrow-right"></i>
-                  </a>
-                </div>
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+            <div class="service-item">
+              <div class="service-icon">
+                <i class="bi bi-lock"></i>
               </div>
+              <h3>Respaldo cifrado</h3>
+              <p>
+                Implementación de respaldos con cifrado para proteger información sensible
+                ante pérdida, robo o acceso no autorizado.
+              </p>
+              <a href="index.html#contact" class="service-link">
+                <span>Consultar</span>
+                <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </div>
 
-              <div class="col-lg-6">
-                <div class="process-steps">
-
-                  <div class="step">
-                    <div class="step-number">01</div>
-                    <div class="step-content">
-                      <h5>Levantamiento inicial</h5>
-                      <p>
-                        Revisamos la necesidad, cantidad de equipos, usuarios, infraestructura involucrada
-                        y nivel de urgencia del requerimiento.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div class="step">
-                    <div class="step-number">02</div>
-                    <div class="step-content">
-                      <h5>Diagnóstico y priorización</h5>
-                      <p>
-                        Identificamos causas probables, riesgos operativos y acciones recomendadas
-                        según criticidad e impacto en la empresa.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div class="step">
-                    <div class="step-number">03</div>
-                    <div class="step-content">
-                      <h5>Ejecución del servicio</h5>
-                      <p>
-                        Realizamos la atención técnica remota o presencial, aplicando configuraciones,
-                        correcciones, mantenciones o mejoras necesarias.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div class="step">
-                    <div class="step-number">04</div>
-                    <div class="step-content">
-                      <h5>Documentación y recomendaciones</h5>
-                      <p>
-                        Cuando corresponde, entregamos observaciones, acciones realizadas y recomendaciones
-                        para mejorar la continuidad y el orden tecnológico.
-                      </p>
-                    </div>
-                  </div>
-
-                </div>
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+            <div class="service-item">
+              <div class="service-icon">
+                <i class="bi bi-arrow-counterclockwise"></i>
               </div>
+              <h3>Recuperación de información</h3>
+              <p>
+                Apoyo ante pérdida de datos, fallas o incidentes. Primero evaluamos
+                posibilidades reales antes de confirmar el alcance del servicio.
+              </p>
+              <a href="index.html#contact" class="service-link">
+                <span>Consultar</span>
+                <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </div>
 
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="250">
+            <div class="service-item">
+              <div class="service-icon">
+                <i class="bi bi-folder-check"></i>
+              </div>
+              <h3>Revisión de rutas críticas</h3>
+              <p>
+                Identificación de carpetas y archivos importantes para asegurar que estén
+                incluidos dentro del plan de respaldo.
+              </p>
+              <a href="index.html#contact" class="service-link">
+                <span>Consultar</span>
+                <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+            <div class="service-item">
+              <div class="service-icon">
+                <i class="bi bi-file-earmark-check"></i>
+              </div>
+              <h3>Informes de estado de respaldo</h3>
+              <p>
+                Reporte sobre el estado, cobertura y últimas ejecuciones del sistema de respaldo,
+                cuando el servicio contratado considera seguimiento periódico.
+              </p>
+              <a href="index.html#contact" class="service-link">
+                <span>Consultar</span>
+                <i class="bi bi-arrow-right"></i>
+              </a>
             </div>
           </div>
 
         </div>
+      </div>
+    </section><!-- /Respaldos y continuidad -->
 
-        <!-- Service Information Cards -->
-        <div class="info-grid" data-aos="fade-up" data-aos-delay="500">
-          <div class="row gy-4">
-
-            <!-- Scope Information -->
-            <div class="col-lg-4">
-              <div class="info-card">
-                <div class="info-header">
-                  <h4>Alcance del servicio</h4>
-                  <p>
-                    Servicios orientados a empresas que necesitan soporte, mantención y control TI.
-                  </p>
-                </div>
-
-                <div class="info-content">
-                  <ul class="info-list">
-                    <li>Soporte técnico remoto y presencial</li>
-                    <li>Revisión de redes, equipos y servidores</li>
-                    <li>Configuración de usuarios, accesos y software</li>
-                    <li>Respaldos, seguridad y continuidad operativa</li>
-                    <li>Informes o recomendaciones cuando el servicio lo requiera</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            <!-- Work Method -->
-            <div class="col-lg-4">
-              <div class="info-card">
-                <div class="info-header">
-                  <h4>Modalidad de atención</h4>
-                  <p>
-                    El tipo de atención dependerá del requerimiento, urgencia y factibilidad técnica.
-                  </p>
-                </div>
-
-                <div class="info-content">
-                  <ul class="info-list">
-                    <li>Atención remota para incidentes resolubles a distancia</li>
-                    <li>Atención presencial previa coordinación</li>
-                    <li>Diagnóstico antes de definir acciones mayores</li>
-                    <li>Cotización según alcance y complejidad</li>
-                    <li>Comunicación clara durante el proceso</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            <!-- Contact Form -->
-            <div class="col-lg-4">
-              <div class="info-card">
-                <div class="info-header">
-                  <h4>Consultar este servicio</h4>
-                  <p>
-                    Envíanos tu requerimiento y revisaremos cómo ayudarte.
-                  </p>
-                </div>
-
-                <form action="forms/contact.php" method="post" class="php-email-form service-form">
-                  <div class="form-field">
-                    <input type="text" name="name" placeholder="Nombre y apellido" autocomplete="name" required="">
-                  </div>
-
-                  <div class="form-field">
-                    <input type="email" name="email" placeholder="Correo corporativo" autocomplete="email" required="">
-                  </div>
-
-                  <div class="form-field">
-                    <input type="tel" name="phone" placeholder="Teléfono / WhatsApp" autocomplete="tel">
-                  </div>
-
-                  <input type="hidden" name="subject" value="Consulta por servicios TI desde servicios-ti.html">
-                  <input type="hidden" name="csrf_token" class="csrf-token-field">
-
-                  <div class="form-field">
-                    <textarea name="message" rows="3" placeholder="Describe brevemente el problema o necesidad TI de tu empresa" required=""></textarea>
-                  </div>
-
-                  <div style="position:absolute;left:-9999px;opacity:0;pointer-events:none;" aria-hidden="true">
-                    <input type="text" name="website" tabindex="-1" autocomplete="off">
-                  </div>
-
-                  <div class="form-check mb-3">
-                    <input class="form-check-input" type="checkbox" name="privacy_consent" id="privacyConsentService" value="accepted" required>
-                    <label class="form-check-label" for="privacyConsentService">
-                      Acepto que D&amp;A Systems trate mis datos para responder mi solicitud, conforme a la <a href="politica-privacidad.html">Política de privacidad</a>.
-                    </label>
-                  </div>
-
-                  <div class="loading">Enviando mensaje...</div>
-                  <div class="error-message"></div>
-                  <div class="sent-message">Tu solicitud fue enviada correctamente. Te contactaremos a la brevedad.</div>
-
-                  <button type="submit" class="submit-btn">
-                    <span>Enviar consulta</span>
-                    <i class="bi bi-arrow-right"></i>
-                  </button>
-                </form>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
+    <!-- Correos y cloud -->
+    <section id="correos" class="services section light-background">
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Correos corporativos, dominios y plataformas cloud</h2>
+        <p>Cuentas, accesos y plataformas bien configuradas, sin correos perdidos ni usuarios sin control</p>
       </div>
 
-    </section><!-- /Detalle de servicios -->
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+        <div class="row gy-4">
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+            <div class="service-item">
+              <div class="service-icon">
+                <i class="bi bi-envelope-check"></i>
+              </div>
+              <h3>Configuración de correos corporativos</h3>
+              <p>
+                Creación, configuración y administración de correos empresariales en Outlook,
+                cuentas IMAP, Microsoft 365 o plataformas cloud.
+              </p>
+              <a href="index.html#contact" class="service-link">
+                <span>Consultar</span>
+                <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="250">
+            <div class="service-item">
+              <div class="service-icon">
+                <i class="bi bi-microsoft"></i>
+              </div>
+              <h3>Asesoría Microsoft 365</h3>
+              <p>
+                Configuración, revisión de licencias, administración de cuentas y apoyo
+                en el uso de Microsoft 365 para empresas.
+              </p>
+              <a href="index.html#contact" class="service-link">
+                <span>Consultar</span>
+                <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+            <div class="service-item">
+              <div class="service-icon">
+                <i class="bi bi-google"></i>
+              </div>
+              <h3>Asesoría Google Workspace</h3>
+              <p>
+                Configuración, administración de cuentas y apoyo en el uso de Google Workspace
+                para empresas y equipos de trabajo.
+              </p>
+              <a href="index.html#contact" class="service-link">
+                <span>Consultar</span>
+                <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+            <div class="service-item">
+              <div class="service-icon">
+                <i class="bi bi-arrow-left-right"></i>
+              </div>
+              <h3>Migración de correos</h3>
+              <p>
+                Apoyo en migración de cuentas, historial de correos y archivos entre plataformas,
+                cuidando continuidad y respaldo de información.
+              </p>
+              <a href="index.html#contact" class="service-link">
+                <span>Consultar</span>
+                <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="250">
+            <div class="service-item">
+              <div class="service-icon">
+                <i class="bi bi-globe"></i>
+              </div>
+              <h3>Dominios, hosting y cPanel</h3>
+              <p>
+                Apoyo en administración de dominios, configuración de hosting, revisión de cPanel
+                y gestión de accesos asociados.
+              </p>
+              <a href="index.html#contact" class="service-link">
+                <span>Consultar</span>
+                <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+            <div class="service-item">
+              <div class="service-icon">
+                <i class="bi bi-key"></i>
+              </div>
+              <h3>Control de claves y permisos</h3>
+              <p>
+                Revisión y ordenamiento de cuentas, contraseñas, permisos de acceso
+                y servicios cloud usados por la empresa.
+              </p>
+              <a href="index.html#contact" class="service-link">
+                <span>Consultar</span>
+                <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section><!-- /Correos y cloud -->
+
+    <!-- Inventario TI e informes -->
+    <section id="inventario" class="services section">
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Inventario TI e informes técnicos</h2>
+        <p>Saber qué equipos tiene tu empresa, quién los usa y en qué estado están</p>
+      </div>
+
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+        <div class="row justify-content-center mb-5">
+          <div class="col-lg-8 text-center" data-aos="fade-up">
+            <p class="fs-5">
+              Muchas empresas saben que tienen computadores, notebooks, impresoras y periféricos,
+              pero no siempre tienen claro cuáles son, en qué estado están, quién los usa
+              ni qué mantenciones se les ha realizado.
+              D&amp;A Systems ayuda a levantar esa información y convertirla en trazabilidad útil.
+            </p>
+          </div>
+        </div>
+
+        <div class="row gy-4">
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+            <div class="service-item">
+              <div class="service-icon">
+                <i class="bi bi-clipboard-data"></i>
+              </div>
+              <h3>Levantamiento de activos TI</h3>
+              <p>
+                Registro de computadores, notebooks, monitores, impresoras, periféricos,
+                componentes y otros activos tecnológicos de la empresa.
+              </p>
+              <a href="index.html#contact" class="service-link">
+                <span>Quiero ordenar mis activos</span>
+                <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="250">
+            <div class="service-item">
+              <div class="service-icon">
+                <i class="bi bi-person-badge"></i>
+              </div>
+              <h3>Asignación por colaborador</h3>
+              <p>
+                Control de qué equipo usa cada trabajador, historial de reasignaciones
+                y trazabilidad de activos entregados o devueltos.
+              </p>
+              <a href="index.html#contact" class="service-link">
+                <span>Consultar</span>
+                <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+            <div class="service-item">
+              <div class="service-icon">
+                <i class="bi bi-journal-text"></i>
+              </div>
+              <h3>Hoja de vida del equipo</h3>
+              <p>
+                Registro del historial de cada activo: mantenciones, reparaciones,
+                cambios de componentes, informes asociados y observaciones relevantes.
+              </p>
+              <a href="index.html#contact" class="service-link">
+                <span>Consultar</span>
+                <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+            <div class="service-item">
+              <div class="service-icon">
+                <i class="bi bi-file-earmark-pdf"></i>
+              </div>
+              <h3>Informes técnicos de atención</h3>
+              <p>
+                Documento formal con diagnóstico, acciones realizadas, resultado,
+                evidencias cuando corresponda y recomendaciones finales.
+              </p>
+              <a href="index.html#contact" class="service-link">
+                <span>Consultar</span>
+                <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="250">
+            <div class="service-item">
+              <div class="service-icon">
+                <i class="bi bi-bar-chart"></i>
+              </div>
+              <h3>Estado de activos disponibles y asignados</h3>
+              <p>
+                Visibilidad ordenada del estado de cada activo: disponible, asignado,
+                en revisión, en reparación o dado de baja.
+              </p>
+              <a href="index.html#contact" class="service-link">
+                <span>Consultar</span>
+                <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+            <div class="service-item">
+              <div class="service-icon">
+                <i class="bi bi-shield-lock"></i>
+              </div>
+              <h3>Seguridad informática básica</h3>
+              <p>
+                Revisión de permisos, accesos, contraseñas y buenas prácticas para reducir
+                riesgos operativos sin necesidad de infraestructura compleja.
+              </p>
+              <a href="index.html#contact" class="service-link">
+                <span>Consultar</span>
+                <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section><!-- /Inventario TI e informes -->
+
+    <!-- Mantención de equipos -->
+    <section id="mantencion" class="services section light-background">
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Mantención y mejora de equipos TI</h2>
+        <p>Equipos bien mantenidos fallan menos y se recuperan más rápido</p>
+      </div>
+
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+        <div class="row gy-4">
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+            <div class="service-item">
+              <div class="service-icon">
+                <i class="bi bi-tools"></i>
+              </div>
+              <h3>Mantención preventiva</h3>
+              <p>
+                Revisión periódica de equipos para detectar problemas antes de que ocurran:
+                limpieza, estado de componentes, temperatura y rendimiento.
+              </p>
+              <a href="index.html#contact" class="service-link">
+                <span>Consultar</span>
+                <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="250">
+            <div class="service-item">
+              <div class="service-icon">
+                <i class="bi bi-wrench-adjustable"></i>
+              </div>
+              <h3>Mantención correctiva</h3>
+              <p>
+                Diagnóstico y reparación de fallas en equipos, considerando disco,
+                memoria, sistema operativo, periféricos u otros componentes.
+              </p>
+              <a href="index.html#contact" class="service-link">
+                <span>Consultar</span>
+                <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+            <div class="service-item">
+              <div class="service-icon">
+                <i class="bi bi-hdd"></i>
+              </div>
+              <h3>Cambio de disco, SSD y RAM</h3>
+              <p>
+                Actualización o reemplazo de discos y memoria para mejorar rendimiento,
+                extender vida útil o recuperar equipos que presentan fallas.
+              </p>
+              <a href="index.html#contact" class="service-link">
+                <span>Consultar</span>
+                <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+            <div class="service-item">
+              <div class="service-icon">
+                <i class="bi bi-cloud-download"></i>
+              </div>
+              <h3>Respaldo previo a formateo</h3>
+              <p>
+                Resguardo de información antes de intervenciones que puedan comprometer
+                datos del usuario, como formateos, reinstalaciones o cambios de disco.
+              </p>
+              <a href="index.html#contact" class="service-link">
+                <span>Consultar</span>
+                <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="250">
+            <div class="service-item">
+              <div class="service-icon">
+                <i class="bi bi-box-seam"></i>
+              </div>
+              <h3>Venta de insumos y componentes</h3>
+              <p>
+                Suministro de discos, SSD, RAM, toner, periféricos y componentes,
+                con diagnóstico, cotización e instalación cuando corresponda.
+              </p>
+              <a href="index.html#contact" class="service-link">
+                <span>Consultar</span>
+                <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+            <div class="service-item">
+              <div class="service-icon">
+                <i class="bi bi-check2-all"></i>
+              </div>
+              <h3>Revisión de estado general</h3>
+              <p>
+                Evaluación integral del estado del equipo con recomendaciones documentadas
+                sobre qué reparar, mejorar, respaldar o reemplazar.
+              </p>
+              <a href="index.html#contact" class="service-link">
+                <span>Consultar</span>
+                <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section><!-- /Mantención de equipos -->
+
+    <!-- CTA final -->
+    <section class="contact section">
+      <div class="container" data-aos="fade-up">
+        <div class="row justify-content-center text-center">
+          <div class="col-lg-7">
+            <h2>¿No sabes por qué servicio empezar?</h2>
+            <p class="mt-3 mb-4">
+              No importa. Cuéntanos qué está pasando en tu empresa y te ayudamos
+              a ordenar el problema, identificar prioridades y definir próximos pasos.
+            </p>
+
+            <a href="index.html#contact" class="btn-primary">
+              Quiero que revisen mi situación TI
+            </a>
+
+            <a href="https://wa.me/56973000457?text=Hola%20D%26A%20Systems%2C%20quiero%20revisar%20la%20situaci%C3%B3n%20TI%20de%20mi%20empresa." class="btn-secondary ms-3" target="_blank" rel="noopener">
+              <span>Escribir por WhatsApp</span>
+              <i class="bi bi-whatsapp"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section><!-- /CTA final -->
 
   </main>
 
   <footer id="footer" class="footer position-relative light-background">
-
     <div class="container footer-top">
       <div class="row gy-4">
 
@@ -426,8 +886,9 @@
             </a>
 
             <p>
-              Servicios TI para empresas: soporte técnico, infraestructura, redes, respaldos,
-              continuidad operativa, mantenimiento y administración tecnológica.
+              Partner TI externo para PYMES en Chile. Soporte técnico, infraestructura,
+              redes, respaldos, inventario de activos y continuidad operativa, con
+              documentación y trazabilidad.
             </p>
 
             <div class="footer-contact">
@@ -437,9 +898,7 @@
               </p>
               <p>
                 <i class="bi bi-whatsapp"></i>
-                <a href="https://wa.me/56973000457" target="_blank" rel="noopener">
-                  +56 9 7300 0457
-                </a>
+                <a href="https://wa.me/56973000457" target="_blank" rel="noopener">+56 9 7300 0457</a>
               </p>
             </div>
           </div>
@@ -449,13 +908,11 @@
           <div class="footer-links">
             <h4>Navegación</h4>
             <ul>
-              <li><a href="index.html#hero">Inicio</a></li>
-              <li><a href="index.html#servicios-ti">Servicios</a></li>
-              <li><a href="index.html#about">Por qué elegirnos</a></li>
-              <li><a href="index.html#soluciones-ti">Soluciones</a></li>
-              <li><a href="index.html#faq">Preguntas</a></li>
-              <li><a href="index.html#contact">Contacto</a></li>
+              <li><a href="index.html">Inicio</a></li>
+              <li><a href="servicios-ti.html">Servicios TI</a></li>
+              <li><a href="soluciones-ti.html">Soluciones</a></li>
               <li><a href="nosotros.html">Nosotros</a></li>
+              <li><a href="index.html#contact">Contacto</a></li>
               <li><a href="terminos-condiciones.html">Términos y condiciones</a></li>
               <li><a href="politica-privacidad.html">Política de privacidad</a></li>
             </ul>
@@ -466,27 +923,24 @@
           <div class="footer-links">
             <h4>Servicios TI</h4>
             <ul>
-              <li><a href="index.html#servicios-ti">Soporte técnico</a></li>
-              <li><a href="index.html#servicios-ti">Infraestructura y redes</a></li>
-              <li><a href="index.html#servicios-ti">Respaldos y continuidad</a></li>
-              <li><a href="index.html#servicios-ti">Migración de correos</a></li>
-              <li><a href="index.html#servicios-ti">Licenciamiento y antivirus</a></li>
-              <li><a href="index.html#servicios-ti">Inventario TI e informes</a></li>
-              <li><a href="index.html#servicios-ti">Mantención de equipos</a></li>
+              <li><a href="#soporte">Soporte técnico</a></li>
+              <li><a href="#infraestructura">Infraestructura y redes</a></li>
+              <li><a href="#respaldos">Respaldos y continuidad</a></li>
+              <li><a href="#correos">Correos corporativos</a></li>
+              <li><a href="#inventario">Inventario TI e informes</a></li>
+              <li><a href="#mantencion">Mantención de equipos</a></li>
             </ul>
           </div>
         </div>
 
         <div class="col-lg-3 col-md-6">
           <div class="footer-cta">
-            <h4>¿Necesitas soporte TI?</h4>
+            <h4>¿Tu empresa necesita apoyo TI?</h4>
             <p>
-              Escríbenos para revisar tu requerimiento y definir una solución adecuada
-              para la operación tecnológica de tu empresa.
+              Te orientamos sin compromiso y te proponemos un plan adecuado a la realidad
+              técnica y operativa de tu empresa.
             </p>
-            <a href="index.html#contact" class="footer-button">
-              Solicitar evaluación TI
-            </a>
+            <a href="index.html#contact" class="footer-button">Quiero revisar mi situación TI</a>
           </div>
         </div>
 
@@ -495,20 +949,15 @@
 
     <div class="container footer-bottom">
       <div class="copyright">
-        <p>
-          © <span>Copyright</span>
-          <strong class="px-1 sitename">D&amp;A Systems</strong>
-          <span>Todos los derechos reservados.</span>
-        </p>
+        <p>© <span>Copyright</span> <strong class="px-1 sitename">D&amp;A Systems</strong> <span>Todos los derechos reservados.</span></p>
       </div>
     </div>
-
   </footer>
 
-  <!-- Scroll Top -->
-  <a href="index.html#hero" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center">
+    <i class="bi bi-arrow-up-short"></i>
+  </a>
 
-  <!-- Preloader -->
   <div id="preloader">
     <div></div>
     <div></div>
@@ -518,52 +967,13 @@
 
   <!-- Vendor JS Files -->
   <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script>
-    (function () {
-      if (!window.fetch || !document.querySelectorAll) {
-        return;
-      }
-
-      var forms = document.querySelectorAll('form[action="forms/contact.php"]');
-      if (forms.length === 0) {
-        return;
-      }
-
-      fetch('forms/csrf-token.php', {
-        credentials: 'same-origin'
-      })
-      .then(function (response) {
-        if (!response.ok) {
-          throw new Error('CSRF token request failed');
-        }
-        return response.json();
-      })
-      .then(function (data) {
-        if (!data || !data.csrf_token) {
-          throw new Error('Invalid CSRF token response');
-        }
-        var inputs = document.querySelectorAll('input.csrf-token-field');
-        inputs.forEach(function (input) {
-          input.value = data.csrf_token;
-        });
-      })
-      .catch(function () {
-        return;
-      });
-    })();
-  </script>
-
-  <script src="assets/vendor/php-email-form/validate.js"></script>
   <script src="assets/vendor/aos/aos.js"></script>
   <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
   <script src="assets/vendor/purecounter/purecounter_vanilla.js"></script>
-  <script src="assets/vendor/imagesloaded/imagesloaded.pkgd.min.js"></script>
-  <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
   <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
 
   <!-- Main JS File -->
   <script src="assets/js/main.js"></script>
-
 </body>
 
 </html>
