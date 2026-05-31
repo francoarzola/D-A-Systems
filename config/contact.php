@@ -20,7 +20,14 @@ if ($smtpHost !== false && trim((string) $smtpHost) !== '') {
     ];
 }
 
+$autoReplyEnabled = filter_var(
+    getenv('DA_SYSTEMS_AUTO_REPLY_ENABLED'),
+    FILTER_VALIDATE_BOOLEAN,
+    FILTER_NULL_ON_FAILURE
+);
+
 return [
   'receiving_email_address' => trim((string) $receivingEmail),
   'smtp' => $smtp,
+  'auto_reply_enabled' => $autoReplyEnabled === null ? false : $autoReplyEnabled,
 ];
