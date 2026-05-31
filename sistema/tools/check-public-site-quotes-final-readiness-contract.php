@@ -45,7 +45,7 @@ if (!empty($errors)) {
     exit(3);
 }
 
-$listing = file_get_contents($publicPaths['quotes']);
+$quotes = file_get_contents($publicPaths['quotes']);
 $detail = file_get_contents($publicPaths['detail']);
 $edit = file_get_contents($publicPaths['edit']);
 $pdf = file_get_contents($publicPaths['pdf']);
