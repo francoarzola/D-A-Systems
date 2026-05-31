@@ -74,7 +74,7 @@ InternalPage::render(
   <div>
     <p class="quotes-eyebrow">Panel operativo</p>
     <h2>Cotizaciones</h2>
-    <p>Administra borradores, emision y documentos comerciales desde una vista centralizada.</p>
+    <p>Administra borradores, emisión y documentos comerciales desde una vista centralizada.</p>
   </div>
   <a class="quote-action quote-action-primary" href="#crear-borrador">Crear borrador</a>
 </section>
@@ -158,7 +158,7 @@ InternalPage::render(
 
 <section id="crear-borrador" class="card quote-section quote-create-section">
   <h2>Crear borrador de cotización</h2>
-  <p class="quote-section-copy">Formulario mínimo real para guardar un borrador con un detalle. Los totales se calculan en el servidor.</p>
+  <p class="quote-section-copy">Completa el formulario para crear un nuevo borrador. Los montos se recalculan automáticamente en el servidor.</p>
 
 <?php if ($draftErrors !== []): ?>
   <div class="form-error-summary">
