@@ -1328,6 +1328,31 @@ section,
     width: 100%;
   }
 
+/* Added responsive H1 overrides from SCSS stage 7D.03 */
+@media (min-width: 1200px) {
+  .hero .hero-content .content h1 {
+    font-size: 3.2rem; /* ~51px - desktop */
+    line-height: 1.14;
+    max-width: 760px;
+  }
+}
+
+@media (min-width: 992px) and (max-width: 1199.98px) {
+  .hero .hero-content .content h1 {
+    font-size: 2.75rem; /* ~44px - notebook */
+    line-height: 1.15;
+    max-width: 720px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 991.98px) {
+  .hero .hero-content .content h1 {
+    font-size: 2.4rem; /* ~38px - tablet */
+    line-height: 1.16;
+    max-width: 680px;
+  }
+}
+
   .hero .hero-content .content .cta-group .btn-primary {
     padding: 0.95rem 1.5rem;
   }
