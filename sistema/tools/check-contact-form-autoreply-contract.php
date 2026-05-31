@@ -1,6 +1,6 @@
 <?php
 
-$root = dirname(__DIR__, 1);
+$root = dirname(__DIR__, 2);
 $configPath = $root . '/config/contact.php';
 $contactPath = $root . '/forms/contact.php';
 
@@ -41,6 +41,12 @@ if ($contactContents === false) {
     exit(1);
 }
 
+$configContents = file_get_contents($configPath);
+if ($configContents === false) {
+    fwrite(STDERR, 'No se pudo leer config/contact.php' . "\n");
+    exit(1);
+}
+
 $checks = [
     'csrf_token' => 'Debe validar csrf_token',
     'privacy_consent' => 'Debe validar privacy_consent',
@@ -61,14 +67,19 @@ foreach ($checks as $needle => $message) {
     }
 }
 
-if (strpos($contactContents, 'DA_SYSTEMS_AUTO_REPLY_ENABLED') === false) {
-    fwrite(STDERR, 'El código debe leer DA_SYSTEMS_AUTO_REPLY_ENABLED desde el entorno' . "\n");
-    $errors[] = 'Falta la variable de entorno DA_SYSTEMS_AUTO_REPLY_ENABLED';
+if (strpos($configContents, 'DA_SYSTEMS_AUTO_REPLY_ENABLED') === false) {
+    fwrite(STDERR, 'El archivo config/contact.php debe exponer DA_SYSTEMS_AUTO_REPLY_ENABLED' . "\n");
+    $errors[] = 'Falta la variable de entorno DA_SYSTEMS_AUTO_REPLY_ENABLED en config/contact.php';
+}
+
+if (strpos($configContents, 'auto_reply_enabled') === false) {
+    fwrite(STDERR, 'El archivo config/contact.php debe contener la clave auto_reply_enabled' . "\n");
+    $errors[] = 'Falta la cadena auto_reply_enabled en config/contact.php';
 }
 
 if (count($errors) > 0) {
     exit(1);
 }
 
-fwrite(STDOUT, 'OK' . "\n");
+fwrite(STDOUT, '[OK] Autorespuesta del formulario de contacto validada correctamente.' . "\n");
 exit(0);
