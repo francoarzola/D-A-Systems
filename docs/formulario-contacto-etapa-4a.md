@@ -1,7 +1,7 @@
 # Formulario de contacto — Etapa 4A
 
 ## Correo receptor configurado
-- Backend configurado en `forms/contact.php` para enviar a: `dasystemstechnology@gmail.com`.
+- Backend configurado en `forms/contact.php` para enviar a: `contacto@dasystems.cl`.
 - El destinatario es fijo en backend y no se toma desde `POST`.
 
 ## Campos validados
@@ -27,7 +27,7 @@
 - Si no existe, el backend devuelve error controlado sin exponer rutas internas.
 
 ## Prueba recomendada en hosting cPanel
-1. Enviar formulario válido y confirmar recepción en `dasystemstechnology@gmail.com`.
+1. Enviar formulario válido y confirmar recepción en `contacto@dasystems.cl`.
 2. Enviar con honeypot `website` lleno y confirmar que no se envía correo.
 3. Probar email inválido y campos requeridos vacíos.
 4. Revisar `error_log` en cPanel por errores de envío.

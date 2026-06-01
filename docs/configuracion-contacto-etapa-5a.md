@@ -18,7 +18,7 @@ El backend carga `config/contact.php`, valida que retorne un arreglo y usa la cl
 
 ## Fallback actual
 Si la variable de entorno no está definida, se mantiene el fallback operativo actual:
-- `dasystemstechnology@gmail.com`
+- `contacto@dasystems.cl`
 
 ## Recomendación para cPanel
 - Definir `DA_SYSTEMS_RECEIVING_EMAIL` en el entorno del hosting.

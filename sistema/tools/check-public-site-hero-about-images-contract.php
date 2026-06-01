@@ -11,8 +11,8 @@ if (! file_exists($indexFile)) {
 
 $index = file_get_contents($indexFile);
 $patterns = [
-    'hero' => '/<img\s+[^>]*src="([^"]*assets\/img\/about\/about-8\.webp)"[^>]*alt="([^"]*)"/i',
-    'about' => '/<img\s+[^>]*src="([^"]*assets\/img\/about\/about-square-8\.webp)"[^>]*alt="([^"]*)"/i',
+    'hero' => '/<img\s+[^>]*src="([^"]*assets\/img\/about\/about-8\.png)"[^>]*alt="([^"]*)"/i',
+    'about' => '/<img\s+[^>]*src="([^"]*assets\/img\/about\/about-square-8\.png)"[^>]*alt="([^"]*)"/i',
 ];
 
 $requiredFiles = [];

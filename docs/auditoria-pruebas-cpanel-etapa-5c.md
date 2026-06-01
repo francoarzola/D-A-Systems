@@ -23,7 +23,7 @@ Este documento detalla la auditoría post-merge del formulario de contacto y pro
 
 ### Observaciones generales
 - `forms/contact.php` implementa el envío del formulario sin modificaciones en los bloques PHP analizados.
-- `config/contact.php` carga el destinatario desde la variable de entorno `DA_SYSTEMS_RECEIVING_EMAIL`, con fallback a `dasystemstechnology@gmail.com`.
+- `config/contact.php` carga el destinatario desde la variable de entorno `DA_SYSTEMS_RECEIVING_EMAIL`, con fallback a `contacto@dasystems.cl`.
 - `config/contact.example.php` define un ejemplo de configuración con `correo@tudominio.cl`.
 - `.gitignore` descarta logs y archivos de rate limit en `storage/logs/*.log` y `storage/rate-limit/*.json`.
 - Los archivos `storage/logs/.gitkeep` y `storage/rate-limit/.gitkeep` existen como marcadores de directorio.
@@ -98,7 +98,7 @@ El log operacional omite explícitamente:
 - [ ] Confirmar que `.htaccess` no rompe la navegación ni bloquea el sitio.
 
 ### Pruebas de correo
-- [ ] Confirmar recepción de correo en `dasystemstechnology@gmail.com` o en `DA_SYSTEMS_RECEIVING_EMAIL` si se define.
+- [ ] Confirmar recepción de correo en `contacto@dasystems.cl` o en `DA_SYSTEMS_RECEIVING_EMAIL` si se define.
 - [ ] Revisar bandejas de spam/promociones tras el envío.
 - [ ] Probar el envío desde un correo real y verificar recepción.
 - [ ] Probar el envío desde un correo inválido y verificar que la validación rechaza el envío antes de enviar correo real.

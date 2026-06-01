@@ -1,5 +1,5 @@
 # Auditoría Integral Final — Etapa 5F
-## D&A Systems SpA
+## D&A Systems
 
 ---
 
@@ -127,7 +127,7 @@ Ninguno identificado.
 
 - [x] Política de privacidad enlazada desde formularios (index.html, servicios-ti.html)
 - [x] Consentimiento explícito requerido (`privacy_consent` checkbox)
-- [x] Texto de consentimiento claro: "Acepto que D&A Systems SpA trate mis datos..."
+- [x] Texto de consentimiento claro: "Acepto que D&A Systems trate mis datos..."
 - [x] Enlace a política desde formularios (funciona)
 - [x] No se guardan datos personales en logs operacionales
 - [x] Tokens CSRF no se registran
@@ -200,8 +200,8 @@ Ninguno identificado.
 - [x] Lenguaje profesional y claro
 - [x] Evitar textos genéricos de plantilla (customizado a D&A Systems)
 - [x] Coherencia de CTA: "Solicitar diagnóstico", "Enviar solicitud", etc.
-- [x] Coherencia de entidad: "D&A Systems SpA" (mayúsculas correctas)
-- [x] Correo consistente: `dasystemstechnology@gmail.com`
+- [x] Coherencia de entidad: "D&A Systems" (mayúsculas correctas)
+- [x] Correo consistente: `contacto@dasystems.cl`
 - [x] Teléfono consistente: `+56 9 7300 0457`
 - [x] WhatsApp activo y con URL compatible
 
