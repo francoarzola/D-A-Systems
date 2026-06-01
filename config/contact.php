@@ -1,5 +1,5 @@
 <?php
-$receivingEmail = getenv('DA_SYSTEMS_RECEIVING_EMAIL') ?: 'dasystemstechnology@gmail.com';
+$receivingEmail = getenv('DA_SYSTEMS_RECEIVING_EMAIL') ?: 'contacto@dasystems.cl';
 $smtpHost = getenv('DA_SYSTEMS_SMTP_HOST');
 $smtp = null;
 
