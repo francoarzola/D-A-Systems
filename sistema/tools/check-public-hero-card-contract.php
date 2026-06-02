@@ -44,7 +44,7 @@ assertContains($content, 'Soporte y gestión TI para tu empresa, sin contratar u
 assertContains($content, 'Quiero revisar mi situación TI', 'Hero debe conservar CTA principal.');
 assertContains($content, 'Ver cómo trabajamos', 'Hero debe conservar CTA secundario.');
 assertContains($content, 'hero-support-note', 'Hero debe conservar hero-support-note.');
-assertContains($content, 'assets/img/about/about-8.png', 'Hero debe conservar la imagen principal.');
+assertContains($content, 'assets/img/about/about-8.webp', 'Hero debe conservar la imagen principal optimizada.');
 
 echo "[OK] Tarjeta flotante del Hero validada correctamente.\n";
 
