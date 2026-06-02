@@ -97,7 +97,9 @@ foreach ($contents as $page => $content) {
     assertContains($content, 'contacto@dasystems.cl', $page . ' debe contener contacto@dasystems.cl.');
     assertContains($content, 'favicon-dasystems.png', $page . ' debe referenciar favicon-dasystems.png.');
     assertContains($content, 'apple-touch-icon.png', $page . ' debe referenciar apple-touch-icon.png.');
-    assertNotContains($content, '.webp', $page . ' no debe contener rutas .webp antiguas.');
+    foreach (['portfolio-11.png', 'portfolio-9.png', 'about-square-8.png', 'portfolio-7.png', 'portfolio-portrait-5.png', 'portfolio-8.png', 'portfolio-3.png', 'about-8.png'] as $legacyImage) {
+        assertNotContains($content, $legacyImage, $page . ' no debe contener la imagen PNG pesada antigua: ' . $legacyImage . '.');
+    }
 
     foreach (['Ã', 'Â', 'â€', 'â–', 'â—', 'â€™', 'â€œ', '�'] as $mojibake) {
         assertNotContains($content, $mojibake, $page . ' no debe contener mojibake: ' . $mojibake);
