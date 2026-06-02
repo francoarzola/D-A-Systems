@@ -23,7 +23,7 @@ if ($content === false) {
 assertContains($content, 'class="service-card"', 'Debe existir .service-card.');
 assertContains($content, 'service-card-header', 'Debe existir service-card-header.');
 assertContains($content, 'Soporte TI claro y documentado', 'Debe existir el nuevo título de tarjeta.');
-assertContains($content, 'Revisamos tu situación, priorizamos riesgos y dejamos próximos pasos por escrito.', 'Debe existir la nueva frase de tarjeta.');
+assertContains($content, 'Identificamos riesgos, urgencias y acciones recomendadas.', 'Debe existir la nueva frase de tarjeta.');
 assertContains($content, 'service-card-text', 'Debe existir service-card-text.');
 
 assertNotContains($content, 'Tu tecnología, en manos responsables', 'No debe existir el texto anterior de la tarjeta.');
