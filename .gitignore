@@ -2,6 +2,7 @@
 config/*.local.php
 *.log
 vendor/
+build/
 
 # Local database configuration files with secrets should not be versioned
 sistema/config/database.php
