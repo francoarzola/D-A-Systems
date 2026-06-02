@@ -212,6 +212,23 @@ $company = isset($_POST['company']) ? $sanitize($_POST['company']) : '';
 $subject = $strip_header_injection($sanitize($_POST['subject']));
 $message = $sanitize($_POST['message']);
 
+$allowed_subjects = [
+  'Soporte técnico',
+  'Infraestructura y redes',
+  'Respaldos y continuidad operativa',
+  'Seguridad y mantenimiento TI',
+  'Administración tecnológica',
+  'Inventario y activos TI',
+  'Otro requerimiento TI',
+];
+
+if (!in_array($subject, $allowed_subjects, true)) {
+  log_event('invalid_subject', 'error', 'invalid_subject');
+  http_response_code(400);
+  echo 'El requerimiento seleccionado no es válido.';
+  exit;
+}
+
 if (
   mb_strlen($name) > 100 ||
   mb_strlen($email) > 150 ||
@@ -296,6 +313,6 @@ if (trim($send_result) === 'OK') {
 
   echo 'OK';
 } else {
-  log_event('send_completed', 'error', 'send_failed');
-  echo $send_result;
+  log_event('send_completed', 'error', substr($send_result, 0, 255));
+  echo 'No fue posible enviar el mensaje en este momento. Intenta nuevamente más tarde o escríbenos por WhatsApp.';
 }
