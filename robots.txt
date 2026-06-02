@@ -1,4 +1,9 @@
 User-agent: *
 Allow: /
+Disallow: /config/
+Disallow: /storage/
+Disallow: /docs/
+Disallow: /sistema/tools/
+Disallow: /sistema/config/
 
 Sitemap: https://www.dasystems.cl/sitemap.xml
