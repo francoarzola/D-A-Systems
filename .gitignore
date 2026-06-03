@@ -16,3 +16,27 @@ sistema/config/*.local.php
 # Contact form rate limiting and operational logging
 storage/logs/*.log
 storage/rate-limit/*.json
+
+# Backups y exportaciones
+*.zip
+*.rar
+*.7z
+*.tar
+*.tar.gz
+*.sql
+*.bak
+*.old
+*.backup
+
+# cPanel / hosting
+.cpanel/
+.htpasswds/
+tmp/
+logs/
+error_log
+
+# Sistema operativo / editores
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
