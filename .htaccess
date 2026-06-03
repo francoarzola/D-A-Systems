@@ -14,7 +14,7 @@ DirectoryIndex index.html index.php
   RewriteRule (^|/)\.(?!well-known(?:/|$)) - [F,L]
   RewriteRule (^|/)(?:\.env(?:\..*)?|composer\.json|composer\.lock)$ - [F,L,NC]
   RewriteRule \.(?:log|bak|backup|old|sql|zip|rar|tar|gz)$ - [F,L,NC]
-  RewriteRule ^(?:docs|storage|sistema/tools|sistema/config|config)(?:/|$) - [F,L,NC]
+  RewriteRule ^(?:docs|storage|vendor|sistema/tools|sistema/config|config)(?:/|$) - [F,L,NC]
 </IfModule>
 
 <FilesMatch "^(?:\.env(?:\..*)?|composer\.json|composer\.lock)$">

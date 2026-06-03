@@ -1,5 +1,9 @@
 .env
 config/*.local.php
+config/contact.local.php
+config/*.private.php
+private/
+*.secret.php
 *.log
 vendor/
 build/

@@ -28,7 +28,7 @@ foreach (['log', 'bak', 'backup', 'old', 'sql', 'zip', 'rar', 'tar', 'gz'] as $e
     assertContains($htaccess, $extension, '.htaccess debe bloquear extension sensible: ' . $extension . '.');
 }
 
-foreach (['docs', 'storage', 'sistema/tools', 'sistema/config', 'config'] as $path) {
+foreach (['docs', 'storage', 'vendor', 'sistema/tools', 'sistema/config', 'config'] as $path) {
     assertContains($htaccess, $path, '.htaccess debe bloquear ' . $path . '.');
 }
 
