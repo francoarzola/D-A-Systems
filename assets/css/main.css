@@ -4104,8 +4104,8 @@ section,
 /* 4. Hero con más profundidad y presencia */
 .hero {
   background:
-    radial-gradient(circle at 85% 16%, rgba(0, 200, 253, 0.14) 0%, rgba(0, 200, 253, 0) 34%),
-    linear-gradient(135deg, #ffffff 0%, #f5f9fd 45%, #eef8ff 100%);
+    radial-gradient(circle at 85% 16%, rgba(0, 200, 253, 0.10) 0%, rgba(0, 200, 253, 0) 34%),
+    linear-gradient(135deg, #ffffff 0%, #f7fbff 48%, #f0f9ff 100%);
 }
 
 .hero::after {
@@ -4122,7 +4122,11 @@ section,
 }
 
 .hero .hero-content .content {
-  padding: 92px 0 82px;
+  padding: 72px 0 66px;
+}
+
+.hero .hero-content .hero-image {
+  padding: 72px 0 66px;
 }
 
 .hero .hero-content .content .hero-badge {
@@ -4160,13 +4164,17 @@ section,
 
 @media (max-width: 576px) {
   .hero .hero-content .content {
-    padding: 48px 0 28px;
+    padding: 44px 0 24px;
   }
 
   .hero .hero-content .content h1 {
     font-size: 2rem;
     line-height: 1.16;
     letter-spacing: -0.025em;
+  }
+
+  .hero .hero-content .hero-image {
+    padding: 24px 0 44px;
   }
 }
 
