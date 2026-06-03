@@ -2,11 +2,11 @@
 config/*.local.php
 config/contact.local.php
 config/*.private.php
-private/
+/private/
 *.secret.php
 *.log
-vendor/
-build/
+/vendor/
+/build/
 
 # Local database configuration files with secrets should not be versioned
 sistema/config/database.php
@@ -29,10 +29,10 @@ storage/rate-limit/*.json
 *.backup
 
 # cPanel / hosting
-.cpanel/
-.htpasswds/
-tmp/
-logs/
+/.cpanel/
+/.htpasswds/
+/tmp/
+/logs/
 error_log
 
 # Sistema operativo / editores
