@@ -1,0 +1,321 @@
+/**
+ * D&A Systems — QA visual premium: colores, efectos y #tags
+ * Uso: cargar DESPUÉS de main.css y DESPUÉS del parche final seguro.
+ *
+ * Objetivo:
+ * - Mejorar estados hover/active/click de filtros tipo #tag en Soluciones.
+ * - Ajustar contraste de botones y links sin perder la identidad cian D&A.
+ * - Mejorar navegación por anclas (#contact, #about, etc.).
+ * - Agregar focus visible para accesibilidad y pruebas reales con teclado.
+ */
+
+/* ============================================================
+   1. Ajustes finos de contraste
+   Mantiene el cian como acento, pero usa azul más legible para texto/CTA.
+   ============================================================ */
+
+:root {
+  --da-link: #007fce;
+  --da-link-dark: #006fb5;
+  --da-focus-ring: rgba(1, 170, 242, 0.28);
+  --da-tag-bg: rgba(255, 255, 255, 0.78);
+  --da-tag-border: rgba(230, 234, 240, 0.95);
+}
+
+/* Links sobre fondo claro: más legibles que el cian puro */
+a {
+  color: var(--da-link);
+}
+
+a:hover {
+  color: var(--da-link-dark);
+}
+
+/* Focus visible: importante al probar navegación, tags y formularios */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+.navmenu a:focus-visible,
+.soluciones-ti .portfolio-filters li:focus-visible {
+  outline: 3px solid var(--da-focus-ring);
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+
+/* ============================================================
+   2. Navegación por anclas #hero, #about, #contact
+   Evita que el header sticky tape el inicio de una sección.
+   ============================================================ */
+
+html {
+  scroll-padding-top: 104px;
+}
+
+section,
+.section,
+.page-title {
+  scroll-margin-top: 104px;
+}
+
+@media (max-width: 1199px) {
+  html {
+    scroll-padding-top: 82px;
+  }
+
+  section,
+  .section,
+  .page-title {
+    scroll-margin-top: 82px;
+  }
+}
+
+@media (max-width: 575px) {
+  html {
+    scroll-padding-top: 92px;
+  }
+
+  section,
+  .section,
+  .page-title {
+    scroll-margin-top: 92px;
+  }
+}
+
+/* Señal sutil cuando una sección fue abierta por #ancla */
+section:target .section-title h2::after,
+.section:target .section-title h2::after {
+  width: 88px;
+  box-shadow: 0 0 18px rgba(1, 170, 242, 0.32);
+}
+
+/* ============================================================
+   3. Botones CTA: más contraste y menos riesgo de texto blanco sobre cian claro
+   ============================================================ */
+
+.hero .hero-content .content .cta-group .btn-primary,
+.contact .contact-form-container .contact-form .send-button,
+.footer .footer-cta .footer-button,
+.service-details .info-grid .info-card .service-form .submit-btn {
+  background: linear-gradient(135deg, #006fb5 0%, #007fce 48%, #009de0 100%);
+  color: #ffffff;
+  border: 0;
+  box-shadow: 0 13px 30px rgba(0, 127, 206, 0.28);
+}
+
+.hero .hero-content .content .cta-group .btn-primary:hover,
+.contact .contact-form-container .contact-form .send-button:hover,
+.footer .footer-cta .footer-button:hover,
+.service-details .info-grid .info-card .service-form .submit-btn:hover {
+  background: linear-gradient(135deg, #005f9e 0%, #006fb5 48%, #008fcf 100%);
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 17px 38px rgba(0, 127, 206, 0.36);
+}
+
+.hero .hero-content .content .cta-group .btn-primary:active,
+.contact .contact-form-container .contact-form .send-button:active,
+.footer .footer-cta .footer-button:active,
+.service-details .info-grid .info-card .service-form .submit-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 9px 20px rgba(0, 127, 206, 0.24);
+}
+
+/* ============================================================
+   4. #Tags / filtros de Soluciones TI
+   Convierte los filtros en chips premium: hover claro, active fuerte,
+   click con feedback táctil y mejor comportamiento mobile.
+   ============================================================ */
+
+.soluciones-ti .portfolio-filters-wrapper {
+  margin-bottom: 56px;
+}
+
+.soluciones-ti .portfolio-filters {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 8px;
+  margin: 0 auto;
+  list-style: none;
+  position: relative;
+  border: 1px solid var(--da-tag-border);
+  border-radius: 999px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(245, 249, 253, 0.88));
+  box-shadow: 0 12px 30px rgba(0, 20, 59, 0.06);
+}
+
+.soluciones-ti .portfolio-filters::after {
+  display: none;
+}
+
+.soluciones-ti .portfolio-filters li {
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  color: rgba(0, 20, 59, 0.68);
+  background: transparent;
+  transition:
+    color 0.25s ease,
+    background 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.25s ease;
+}
+
+.soluciones-ti .portfolio-filters li::after {
+  display: none;
+}
+
+.soluciones-ti .portfolio-filters li:hover {
+  color: var(--da-link);
+  background: rgba(1, 170, 242, 0.09);
+  transform: translateY(-1px);
+}
+
+.soluciones-ti .portfolio-filters li:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.soluciones-ti .portfolio-filters li.filter-active {
+  color: #ffffff;
+  background: linear-gradient(135deg, #006fb5 0%, #007fce 52%, #009de0 100%);
+  box-shadow: 0 10px 24px rgba(0, 127, 206, 0.26);
+}
+
+.soluciones-ti .portfolio-filters li.filter-active:hover {
+  color: #ffffff;
+  background: linear-gradient(135deg, #005f9e 0%, #006fb5 52%, #008fcf 100%);
+}
+
+/* Mobile: chips cómodos, scroll horizontal limpio si no caben */
+@media (max-width: 576px) {
+  .soluciones-ti .portfolio-filters-wrapper {
+    margin-bottom: 42px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .soluciones-ti .portfolio-filters-wrapper::-webkit-scrollbar {
+    display: none;
+  }
+
+  .soluciones-ti .portfolio-filters {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    width: max-content;
+    max-width: none;
+    min-width: 100%;
+    border-radius: 18px;
+    padding: 8px;
+  }
+
+  .soluciones-ti .portfolio-filters li {
+    white-space: nowrap;
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+}
+
+/* ============================================================
+   5. Overlay de tarjetas Soluciones: más premium y menos cian plano
+   ============================================================ */
+
+.soluciones-ti .image-container .overlay {
+  background:
+    linear-gradient(135deg, rgba(0, 20, 59, 0.72), rgba(0, 127, 206, 0.52));
+  backdrop-filter: saturate(115%) blur(2px);
+}
+
+.soluciones-ti .image-container .overlay-content {
+  transform: translateY(16px) scale(0.96);
+  transition:
+    transform 0.34s ease,
+    opacity 0.34s ease;
+  opacity: 0;
+}
+
+.soluciones-ti .portfolio-card:hover .image-container .overlay-content {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+.soluciones-ti .image-container .overlay-content a {
+  background: #ffffff;
+  color: var(--da-navy);
+  box-shadow: 0 12px 26px rgba(0, 20, 59, 0.22);
+}
+
+.soluciones-ti .image-container .overlay-content a:hover {
+  background: var(--da-cyan);
+  color: var(--da-navy);
+  transform: scale(1.08);
+}
+
+/* ============================================================
+   6. Tarjetas: click/hover más consistente y menos brusco
+   ============================================================ */
+
+.featured-services .service-item,
+.services .service-item,
+.hero .hero-features .feature-item,
+.soluciones-ti .portfolio-card {
+  will-change: transform;
+}
+
+.featured-services .service-item:hover,
+.services .service-item:hover,
+.hero .hero-features .feature-item:hover,
+.soluciones-ti .portfolio-card:hover {
+  transform: translateY(-6px);
+}
+
+.featured-services .service-item:active,
+.services .service-item:active,
+.hero .hero-features .feature-item:active,
+.soluciones-ti .portfolio-card:active {
+  transform: translateY(-2px);
+}
+
+/* ============================================================
+   7. Menú mobile: reforzar lectura y estado activo
+   ============================================================ */
+
+@media (max-width: 1199px) {
+  .navmenu a:hover,
+  .navmenu .active,
+  .navmenu .active:focus {
+    color: #00c8fd;
+    background: rgba(0, 200, 253, 0.08);
+  }
+
+  .navmenu a {
+    border-radius: 8px;
+    margin: 2px 8px;
+  }
+}
+
+/* ============================================================
+   8. Menos movimiento para usuarios que lo pidan
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

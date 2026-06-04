@@ -1,0 +1,103 @@
+/**
+ * D&A Systems — Parche final seguro sobre CoreBiz Pro
+ * Usar solo si tu main.css YA tiene la capa:
+ * "D&A Systems — Premium visual refinement layer"
+ *
+ * Objetivo:
+ * - No duplicar una segunda capa premium completa.
+ * - Mantener el look fuerte que ya existe en producción.
+ * - Corregir/asegurar bugs puntuales.
+ * - Evitar que el parche "restore" anterior baje pesos visuales.
+ */
+
+/* 1. Asegurar H1 responsive correcto del Hero */
+.hero .hero-content .content h1 {
+  font-size: clamp(2.15rem, 4.2vw, 3.2rem);
+  line-height: 1.12;
+  max-width: 760px;
+  letter-spacing: -0.035em;
+  font-weight: 800;
+}
+
+@media (min-width: 1200px) {
+  .hero .hero-content .content h1 {
+    font-size: 3.2rem;
+  }
+}
+
+@media (min-width: 992px) and (max-width: 1199.98px) {
+  .hero .hero-content .content h1 {
+    font-size: 2.75rem;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 991.98px) {
+  .hero .hero-content .content h1 {
+    font-size: 2.4rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .hero .hero-content .content h1 {
+    font-size: 2rem;
+    line-height: 1.16;
+    letter-spacing: -0.025em;
+  }
+}
+
+/* 2. Asegurar overlay correcto en Soluciones */
+.soluciones-ti .portfolio-card:hover .image-container .overlay-content {
+  transform: translateY(0);
+}
+
+/* 3. Asegurar contexto para pseudo-elementos y bordes premium */
+.soluciones-ti .portfolio-card,
+.service-details .info-grid .info-card {
+  position: relative;
+  overflow: hidden;
+}
+
+/* 4. Mantener jerarquía visual premium ya lograda */
+.featured-services h3,
+.services h3,
+.soluciones-ti .content h3,
+.about .content h2,
+.page-title .title-wrapper h1 {
+  font-weight: 800;
+}
+
+.featured-services h3,
+.services h3 {
+  letter-spacing: -0.025em;
+}
+
+.soluciones-ti .content h3 {
+  letter-spacing: -0.02em;
+  line-height: 1.35;
+}
+
+.about .content h2,
+.page-title .title-wrapper h1 {
+  letter-spacing: -0.035em;
+}
+
+/* 5. Mantener contraste premium de secciones */
+.light-background {
+  --background-color: #f5f7fa;
+  --surface-color: #ffffff;
+}
+
+/* 6. Evitar que tarjetas vuelvan a verse planas */
+.featured-services .service-item,
+.services .service-item,
+.soluciones-ti .portfolio-card,
+.service-details .info-grid .info-card {
+  box-shadow: var(--da-card-shadow);
+}
+
+.featured-services .service-item:hover,
+.services .service-item:hover,
+.soluciones-ti .portfolio-card:hover,
+.service-details .info-grid .info-card:hover {
+  box-shadow: var(--da-card-shadow-hover);
+}

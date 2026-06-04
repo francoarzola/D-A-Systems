@@ -1,0 +1,163 @@
+/**
+ * D&A Systems — Ajuste tipográfico corporativo
+ * Uso: cargar DESPUÉS de main.css y después de los parches premium.
+ *
+ * Objetivo:
+ * - Mantener CoreBiz Pro + Montserrat.
+ * - Evitar apariencia demasiado "máquina" o excesivamente pesada.
+ * - Dar jerarquía: títulos principales firmes, subtítulos más humanos.
+ */
+
+/* ============================================================
+   1. Sistema tipográfico general
+   ============================================================ */
+
+body {
+  font-family: var(--default-font);
+  font-weight: 400;
+  color: var(--default-color);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--heading-font);
+}
+
+/* ============================================================
+   2. Page title superior de páginas internas
+   Ej: "Servicios TI para empresas", "Sobre D&A Systems"
+   ============================================================ */
+
+.page-title .title-wrapper h1 {
+  font-size: clamp(2rem, 3vw, 2.65rem);
+  font-weight: 750;
+  line-height: 1.16;
+  letter-spacing: -0.03em;
+}
+
+.page-title .title-wrapper p {
+  font-family: var(--default-font);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  font-weight: 400;
+  color: color-mix(in srgb, var(--default-color), transparent 16%);
+}
+
+/* ============================================================
+   3. Títulos grandes de contenido interno
+   Ej: "De problemas TI repetidos...", "Tecnología empresarial..."
+   ============================================================ */
+
+.portfolio-details .project-hero .hero-content .project-title,
+.about .content h2,
+.service-details .service-intro h1 {
+  font-weight: 650;
+  letter-spacing: -0.035em;
+  line-height: 1.18;
+}
+
+/* Título enorme de soluciones: bajarlo un poco para que no se vea tan máquina */
+.portfolio-details .project-hero .hero-content .project-title {
+  font-size: clamp(2.25rem, 4vw, 3rem);
+  max-width: 860px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Subtítulos internos más humanos y legibles */
+.portfolio-details .project-hero .hero-content .project-subtitle,
+.service-details .service-intro .lead,
+.about .content .lead {
+  font-family: var(--default-font);
+  font-weight: 400;
+  line-height: 1.75;
+  color: color-mix(in srgb, var(--default-color), transparent 16%);
+}
+
+/* ============================================================
+   4. Section titles
+   Ej: "Quiénes somos", "Soporte técnico TI"
+   ============================================================ */
+
+.section-title h2 {
+  font-size: clamp(1.85rem, 2.6vw, 2.35rem);
+  font-weight: 750;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+}
+
+.section-title p {
+  font-family: var(--default-font);
+  font-size: 1rem;
+  line-height: 1.65;
+  color: color-mix(in srgb, var(--default-color), transparent 18%);
+}
+
+/* ============================================================
+   5. Cards y bloques de servicios
+   Mantener autoridad sin gritar visualmente.
+   ============================================================ */
+
+.featured-services h3,
+.services h3,
+.soluciones-ti .content h3,
+.service-details .info-grid .info-card .info-header h4 {
+  font-weight: 700;
+  letter-spacing: -0.018em;
+  line-height: 1.32;
+}
+
+.services p,
+.featured-services p,
+.soluciones-ti .content p,
+.service-details .info-grid .info-card .info-header p,
+.service-details .info-grid .info-card .info-content .info-list li {
+  font-family: var(--default-font);
+  font-weight: 400;
+}
+
+/* ============================================================
+   6. Nav: firme, pero no excesivamente grueso
+   ============================================================ */
+
+@media (min-width: 1200px) {
+  .navmenu a,
+  .navmenu a:focus {
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+}
+
+/* ============================================================
+   7. Mobile
+   ============================================================ */
+
+@media (max-width: 768px) {
+  .page-title .title-wrapper h1 {
+    font-size: 2rem;
+  }
+
+  .portfolio-details .project-hero .hero-content .project-title {
+    font-size: 2.15rem;
+  }
+
+  .section-title h2 {
+    font-size: 1.85rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .page-title .title-wrapper h1 {
+    font-size: 1.8rem;
+  }
+
+  .portfolio-details .project-hero .hero-content .project-title {
+    font-size: 1.95rem;
+  }
+}
