@@ -314,5 +314,6 @@ if (trim($send_result) === 'OK') {
   echo 'OK';
 } else {
   log_event('send_completed', 'error', substr($send_result, 0, 255));
+  http_response_code(500);
   echo 'No fue posible enviar el mensaje en este momento. Intenta nuevamente más tarde o escríbenos por WhatsApp.';
 }

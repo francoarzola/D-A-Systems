@@ -56,11 +56,13 @@
       headers: {'X-Requested-With': 'XMLHttpRequest'}
     })
     .then(response => {
-      if( response.ok ) {
-        return response.text();
-      } else {
-        throw new Error(`${response.status} ${response.statusText} ${response.url}`); 
-      }
+      return response.text().then(data => {
+        if (response.ok) {
+          return data;
+        }
+
+        throw new Error(data ? data : `${response.status} ${response.statusText}`);
+      });
     })
     .then(data => {
       thisForm.querySelector('.loading').classList.remove('d-block');
@@ -75,7 +77,6 @@
       displayError(thisForm, error);
     });
   }
-
   function displayError(thisForm, error) {
     thisForm.querySelector('.loading').classList.remove('d-block');
     thisForm.querySelector('.error-message').textContent = String(error);
