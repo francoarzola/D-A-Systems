@@ -36,7 +36,7 @@ h6 {
 
 .page-title .title-wrapper h1 {
   font-size: clamp(2rem, 3vw, 2.65rem);
-  font-weight: 750;
+  font-weight: 700;
   line-height: 1.16;
   letter-spacing: -0.03em;
 }
@@ -57,7 +57,7 @@ h6 {
 .portfolio-details .project-hero .hero-content .project-title,
 .about .content h2,
 .service-details .service-intro h1 {
-  font-weight: 650;
+  font-weight: 600;
   letter-spacing: -0.035em;
   line-height: 1.18;
 }
@@ -87,7 +87,7 @@ h6 {
 
 .section-title h2 {
   font-size: clamp(1.85rem, 2.6vw, 2.35rem);
-  font-weight: 750;
+  font-weight: 700;
   line-height: 1.2;
   letter-spacing: -0.025em;
 }
