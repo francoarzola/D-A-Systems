@@ -101,3 +101,15 @@
 .service-details .info-grid .info-card:hover {
   box-shadow: var(--da-card-shadow-hover);
 }
+
+/* Anchor offset para CTAs que llevan directo al formulario de contacto */
+#contact-form {
+  scroll-margin-top: 140px;
+}
+
+@media (max-width: 991.98px) {
+  #contact-form {
+    scroll-margin-top: 110px;
+  }
+}
+
