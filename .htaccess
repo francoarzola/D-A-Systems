@@ -4,9 +4,14 @@ DirectoryIndex index.html index.php
 <IfModule mod_rewrite.c>
   RewriteEngine On
 
-  # Forzar HTTPS
-  RewriteCond %{HTTPS} !=on
-  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+  # Redirigir /index.html a la URL canonica sin archivo
+  RewriteCond %{THE_REQUEST} \s/+(.*/)?index\.html[\s?] [NC]
+  RewriteRule ^(.*/)?index\.html$ https://www.dasystems.cl/$1 [R=301,L]
+
+  # Forzar HTTPS + www
+  RewriteCond %{HTTPS} !=on [OR]
+  RewriteCond %{HTTP_HOST} !^www\.dasystems\.cl$ [NC]
+  RewriteRule ^ https://www.dasystems.cl%{REQUEST_URI} [R=301,L]
 
   # Bloquear archivos ocultos, excepto .well-known
   RewriteRule (^|/)\.(?!well-known(?:/|$)) - [F,L]
